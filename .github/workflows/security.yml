@@ -1,0 +1,9 @@
+name: ⛑️ Security
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  betterleaks:
+    uses: FireToak/firetoak/.github/workflows/betterleaks-central.yml@main

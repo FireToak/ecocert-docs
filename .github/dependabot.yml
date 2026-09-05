@@ -1,0 +1,35 @@
+# ==============================================================================
+# TEMPLATE DEPENDABOT
+# ==============================================================================
+# Ce fichier automatise la création de Pull Requests (PR) pour maintenir
+# vos dépendances à jour (versions) et corriger les failles de sécurité.
+#
+# INSTRUCTIONS :
+# 1. Les mises à jour pour "github-actions" sont activées par défaut.
+# 2. Pour activer la vérification d'autres écosystèmes (npm, docker, etc.),
+#    décommentez les lignes de leur bloc respectif (supprimez les symboles '#').
+# 3. Pour gérer les failles, assurez-vous que "Dependabot security updates" 
+#    est également activé dans Settings > Code security and analysis.
+# ==============================================================================
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # - package-ecosystem: "docker"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # - package-ecosystem: "npm"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
