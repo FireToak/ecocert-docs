@@ -20,7 +20,7 @@ description: Procédure de validation des éléments de configuration Zensical.
 
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
-- [3. Validation des éléments Zensical](#3-validation-des-éléments-zensical)
+- [3. Validation des éléments Zensical](#3-validation-des-elements-zensical)
 
 ## 2. Contexte
 
