@@ -15,7 +15,7 @@ Informations à prendre en compte :
 ````markdown
 # [nom]
 
-![Bannière du projet]([Insère l'URL de l'image si fournie, sinon supprime cette ligne])
+![Bannière EPOKA]([https://epoka.bts.loutik.fr/assets/banniere_epoka.png])
 
 ## Contexte
 
