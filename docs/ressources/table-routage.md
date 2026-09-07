@@ -24,7 +24,7 @@ Ce document définit les règles de routage statique et les réseaux directement
 
 ## 4. Tables de routage
 
-### 4.1. Switch dmd-sw-coeur01
+### 4.1. Switch `ec-sw-c1` "Switch Cisco L3"
 
 | Commentaire | Destination | Masque | Passerelle | Interface | Type |
 | :--- | :--- | :--- | :--- | :--- | :---: |
@@ -34,7 +34,7 @@ Ce document définit les règles de routage statique et les réseaux directement
 | Inter-co | 192.168.44.248 | 255.255.255.248 | 192.168.44.253 | 192.168.44.253 | C |
 | Default | 0.0.0.0 | 0.0.0.0 | 192.168.44.254 | 192.168.44.253 | S* |
 
-### 4.2. Pare-feu dmd-fw-coeur01
+### 4.2. Pare-feu `ec-fw-c1` "Firewall StormShield"
 
 | Commentaire | Destination | Masque | Passerelle | Interface | Type |
 | :--- | :--- | :--- | :--- | :--- | :---: |
