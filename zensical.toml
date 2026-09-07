@@ -1,13 +1,13 @@
 [project]
-site_url = "epoka.bts.loutik.fr"
-site_name = "Documentation infrastructure - Epoka"
-site_description = "Documentation du contexte Epoka du BTS SIO Paul-Louis Courier."
+site_url = "ecocert.bts.loutik.fr"
+site_name = "Documentation infrastructure - Ecocert"
+site_description = "Documentation du contexte Ecocert du BTS SIO Paul-Louis Courier."
 site_author = "Louis MEDO & Amine KADA"
 
 copyright = "Copyright &copy; 2026 Louis MEDO & Amine KADA"
 
-repo_url = "https://github.com/FireToak/cub-docs"
-repo_name = "firetoak/epoka-docs"
+repo_url = "https://github.com/FireToak/ecocert-docs"
+repo_name = "firetoak/ecocert-docs"
 edit_uri = "edit/main/docs/"
 
 # extra_css = ["stylesheets/extra.css"]
