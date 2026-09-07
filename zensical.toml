@@ -16,7 +16,7 @@ edit_uri = "edit/main/docs/"
 [project.theme]
 # variant = "classic"
 # custom_dir = "overrides"
-favicon = "assets/logo_epoka-transparant.png"
+favicon = "assets/logo_ecocert-transparant.png"
 language = "fr"
 features = [
   "announce.dismiss",
@@ -38,7 +38,7 @@ features = [
   "search.highlight",
 ]
 
-logo = "assets/logo_epoka-transparant.png"
+logo = "assets/logo_ecocert-transparant.png"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme)"

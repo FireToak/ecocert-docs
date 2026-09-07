@@ -83,13 +83,13 @@ description: [Description en moins de 20 mots de la procédure]
 
 # [Titre de la procédure]
 
-![Bannière CUB](https://epoka.bts.loutik.fr/assets/banniere_epoka.png)
+![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
 !!! note "Informations"
 
-    - **Auteur :** Louis MEDO
+    - **Auteur :** [Prénom NOM]
     - **Date :** [JJ/MM/DDDD]
     - **Domaine :** [Domaine]
 
