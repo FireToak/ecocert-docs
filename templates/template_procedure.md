@@ -83,7 +83,7 @@ description: [Description en moins de 20 mots de la procédure]
 
 # [Titre de la procédure]
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
