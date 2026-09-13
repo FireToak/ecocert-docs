@@ -1,5 +1,5 @@
 [project]
-site_url = "ecocert.bts.loutik.fr"
+site_url = "https://ecocert.bts.loutik.fr"
 site_name = "Documentation infrastructure - Ecocert"
 site_description = "Documentation du contexte Ecocert du BTS SIO Paul-Louis Courier."
 site_author = "Louis MEDO & Amine KADA"
