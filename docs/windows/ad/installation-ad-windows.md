@@ -1,19 +1,12 @@
----
-description: Procédure d'installation du rôle AD DS sur Windows Server 2025.
----
-
 # Installation du rôle AD DS
 
 ![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 14/09/2026
-    - **Domaine :** Windows Serveur 2025
-
+- **Auteur :** Amine KADA
+- **Date :** 14/09/2026
+- **Domaine :** Windows serveur
 ---
 
 ## 1. Sommaire

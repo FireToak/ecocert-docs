@@ -1,18 +1,12 @@
----
-description: Procédure de configuration, modification et vérification du nom d'hôte sur un système Debian.
----
-
 # Configuration du hostname
 
 ![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 08/09/2026
-    - **Domaine :** Debian
+- **Auteur :** Amine KADA
+- **Date :** 08/09/2026
+- **Domaine :** Debian
 
 ---
 

@@ -1,18 +1,12 @@
----
-description: Déploiement et configuration du service Kea-dhcp4 multi-VLANs sur Debian 13 avec relais Cisco.
----
-
 # Configuration kea-dhcp4 sur Debian
 
 ![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** KADA Amine
-    - **Date :** 08/09/2026
-    - **Domaine :** Debian
+- **Auteur :** Amine KADA
+- **Date :** 08/09/2026
+- **Domaine :** Debian
 
 ---
 

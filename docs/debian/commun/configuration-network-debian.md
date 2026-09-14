@@ -1,20 +1,12 @@
----
-
-description: Procédure de configuration d'une interface réseau en IP statique et des serveurs DNS sous Debian.
-
----
-
 # Configuration network debian
 
 ![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Jean DUPONT
-    - **Date :** 14/09/2026
-    - **Domaine :** Debian
+- **Auteur :** Amine KADA
+- **Date :** 08/09/2026
+- **Domaine :** Debian
 
 ---
 
