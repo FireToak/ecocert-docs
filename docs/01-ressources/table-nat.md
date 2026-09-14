@@ -26,8 +26,8 @@ Documentation référençant les règles de traduction d'adresses réseau (Sourc
 
 ### 3.1. Pare-feu ec-fw-c1 "StormShield"
 
-| Description | IP src (Avant) | Port src | IP dst (Avant) | Port dst | IP src (Après) | Port src | IP dst (Après) | Port dst |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| LAN | `192.168.4.0/24` | `*` | `*` | `*` | `172.16.32.4` | `*` | `*` | `*` |
-| INTER-CO (SW & FW) | `192.168.14.0/29` | `*` | `*` | `*` | `172.16.32.4` | `*` | `*` | `*` |
-| SERVEURS | `172.16.54.0/24` | `*` | `*` | `*` | `172.16.32.4` | `*` | `*` | `*` |
+| Description        | IP src (Avant)  | Port src | IP dst (Avant) | Port dst | IP src (Après) | Port src | IP dst (Après) | Port dst |
+| ------------------ | --------------- | -------- | -------------- | -------- | -------------- | -------- | -------------- | -------- |
+| LAN                | 192.168.4.0/24  | *        | *              | *        | 172.16.32.14   | *        | *              | *        |
+| INTER-CO (SW & FW) | 192.168.14.0/29 | *        | *              | *        | 172.16.32.14   | *        | *              | *        |
+| SERVEURS           | 172.16.54.0/24  | *        | *              | *        | 172.16.32.14   | *        | *              | *        |
