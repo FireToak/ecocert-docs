@@ -134,7 +134,8 @@ sudo nano /etc/kea/kea-dhcp4.conf
 }
 ```
 
-!!! warning Évolution de la configuration (VLAN 81).
+!!! warning "Évolution de la configuration (VLAN 81)"
+
     L'intégration de la configuration DHCP relative au VLAN 81 (Wifi-Visiteurs) sera déployée ultérieurement, à la suite de la mise en production du contrôleur Wi-Fi UniFi.
 
 ```json title="/etc/kea/kea-dhcp4.conf"
