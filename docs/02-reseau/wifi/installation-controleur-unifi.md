@@ -2,7 +2,7 @@
 description: Procédure d'installation et de configuration du contrôleur UniFi OS Server sur un environnement Debian.
 ---
 
-# Installation du controleur UNIFI sur Debian
+# Installation du controleur Unifi sur Debian
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
