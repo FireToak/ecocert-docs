@@ -1,6 +1,6 @@
-Current configuration : 9130 bytes
+Current configuration : 9319 bytes
 !
-! Last configuration change at 13:39:21 UTC Mon Sep 21 2026 by dreamlike
+! Last configuration change at 15:00:45 UTC Mon Sep 21 2026 by dreamlike
 !
 version 17.6
 service timestamps debug datetime msec
@@ -17,7 +17,7 @@ vrf definition Mgmt-vrf
  !
  address-family ipv4
  exit-address-family
- !        
+ !
  address-family ipv6
  exit-address-family
 !
@@ -154,9 +154,9 @@ policy-map system-cpp-policy
 !
 !
 !
+!
+!
 !         
-!
-!
 !
 !
 interface GigabitEthernet0/0
@@ -234,9 +234,9 @@ interface GigabitEthernet1/0/16
 interface GigabitEthernet1/0/17
 !
 interface GigabitEthernet1/0/18
-!         
-interface GigabitEthernet1/0/19
 !
+interface GigabitEthernet1/0/19
+!         
 interface GigabitEthernet1/0/20
 !
 interface GigabitEthernet1/0/21
@@ -247,14 +247,17 @@ interface GigabitEthernet1/0/22
  switchport mode trunk
 !
 interface GigabitEthernet1/0/23
+ description BORNE WIFI UBIQUITI
  switchport access vlan 14
- switchport mode access
+ switchport trunk native vlan 54
+ switchport trunk allowed vlan 71,81
+ switchport mode trunk
 !
 interface GigabitEthernet1/0/24
  description INTER-CO ROUTEUR STORMSHIELD
  switchport access vlan 14
  switchport mode access
-!         
+!
 interface GigabitEthernet1/1/1
 !
 interface GigabitEthernet1/1/2
@@ -274,11 +277,15 @@ interface Vlan11
 interface Vlan14
  description INTER-CO
  ip address 192.168.14.253 255.255.255.248
-!         
+!
 interface Vlan21
  description CERTIFICATION
  ip address 192.168.4.94 255.255.255.224
  ip helper-address 172.16.54.2
+!
+interface Vlan31
+ description REFERENTIELS
+ ip address 192.168.4.190 255.255.255.224
 !
 interface Vlan41
  description FORMA PRO
@@ -286,21 +293,21 @@ interface Vlan41
  ip helper-address 172.16.54.2
 !
 interface Vlan54
- description PASSERELLE SERVEURS
+ description SERVEURS
  ip address 172.16.54.253 255.255.255.0
 !
 interface Vlan61
- description EXPERTISE TECH CONSEIL
+ description EXP TECHNI CONSEIL
  ip address 192.168.4.158 255.255.255.224
  ip helper-address 172.16.54.2
 !
 interface Vlan71
- description PASSERELLE TECHNIQUE
+ description TECHNIQUE
  ip address 192.168.4.206 255.255.255.240
  ip helper-address 172.16.54.2
 !
 interface Vlan81
- description PASSERELLE WIFI-VISITEURS
+ description WIFI-VISITEURS
  ip address 192.168.4.126 255.255.255.224
  ip helper-address 172.16.54.2
 !
@@ -311,7 +318,7 @@ ip http secure-server
 ip route 0.0.0.0 0.0.0.0 192.168.14.254
 ip ssh time-out 60
 ip ssh version 2
-!
+!         
 !
 !
 !
