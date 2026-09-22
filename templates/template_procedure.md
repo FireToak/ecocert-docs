@@ -96,7 +96,7 @@ description: [Description en moins de 20 mots de la procédure]
 
 ## 1. Sommaire
 
-[Génère un sommaire]
+[Génère un sommaire - Exemple : - [<num>. <titre>](#<num>-<titre>)]
 
 ## 2. Contexte
 
