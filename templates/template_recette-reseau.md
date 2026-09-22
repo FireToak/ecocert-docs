@@ -1,23 +1,19 @@
-ROLE : Administrateur système et SRE senior. Ton approche doit être rigoureuse, orientée automatisation (IaC) et respecter les standards d'ingénierie pour les procédures de mise en production.
+ROLE : Ingénieur réseau senior. Ton approche doit être méthodique, orientée modèle OSI, et respecter les standards de validation d'infrastructure réseau (routage, commutation, sécurité).
 
-MISSION : Rédiger une documentation de Déploiement basée sur les paramètres ci-dessous.
+MISSION : Rédiger une fiche de procédure de tests réseau basée sur les paramètres ci-dessous.
 
 INFORMATIONS :
-Titre :
-Domaine :
-[Décrit la procédure souhaité.]
+Titre : 
+Domaine : 
+[Décris ici le ou les tests réseau souhaités]
 
 CONTRAINTES DE SORTIE :
-
-- Utilise le modèle (template) fourni ci-après.
-- Affiche UNIQUEMENT le contenu rempli du template.
-- Respecte scrupuleusement la syntaxe Markdown, YAML et Jinja2.
-- Aucun commentaire, introduction ou conclusion de ta part n'est autorisé.
-- L'image markdown doit toujours être présente.
+- Utilise le modèle (template) Markdown fourni ci-après.
+- Affiche UNIQUEMENT le contenu rempli du template (aucune introduction ou conclusion).
+- Pour chaque bloc de code/commande, tu dois expliquer brièvement la commande et ses arguments.
+- L'image markdown de la bannière doit toujours être présente.
 - Tu mets `````` au début et à la fin de ton message pour que le message soit bien sous embed markdown.
 - Utilise les admonitions quand s'est nécessaire.
-
-Documentation des admonitions :
 
 Documentation des admonitions :
 
@@ -25,6 +21,8 @@ Documentation des admonitions :
 > Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et euismod
 > nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
 > massa, nec semper lorem quam in massa.
+
+Support types : note, abstract, info, tip, success, question, warning, failure, danger, bug, example, quot
 
 Documentation des code blocs :
 
@@ -74,13 +72,8 @@ Table :
 | `PUT`    | :lucide-check-check: Update resource |
 | `DELETE` | :lucide-x: Delete resource           |
 
-`````markdown
-
----
-description: [Description en moins de 20 mots de la procédure]
----
-
-# [Titre de la procédure]
+```markdown
+# [Titre de la fiche de test]
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
@@ -94,23 +87,38 @@ description: [Description en moins de 20 mots de la procédure]
 
 ---
 
-## 1. Sommaire
+## 1. Contexte du test
 
-[Génère un sommaire - Exemple : - [<num>. <titre>](#<num>-<titre>)]
+[Description du scénario réseau, des équipements impliqués et du flux à valider.]
 
-## 2. Contexte
+## 2. Procédures de validation
 
-[Description du composant à déployer. Expliquer comment ce service s'intègre au reste de l'infrastructure CUB (ex: flux réseau, dépendance à la base de données, etc.).]
+### 2.1. [Nom du test - ex: Communication avec un hôte sur le même VLAN]
 
-## 3. [Titre de l'étape]
+**Objectif :** [Ce que l'on cherche à vérifier]
 
-3.1.  **[Titre de l'action à mener].** [Description de l'action à mener].
+**Commande utilisée :**
 
-```[techno]
-Exemple de commande
+```bash
+[Exemple : ping -c 4 192.168.10.5]
 ```
 
-- `[Exemple]` : [Description de l'argument dans la commande]
-- `[Exemple]` : [Description de l'argument dans la commande]
+- `[Commande]` : [Explication globale]
+- `[Argument]` : [Explication spécifique]
 
-`````
+**Résultat attendu :**
+
+```bash
+[Exemple de résultat]
+```
+
+**Statut :**
+
+- [ ] Ok
+- [ ] KO
+
+**Commentaire :**
+
+................................................................................................................................................................................................................................................................................................................................................................
+
+```
