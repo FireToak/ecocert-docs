@@ -23,3 +23,7 @@
 ## Configuration `ec-sw-a1` (Switch accès)
 
 - **Ficher de configuration :** [ec-sw-a1](./assets/configurations/ec-sw-a1.txt)
+
+## Configuration `wifiecocert` (Contrôleur Unifi)
+
+- **Ficher de configuration :** [wifiecocert](./assets/configurations/wifiecocert.unf)
