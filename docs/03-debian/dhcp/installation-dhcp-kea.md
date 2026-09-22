@@ -4,7 +4,7 @@ description: Déploiement et vérification du serveur ISC Kea DHCP IPv4 sur Debi
 
 # Installation kea-dhcp4 sur debian 13
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 

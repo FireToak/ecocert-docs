@@ -4,7 +4,7 @@ description: Procédure de configuration, modification et vérification du nom d
 
 # Configuration du hostname
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 

@@ -1,6 +1,6 @@
 # Configuration et intégration AD
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
