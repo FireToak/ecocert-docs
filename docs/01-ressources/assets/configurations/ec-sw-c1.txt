@@ -1,6 +1,4 @@
-Current configuration : 9319 bytes
-!
-! Last configuration change at 15:00:45 UTC Mon Sep 21 2026 by dreamlike
+! Last configuration change at 11:34:50 UTC Tue Sep 22 2026 by dreamlike
 !
 version 17.6
 service timestamps debug datetime msec
@@ -20,7 +18,7 @@ vrf definition Mgmt-vrf
  !
  address-family ipv6
  exit-address-family
-!
+!         
 enable secret 9 $9$4UrK8XApz5am5E$ogsabFro4dJvZ22t2U5V/LGwNLLjEs4ZwS9N5sia0aU
 !
 !
@@ -43,7 +41,7 @@ no ip domain lookup
 ip domain name local.ecocert4.fr
 !
 !
-!
+!         
 login on-success log
 !
 crypto pki trustpoint SLA-TrustPoint
@@ -89,7 +87,7 @@ diagnostic bootup level minimal
 spanning-tree mode rapid-pvst
 spanning-tree extend system-id
 memory free low-watermark processor 10626
-!
+!         
 username dreamlike privilege 15 secret 9 $9$VPGBg9zgl6QAXE$.zJsH.FJLUZ7Zsww3v5DQerCIMAND/Bz7sMCF9zZrY6
 !
 redundancy
@@ -155,8 +153,8 @@ policy-map system-cpp-policy
 !
 !
 !
-!
 !         
+!
 !
 !
 interface GigabitEthernet0/0
@@ -224,7 +222,7 @@ interface GigabitEthernet1/0/12
  switchport mode access
 !
 interface GigabitEthernet1/0/13
-!
+!         
 interface GigabitEthernet1/0/14
 !
 interface GigabitEthernet1/0/15
@@ -236,7 +234,7 @@ interface GigabitEthernet1/0/17
 interface GigabitEthernet1/0/18
 !
 interface GigabitEthernet1/0/19
-!         
+!
 interface GigabitEthernet1/0/20
 !
 interface GigabitEthernet1/0/21
@@ -248,9 +246,8 @@ interface GigabitEthernet1/0/22
 !
 interface GigabitEthernet1/0/23
  description BORNE WIFI UBIQUITI
- switchport access vlan 14
  switchport trunk native vlan 54
- switchport trunk allowed vlan 71,81
+ switchport trunk allowed vlan 54,71,81
  switchport mode trunk
 !
 interface GigabitEthernet1/0/24
@@ -286,6 +283,7 @@ interface Vlan21
 interface Vlan31
  description REFERENTIELS
  ip address 192.168.4.190 255.255.255.224
+ ip helper-address 172.16.54.2
 !
 interface Vlan41
  description FORMA PRO
@@ -297,12 +295,12 @@ interface Vlan54
  ip address 172.16.54.253 255.255.255.0
 !
 interface Vlan61
- description EXP TECHNI CONSEIL
+ description EXP TECH CONSEIL
  ip address 192.168.4.158 255.255.255.224
  ip helper-address 172.16.54.2
 !
 interface Vlan71
- description TECHNIQUE
+ description TECHNIQUES
  ip address 192.168.4.206 255.255.255.240
  ip helper-address 172.16.54.2
 !
@@ -318,7 +316,7 @@ ip http secure-server
 ip route 0.0.0.0 0.0.0.0 192.168.14.254
 ip ssh time-out 60
 ip ssh version 2
-!         
+!
 !
 !
 !
@@ -340,7 +338,7 @@ line vty 5 15
  login local
  transport input ssh
 !
-call-home
+call-home 
  ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
  ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
  contact-email-addr sch-smart-licensing@cisco.com
