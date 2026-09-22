@@ -68,7 +68,29 @@ sudo ./5172-linux-x64-5.1.42-12e9e3cf-8f8b-4e54-928c-76b80a10c8a4.42-x64
 
 ## 6. Post-installation
 
-6.1. **Connexion à l'interface** Finalisation de l'intégration dans l'infrastructure via l'interface UI `https://<votre-ip>:11443`.
+6.1 **Vérification du fonctionnement du service uosserver.** Vérifier le bon fonctionnement du contrôleur au près du service uosserver sur Debian.
+
+```bash
+sudo systemctl status uosserver
+```
+
+**Résultat attendu :**
+
+```bash
+● uosserver.service - UniFi OS Server Service
+     Loaded: loaded (/etc/systemd/system/uosserver.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-09-22 19:06:51 CEST; 2min 44s ago
+ Invocation: cc5a1db737654752bd0a4ae6e986b24c
+   Main PID: 951 (uosserver-servi)
+      Tasks: 8 (limit: 2252)
+     Memory: 59.3M (peak: 93.4M, swap: 3.6M, swap peak: 3.6M)
+        CPU: 850ms
+     CGroup: /system.slice/uosserver.service
+             ├─ 951 /var/lib/uosserver/bin/uosserver-service
+             └─1100 /var/lib/uosserver/bin/discovery
+```
+
+6.2. **Connexion à l'interface** Finalisation de l'intégration dans l'infrastructure via l'interface UI `https://<votre-ip>:11443`.
 
 > [!note] Administration et équipements
 > Une fois installé, créez un compte UI (ou connectez-vous avec un existant) via l'interface web pour activer la gestion à distance (*Site Manager*). Procédez ensuite à l'adoption de vos équipements (APs, Switchs) en suivant les instructions d'adoption *UniFi Device Adoption*.
