@@ -65,7 +65,7 @@ DocumentRoot /var/www/glpi/public
 
 ```registry title="Paramètre de Registre (GPO)"
 HKEY_LOCAL_MACHINE\SOFTWARE\GLPI-Agent
-"server"="http://172.16.54.40/"
+"server"="https://172.16.54.40/"
 ```
 
 - `server` : La valeur de la clé de registre pointe sur l'URL courte. Cela permet de contourner l'erreur HTTP 404 causée par la restriction de sécurité du dossier web (`/public`).
