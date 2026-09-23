@@ -53,7 +53,7 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 > [!warning] DNS Secondaire
 > Ne pas renseigner de "DNS Secondary" avec un DNS public (ex: 8.8.8.8). En effet, le système risquerait de rejeter les requêtes ou de faire la demande à l'extérieur plutôt qu'en interne, brisant la résolution de nom pour le domaine `local.ecocert4.fr`.
 
-![Configuration Réseau](../img/nas/network-nas.jpg)
+![Configuration Réseau](img-nas/network-nas.jpg)
 
 ## 5. Création du Pool de Stockage (RAID 5)
 
@@ -63,7 +63,7 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 2. Cliquez sur **Add** pour créer un nouveau pool en sélectionnant au moins 3 disques virtuels disponibles.
 3. Validez la création en choisissant l'agencement **RAIDZ1** (équivalent au RAID 5 logiciel sous ZFS) pour initialiser l'espace de stockage. Vérifiez d'avoir au moins **20 Go** d'espace disponible pour les données.
 
-![Pool NAS](../img/nas/pool-nas.jpg)
+![Pool NAS](img-nas/pool-nas.jpg)
 
 ## 6. Configuration NTP & Active Directory
 
@@ -72,17 +72,17 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 1. Naviguez dans **System > NTP Servers**.
 2. Ajoutez ou modifiez un serveur NTP pour pointer vers votre contrôleur de domaine (`172.16.54.1`).
 
-![Configuration NTP](../img/nas/config-ntp.jpg)
+![Configuration NTP](img-nas/config-ntp.jpg)
 
 6.2.  **Intégration à l'annuaire (Active Directory)**. Liaison du NAS avec l'annuaire pour l'authentification centralisée.
 
 1. Allez dans le menu **Directory Services > Active Directory**.
 2. Renseignez le domaine `local.ecocert4.fr` et les identifiants de l'administrateur du domaine.
 
-![Annuaire LDAP/AD](../img/nas/ldap-truenas.jpg)
+![Annuaire LDAP/AD](img-nas/ldap-truenas.jpg)
 
-![Configuration AD - Étape 1](../img/nas/1config-ad.jpg)
-![Configuration AD - Étape 2](../img/nas/2config-ad.jpg)
+![Configuration AD - Étape 1](img-nas/1config-ad.jpg)
+![Configuration AD - Étape 2](img-nas/2config-ad.jpg)
 
 ## 7. Partage de fichiers (SMB) et Droits (ACL)
 
@@ -91,8 +91,8 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 1. Naviguez dans le menu **Services**.
 2. Activez le service **SMB** et cochez "Start Automatically".
 
-![Services Système](../img/nas/system-service.jpg)
-![Service SMB](../img/nas/service-smb.jpg)
+![Services Système](img-nas/system-service.jpg)
+![Service SMB](img-nas/service-smb.jpg)
 
 7.2.  **Création du partage et gestion des permissions (ACL)**.
 
@@ -100,8 +100,8 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 2. Sélectionnez le chemin correspondant à votre pool de stockage (ex: `Sauvegardes`).
 3. Modifiez les droits d'accès (ACL) sur le Dataset pour autoriser les utilisateurs et groupes de l'Active Directory.
 
-![Permissions Dataset](../img/nas/permission-dataset.jpg)
-![Ajout ACL NAS](../img/nas/ajout-acl-nas.jpg)
+![Permissions Dataset](img-nas/permission-dataset.jpg)
+![Ajout ACL NAS](img-nas/ajout-acl-nas.jpg)
 
 ## 8. Validation Côté Client (Windows)
 
@@ -111,5 +111,5 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 2. Cliquez sur **Réseau** ou tapez directement `\\172.16.54.20` ou `\\NASECOCERT` dans la barre d'adresse.
 3. Vérifiez la présence du dossier partagé et testez la lecture/écriture.
 
-![Vue Réseau](../img/nas/win-reseau.png)
-![Ce PC](../img/nas/win-cepc.png)
+![Vue Réseau](img-nas/win-reseau.png)
+![Ce PC](img-nas/win-cepc.png)

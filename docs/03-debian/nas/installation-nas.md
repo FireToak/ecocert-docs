@@ -47,8 +47,8 @@ Le serveur **NASECOCERT** nécessite un socle solide pour opérer en tant que se
 4. **Disk size (GiB) :** Spécifiez `20` pour créer un disque de 20 Go.
 5. Répétez cette opération pour obtenir le nombre de disques requis (au moins 3 disques de 20 Go pour un RAID 5 fonctionnel).
 
-![Ajout Disque Proxmox](../img/nas/proxmox-disk.jpg)
-![Configuration Disque SATA](../img/nas/disk-sata.jpg)
+![Ajout Disque Proxmox](img-nas/proxmox-disk.jpg)
+![Configuration Disque SATA](img-nas/disk-sata.jpg)
 
 > [!important] Architecture ZFS
 > L'utilisation du bus SATA et la présentation de disques bruts permet à TrueNAS d'avoir un accès direct aux disques pour gérer efficacement le système de fichiers ZFS et la redondance.
