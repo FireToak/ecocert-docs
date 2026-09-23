@@ -10,9 +10,8 @@ description: Configuration du moteur GLPI 11, du helpdesk (ITIL) et déploiement
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 
-- **Auteur :** Amine KADA
-- **Classe :** BTS SIO 2 - Option SISR (Tours)
-- **Date :** 22 Septembre 2026
+- **Auteur :** KADA Amine
+- **Date :** 23/09/2026
 - **Domaine :** Debian / GLPI
 
 ---
@@ -27,60 +26,60 @@ description: Configuration du moteur GLPI 11, du helpdesk (ITIL) et déploiement
 
 ## 2. Contexte
 
-- **Serveur GLPI :** GLPIECOCERT
-- **IP et Passerelle :** `172.16.54.40` (Passerelle : `172.16.54.253`)
-- **Système d'exploitation :** Debian 13
-- **Services en charge :** Gestion d'inventaire et de tickets d'incident
+Le serveur **GLPIECOCERT** (172.16.54.40, Passerelle : 172.16.54.253) hébergé sous Debian 13 a pour rôle la gestion d'inventaire et des tickets d'incident. Ce service s'intègre à l'infrastructure Active Directory (`local.ecocert4.fr`) pour la remontée automatisée des composants matériels et logiciels des postes de travail via le déploiement d'un agent.
 
 ## 3. Déploiement et Sécurisation du Serveur
 
-- **Moteur GLPI :** Installation de la version 11 sur la machine virtuelle Debian.
-- **Sécurisation Web :** Configuration du serveur web (Apache/Nginx) pour restreindre la lecture stricte au dossier racine `/public`. Cette action répond aux exigences de sécurité de GLPI 11 et empêche l'exposition des fichiers de configuration sensibles de l'infrastructure.
+3.1.  **Sécurisation de l'accès web**. Restreindre la lecture du serveur web (Apache/Nginx) au dossier racine `/public` afin d'empêcher l'exposition de fichiers sensibles.
+
+```bash title="Terminal"
+# Exemple de modification de la configuration du vhost
+DocumentRoot /var/www/glpi/public
+```
+
+- `DocumentRoot` : Définit le répertoire racine du site web. Cette action répond aux exigences strictes de sécurité introduites par GLPI 11.
 
 ## 4. Configuration du Helpdesk (ITIL)
 
-Pour structurer la gestion des tickets et respecter les processus ITIL, l'assistance est divisée entre les deux administrateurs réseau selon leurs domaines d'expertise.
+4.1.  **Création des groupes et affectations**. Afin de structurer la gestion des incidents selon les normes ITIL, l'assistance est divisée selon les domaines d'expertise des administrateurs.
 
-### 4.1. Création des groupes de techniciens
+| Administrateur | Identifiant | Profil | Groupe affecté | Peut être assigné |
+| :--- | :--- | :--- | :--- | :--- |
+| Olivier TONDET | `otondet` | Admin (entité racine) | Équipe Réseau & Accès | :lucide-check: Oui |
+| Pamela TREMO | `ptremo` | Admin (entité racine) | Équipe Serveurs & Systèmes | :lucide-check: Oui |
 
-- **Équipe Réseau & Accès :** Créé avec le paramètre `Peut être assigné : Oui` pour pouvoir y affecter des tickets.
-- **Équipe Serveurs & Systèmes :** Créé avec le paramètre `Peut être assigné : Oui`.
+![Création des groupes](../img/glpi/groupe-glpi.jpg)
 
-### 4.2. Création des comptes administrateurs
+![Création des comptes](../img/glpi/glpi-user.jpg)
 
-- **Olivier TONDET (`otondet`) :**
-  - Profil : *Admin* (sur l'entité racine).
-  - Affectation : Associé au groupe **Équipe Réseau & Accès**.
-- **Pamela TREMO (`ptremo`) :**
-  - Profil : *Admin* (sur l'entité racine).
-  - Affectation : Associée au groupe **Équipe Serveurs & Systèmes**.
+4.2.  **Paramétrage du routage automatique**. Les catégories d'incidents sont liées aux groupes pour permettre un dispatching ITIL sans intervention manuelle.
 
-### 4.3. Paramétrage des catégories de tickets (Routage automatique)
-
-Afin d'automatiser le flux de travail (workflow ITIL), les catégories d'incidents sont liées aux groupes pour un routage sans intervention manuelle :
-
-- **Catégorie "Problème réseau / Interconnexion" :** Liée au groupe technique en charge *Équipe Réseau & Accès*. Les tickets tombent directement dans la file d'attente d'Olivier.
-- **Catégorie "Problème Serveur / AD" :** Liée au groupe technique en charge *Équipe Serveurs & Systèmes*. Les tickets tombent directement dans la file d'attente de Pamela.
+| Catégorie de ticket | Groupe assigné (Routage automatique) |
+| :--- | :--- |
+| Problème réseau / Interconnexion | Équipe Réseau & Accès (Olivier) |
+| Problème Serveur / AD | Équipe Serveurs & Systèmes (Pamela) |
 
 ## 5. Automatisation de l'Inventaire de Parc (GPO)
 
-La remontée du matériel et des logiciels est entièrement automatisée pour s'intégrer au domaine Active Directory (`local.ecocert4.fr`).
+5.1.  **Création de la stratégie de déploiement**. Sur le contrôleur de domaine (`ADECOCERT`), mise en place d'une GPO pour déployer silencieusement `GLPI-Agent.msi` (11.0.9) et configurer son URL de contact.
 
-### 5.1. Stratégie de déploiement
+```registry title="Paramètre de Registre (GPO)"
+HKEY_LOCAL_MACHINE\SOFTWARE\GLPI-Agent
+"server"="http://172.16.54.40/"
+```
 
-Création d'une GPO sur le contrôleur de domaine Windows Server 2025 (`ADECOCERT`) pour installer silencieusement le paquet `GLPI-Agent.msi` (version 11.0.9) sur les postes clients.
+- `server` : La valeur de la clé de registre pointe sur l'URL courte. Cela permet de contourner l'erreur HTTP 404 causée par la restriction de sécurité du dossier web (`/public`).
 
-### 5.2. Configuration de la communication Agent/Serveur
+![Agent GLPI](../img/glpi/client-agent-glpi.jpg)
 
-1. **Clé de registre :** Ajout d'une configuration via la GPO avec la création de la clé `HKEY_LOCAL_MACHINE\SOFTWARE\GLPI-Agent` et la valeur chaîne `server`.
-2. **Ajustement de l'URL :** La valeur `server` est définie sur l'URL courte `http://172.16.54.40/` (au lieu du chemin classique `/front/inventory.php`). Cela permet de contourner l'erreur HTTP 404 causée par la restriction de sécurité du dossier web (`/public`) mise en place lors de l'installation.
-
-### 5.3. Validation
-
-Après application des stratégies et redémarrage du service local *GLPI Agent*, les postes communiquent avec le serveur de manière autonome.
+5.2.  **Application et Validation**. Sur les postes clients Windows, forcer l'application des stratégies et vérifier la remontée des données dans l'interface d'administration.
 
 ```cmd title="Terminal (Client Windows)"
 gpupdate /force
 ```
 
-- **Vérification :** Naviguez dans **Parc > Ordinateurs** sur l'interface GLPI. Les postes Windows doivent remonter automatiquement avec leurs configurations exhaustives.
+- `gpupdate /force` : Oblige le poste client à récupérer immédiatement les nouvelles directives de la GPO. Les ordinateurs apparaissent ensuite automatiquement dans le menu **Parc > Ordinateurs** de l'interface GLPI avec leurs caractéristiques complètes.
+
+![Parc informatique](../img/glpi/client-parc-glpi.jpg)
+
+![Inventaire détaillé](../img/glpi/inventaire-glpi.jpg)
