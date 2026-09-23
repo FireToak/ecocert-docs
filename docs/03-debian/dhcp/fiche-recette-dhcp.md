@@ -31,7 +31,7 @@ Validation du bon fonctionnement du service Kea-dhcp4 (serveur DHCP) via deux ma
 ip a
 ```
 
-![Configuration IP du client Debian](img-dhcp/client-dhcp.png)
+![Configuration IP du client Debian](./assets/fiche-recette-dhcp/client-dhcp.png)
 
 !!! success "Validation"
     L'interface réseau obtient bien une adresse IP cohérente avec la plage configurée sur le serveur DHCP Kea. Cela confirme la bonne distribution des baux sur le segment du client Debian.
@@ -46,8 +46,7 @@ ip a
 ipconfig
 ```
 
-![Configuration IP du client Windows AD](img-dhcp/dhcp-administration.png)
+![Configuration IP du client Windows AD](./assets/fiche-recette-dhcp/dhcp-administration.png)
 
 !!! success "Validation"
     Le poste Windows reçoit une adresse IP correspondant bien à la plage d'adresses définie pour son groupe de travail (le VLAN Administration). La distribution s'opère correctement, prouvant que le relais DHCP et les pools d'adresses fonctionnent parfaitement.
-

@@ -1,6 +1,6 @@
 # Tables NAT
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 

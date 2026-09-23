@@ -4,7 +4,7 @@ description: Configuration réseau de l'Active Directory dans le panneau de conf
 
 # Configuration réseau de l'AD
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
@@ -31,9 +31,10 @@ Déploiement et configuration d'une adresse IP statique pour le futur contrôleu
 3.1.  **Accès au Gestionnaire de serveur.** 
 - Ouvrir le Gestionnaire de serveur pour accéder aux propriétés de la carte réseau locale et initier la configuration d'une IP statique.
 
-![Configuration IP statique Gestionnaire de serveur](img/Windows-Server-2025-Configurer-une-IP-statique-Gestionnaire-de-serveur.jpg.webp)
+![Configuration IP statique Gestionnaire de serveur](./assets/configuration-network-windows/windows-Server-2025-Configurer-une-ip-statique-gestionnaire-de-serveur.jpg.webp)
 
-3.2.  **Configuration des paramètres IPv4.** 
+3.2.  **Configuration des paramètres IPv4.**
+
 - Dans les propriétés de la carte réseau, définir une adresse IP fixe, le masque de sous-réseau, la passerelle par défaut ainsi que le serveur DNS préféré (l'adresse locale loopback ou la propre adresse IP du serveur).
 
-![Configuration IPv4](img/Windows-Server-2025-Configurer-une-IP-statique-en-IPv4-800x275.jpg.webp)
+![Configuration IPv4](./assets/configuration-network-windows/windows-Server-2025-configurer-une-ip-statique-en-Ipv4-800x275.jpg.webp)

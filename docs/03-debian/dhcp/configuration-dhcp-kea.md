@@ -4,7 +4,7 @@ description: Déploiement et configuration du service Kea-dhcp4 multi-VLANs sur 
 
 # Configuration kea-dhcp4 sur Debian
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
@@ -29,9 +29,9 @@ description: Déploiement et configuration du service Kea-dhcp4 multi-VLANs sur 
 
 Ce document détaille la procédure de déploiement et de configuration du service **Kea-dhcp4** sur un système Debian 13 (nœud `pve2`, ID `20804`). Le serveur (nommé `DHCPECOCERT`, adresse IP `172.16.54.2`) fait office de serveur DHCP centralisé et a pour mission d'allouer dynamiquement les adresses IP aux hôtes répartis sur plusieurs VLANs. L'architecture nécessitant des franchissements de domaines de diffusion, l'intégration implique l'activation d'agents relais DHCP sur l'équipement réseau de cœur de réseau (Switch Cisco de niveau 3).
 
-## 3. Préparation et sauvegarde
+## 3. Préparation et sauvegarde {#3-preparation-et-sauvegarde}
 
-!!! warning "Stricte conformité JSON"
+!!! warning "Conformité JSON"
 
     Le service Kea s'appuie sur une structure de configuration JSON. Le parsing étant extrêmement strict, une erreur de syntaxe (telle qu'une virgule superflue ou manquante) bloquera l'instanciation du daemon.
 
@@ -49,18 +49,22 @@ sudo nano /etc/kea/kea-dhcp4.conf
 
 4.1.  **Définition des options DHCP et des sous-réseaux**. Implémentation du mapping réseau (scopes, baux, options de passerelle et résolveurs DNS) requis pour provisionner les différents VLANs depuis le sous-réseau `172.16.54.0/24`.
 
+!!! warning "DHCP VLANs Wifi & Technique"
+
+    Le serveur DHCP est configuré pour distribuer les adresses IP sur les VLANs **Technique** et **Wifi-Visiteurs**. En effet, l'utilisation d'un contrôleur Wi-Fi Unifi virtuel sur un hyperviseur de type 1 n'est pas possible dans notre contexte (un contrôleur matériel physique est requis), justifiant ainsi la gestion des baux par le serveur DHCP centralisé.
+
 ```json title="/etc/kea/kea-dhcp4.conf"
 {
   "Dhcp4": {
     "interfaces-config": {
       "interfaces": [ "ens18" ]
     },
-    
+
     "valid-lifetime": 691200,
     "renew-timer": 345600,
     "rebind-timer": 604800,
     "authoritative": true,
-    
+
     "lease-database": {
       "type": "memfile",
       "persist": true,
@@ -75,7 +79,7 @@ sudo nano /etc/kea/kea-dhcp4.conf
         "pools": [ { "pool": "192.168.4.10 - 192.168.4.60" } ],
         "option-data": [
           { "name": "routers", "data": "192.168.4.62" },
-          { "name": "domain-name-servers", "data": "172.16.54.1, 1.1.1.1" }
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
         ],
         "user-context": { "description": "VLAN 11 - Administration" }
       },
@@ -85,9 +89,19 @@ sudo nano /etc/kea/kea-dhcp4.conf
         "pools": [ { "pool": "192.168.4.70 - 192.168.4.90" } ],
         "option-data": [
           { "name": "routers", "data": "192.168.4.94" },
-          { "name": "domain-name-servers", "data": "172.16.54.1, 1.1.1.1" }
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
         ],
         "user-context": { "description": "VLAN 21 - Service de certification" }
+      },
+      {
+        "id": 81,
+        "subnet": "192.168.4.96/27",
+        "pools": [ { "pool": "192.168.4.100 - 192.168.4.120" } ],
+        "option-data": [
+          { "name": "routers", "data": "192.168.4.126" },
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
+        ],
+        "user-context": { "description": "VLAN 81 - Wifi visiteurs" }
       },
       {
         "id": 61,
@@ -95,9 +109,9 @@ sudo nano /etc/kea/kea-dhcp4.conf
         "pools": [ { "pool": "192.168.4.135 - 192.168.4.150" } ],
         "option-data": [
           { "name": "routers", "data": "192.168.4.158" },
-          { "name": "domain-name-servers", "data": "172.16.54.1, 1.1.1.1" }
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
         ],
-        "user-context": { "description": "VLAN 61 - Expertise technique & conseil" }
+        "user-context": { "description": "VLAN 61 - Expertise technique et conseil" }
       },
       {
         "id": 31,
@@ -105,9 +119,19 @@ sudo nano /etc/kea/kea-dhcp4.conf
         "pools": [ { "pool": "192.168.4.165 - 192.168.4.185" } ],
         "option-data": [
           { "name": "routers", "data": "192.168.4.190" },
-          { "name": "domain-name-servers", "data": "172.16.54.1, 1.1.1.1" }
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
         ],
         "user-context": { "description": "VLAN 31 - Service referentiels" }
+      },
+      {
+        "id": 71,
+        "subnet": "192.168.4.192/28",
+        "pools": [ { "pool": "192.168.4.195 - 192.168.4.200" } ],
+        "option-data": [
+          { "name": "routers", "data": "192.168.4.206" },
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
+        ],
+        "user-context": { "description": "VLAN 71 - Services techniques" }
       },
       {
         "id": 41,
@@ -115,9 +139,19 @@ sudo nano /etc/kea/kea-dhcp4.conf
         "pools": [ { "pool": "192.168.4.212 - 192.168.4.220" } ],
         "option-data": [
           { "name": "routers", "data": "192.168.4.222" },
-          { "name": "domain-name-servers", "data": "172.16.54.1, 1.1.1.1" }
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
         ],
         "user-context": { "description": "VLAN 41 - Formations professionnelles" }
+      },
+      {
+        "id": 14,
+        "subnet": "192.168.14.248/29",
+        "pools": [ { "pool": "192.168.14.250 - 192.168.14.252" } ],
+        "option-data": [
+          { "name": "routers", "data": "192.168.14.254" },
+          { "name": "domain-name-servers", "data": "172.16.54.1, 9.9.9.9" }
+        ],
+        "user-context": { "description": "VLAN 14 - Interconnexion" }
       }
     ]
   }
@@ -129,10 +163,18 @@ sudo nano /etc/kea/kea-dhcp4.conf
 - `lease-database` : Ordonne le stockage persistant des baux DHCP alloués dans un fichier CSV (memfile), assurant la continuité de service après reboot.
 - `subnet4` : Dictionnaire d'objets assignant pour chaque VLAN un ID de sous-réseau, une étendue d'adresses (`pools`) et les directives réseau standards (routeur par défaut, résolveur DNS).
 
-
 ## 5. Application et tests
 
-5.1.  **Rechargement de la configuration via Systemd**. Validation de l'arbre syntaxique du fichier JSON et injection dans le processus applicatif.
+5.1.  **Validation de la configuration DHCP**. Avant de redémarrer le service, il est indispensable de vérifier que le fichier de configuration ne comporte aucune erreur de syntaxe JSON.
+
+```bash title="test_kea_config.sh"
+kea-dhcp4 -t /etc/kea/kea-dhcp4.conf
+```
+
+!!! success "Configuration valide"
+    Si la syntaxe est correcte, la commande s'exécutera sans erreur et confirmera la validité du fichier. Cela garantit que le service pourra être relancé en toute sécurité.
+
+5.2.  **Rechargement de la configuration via Systemd**. Injection de la nouvelle configuration dans le processus applicatif.
 
 ```bash title="restart_kea.sh" hl_lines="1"
 sudo systemctl restart kea-dhcp4-server
@@ -140,7 +182,7 @@ sudo systemctl restart kea-dhcp4-server
 
 - `restart` : Coupe la session en cours et réinstancie le service avec les nouveaux paramètres.
 
-5.2.  **Audit du service (Troubleshooting)**. Vérification de l'état d'exécution et extraction des exceptions ou erreurs de parsing JSON.
+5.3.  **Audit du service (Troubleshooting)**. Vérification de l'état d'exécution et extraction des exceptions ou erreurs de parsing JSON.
 
 ```bash title="troubleshoot_kea.sh"
 sudo journalctl -xe | grep kea

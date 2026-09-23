@@ -4,7 +4,7 @@ description: Déploiement et vérification du serveur ISC Kea DHCP IPv4 sur Debi
 
 # Installation kea-dhcp4 sur debian 13
 
-![Bannière CUB](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
@@ -28,7 +28,7 @@ description: Déploiement et vérification du serveur ISC Kea DHCP IPv4 sur Debi
 
 L'infrastructure nécessite le déploiement d'un service DHCP performant et moderne pour distribuer automatiquement les configurations réseaux (Adresses IP, masques, passerelles, serveurs DNS). **ISC Kea** est la nouvelle génération de serveur DHCP de l'ISC, remplaçant l'ancien *ISC DHCP Server*. Il se distingue par l'utilisation d'une configuration structurée en **JSON** (facilitant la lisibilité et l'automatisation) et par une API permettant des rechargements à chaud sans interruption de service. Ce document standardise l'installation du module IPv4 sur le nœud `pve2` (ID `20804`), machine `DHCPECOCERT` sous Debian 13.
 
-## 3. Prérequis et validation réseau
+## 3. Prérequis et validation réseau {#3-prerequis-et-validation-reseau}
 
 !!! warning "Exigence d'infrastructure"
 
@@ -70,7 +70,7 @@ sudo apt-get install kea-dhcp4-server -y
 - `install` : Demande le déploiement du paquet cible et la résolution de ses dépendances.
 - `-y` : Force l'acceptation automatique des changements (mode non-interactif adapté à l'automatisation).
 
-## 5. Vérification du déploiement
+## 5. Vérification du déploiement {#5-verification-du-deploiement}
 
 5.1. **Contrôle de l'état du service système.** Vérifier la bonne création de l'unité `systemd` et le démarrage initial du processus Kea.
 
