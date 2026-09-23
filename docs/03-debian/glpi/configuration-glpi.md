@@ -1,8 +1,5 @@
-
 ---
-
 description: Configuration du moteur GLPI 11, du helpdesk (ITIL) et déploiement de l'inventaire automatisé via GPO.
-
 ---
 
 # Configuration du serveur GLPI (Helpdesk & Inventaire)
