@@ -1,8 +1,5 @@
-
 ---
-
 description: Installation système du moteur GLPI 11 et de la pile LAMP en ligne de commande (CLI) sur Debian 13.
-
 ---
 
 # Installation du Serveur GLPI
@@ -21,16 +18,16 @@ description: Installation système du moteur GLPI 11 et de la pile LAMP en ligne
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
 - [3. Préparation du système d'exploitation](#3-preparation-du-systeme-dexploitation)
-- [4. Installation de la pile LAMP](#4-installation-de-la-pile-lamp)
-- [5. Configuration des fuseaux horaires (Timezone)](#5-configuration-des-fuseaux-horaires-timezone)
+- [4. Installation de la pile LAMP & PHP 8.4](#4-installation-de-la-pile-lamp--php-84)
+- [5. Sécurisation et configuration (MariaDB & PHP)](#5-securisation-et-configuration-mariadb--php)
 - [6. Création de la base de données MariaDB](#6-creation-de-la-base-de-donnees-mariadb)
-- [7. Téléchargement et déploiement de GLPI](#7-telechargement-et-deploiement-de-glpi)
-- [8. Configuration du VirtualHost Apache](#8-configuration-du-virtualhost-apache)
+- [7. Téléchargement et sécurisation de GLPI](#7-telechargement-et-securisation-de-glpi)
+- [8. Configuration du routage Apache](#8-configuration-du-routage-apache)
 - [9. Installation finale (Interface Web)](#9-installation-finale-interface-web)
 
 ## 2. Contexte
 
-La **Mission 3** requiert l'installation en ligne de commande (CLI) du système de Helpdesk et d'inventaire GLPI (version 11). Ce déploiement s'effectue sur le nœud hyperviseur `pve2` (ID : 20805) via la machine virtuelle Debian 13 nommée **GLPIECOCERT** (IP : `172.16.54.40`, Passerelle : `172.16.54.253`).
+La **Mission 3** requiert l'installation en ligne de commande (CLI) du système de Helpdesk et d'inventaire GLPI (version 11). Ce déploiement s'effectue sur le nœud hyperviseur `pve2` (ID : 20805) via la machine virtuelle Debian 13 nommée **GLPIECOCERT** (IP : `172.16.54.40`, Passerelle : `172.16.54.253`). Cette documentation intègre toutes les bonnes pratiques de sécurité (PHP 8.4 FPM, sécurisation MariaDB, externalisation des dossiers sensibles et routage par Alias).
 
 ## 3. Préparation du système d'exploitation
 
@@ -43,52 +40,76 @@ apt update && apt upgrade -y
 - `update` : Actualise la liste des paquets disponibles depuis les dépôts.
 - `upgrade` : Installe les dernières versions des paquets déjà présents sur le système.
 
-## 4. Installation de la pile LAMP
+## 4. Installation de la pile LAMP & PHP 8.4
 
-4.1.  **Installation des paquets**. GLPI nécessite un serveur web (Apache), un moteur de base de données (MariaDB) et PHP avec de nombreux modules spécifiques.
+4.1.  **Serveur Web et Base de données**. Installation d'Apache et MariaDB.
 
 ```bash title="Terminal"
 apt install apache2 mariadb-server -y
-apt install php php-mysql php-xml php-curl php-gd php-mbstring php-intl php-ldap php-apcu php-zip php-bz2 -y
 ```
 
-- `apache2` : Démon du serveur web HTTP.
-- `mariadb-server` : Moteur de base de données relationnelle libre.
-- `php-*` : Extensions PHP requises par le code source de GLPI.
+4.2.  **Ajout du dépôt SURY pour PHP 8.4**. Debian 13 intégrant nativement PHP 8.2 (déprécié par les nouvelles normes), il faut ajouter un dépôt officiel tiers :
 
-## 5. Configuration des fuseaux horaires (Timezone)
+```bash title="Terminal"
+apt install -y apt-transport-https lsb-release ca-certificates curl
+curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+apt update
+```
 
-5.1.  **Injection des fuseaux horaires dans MariaDB**. Il faut importer la base de données des fuseaux horaires de Debian directement dans le moteur SQL pour que GLPI puisse les utiliser. (Le mot de passe root SQL vous sera demandé).
+4.3.  **Installation de PHP 8.4 FPM et ses extensions**.
+
+```bash title="Terminal"
+apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-gd php8.4-mbstring php8.4-intl php8.4-bz2 php8.4-zip php8.4-ldap php8.4-apcu
+```
+
+4.4.  **Activation de PHP-FPM dans Apache**.
+
+```bash title="Terminal"
+a2enmod proxy_fcgi setenvif
+a2enconf php8.4-fpm
+systemctl restart apache2 php8.4-fpm
+```
+
+## 5. Sécurisation et configuration (MariaDB & PHP)
+
+5.1.  **Sécurisation de MariaDB**. Lancement du script de sécurité pour fermer les failles par défaut (répondre 'Y' à toutes les questions).
+
+```bash title="Terminal"
+mysql_secure_installation
+```
+
+5.2.  **Injection des fuseaux horaires**.
 
 ```bash title="Terminal"
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
 ```
 
-- `mysql_tzinfo_to_sql` : Convertit les tables de fuseaux horaires du système en requêtes SQL.
-
-5.2.  **Configuration du fuseau horaire web (PHP)**. Modification du fichier de configuration PHP pour forcer l'heure française. Remplacez `8.x` par votre version de PHP installée (ex: 8.2).
+5.3.  **Configuration PHP-FPM**.
 
 ```bash title="Terminal"
-nano /etc/php/8.x/apache2/php.ini
+nano /etc/php/8.4/fpm/php.ini
 ```
 
-Recherchez la ligne `;date.timezone =` et modifiez-la en enlevant le point-virgule :
+Recherchez et modifiez ces lignes pour définir l'heure française et sécuriser les cookies :
 
-```ini title="php.ini"
+```ini title="/etc/php/8.4/fpm/php.ini"
 date.timezone = Europe/Paris
+session.cookie_secure = on
 ```
 
-- `date.timezone` : Définit la zone de temps de référence pour toutes les dates traitées par l'application web.
+Redémarrez PHP-FPM :
+```bash title="Terminal"
+systemctl restart php8.4-fpm
+```
 
 ## 6. Création de la base de données MariaDB
 
-6.1.  **Création de l'espace SQL et attribution des droits**. Connexion au moteur de base de données pour créer l'espace dédié à GLPI, son utilisateur privilégié, et lui octroyer l'accès en lecture à la table des fuseaux horaires.
+6.1.  **Création de l'espace SQL**.
 
 ```bash title="Terminal"
 mysql -u root -p
 ```
-
-Dans l'invite de commande MariaDB, exécutez les requêtes suivantes :
 
 ```sql title="Invite MariaDB"
 CREATE DATABASE glpi;
@@ -99,62 +120,141 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-- `GRANT SELECT ON mysql.time_zone_name` : Autorise l'utilisateur GLPI à lire la table des fuseaux horaires importée à l'étape 5.
+## 7. Téléchargement et sécurisation de GLPI
 
-## 7. Téléchargement et déploiement de GLPI
-
-7.1.  **Téléchargement et extraction de l'archive**. Récupération de la version 11 depuis GitHub et extraction dans le répertoire web.
+7.1.  **Téléchargement et extraction**.
 
 ```bash title="Terminal"
 wget https://github.com/glpi-project/glpi/releases/download/11.0.0/glpi-11.0.0.tgz
 tar -xzvf glpi-11.0.0.tgz -C /var/www/html/
 ```
 
-- `wget` : Télécharge l'archive compressée.
-- `tar -xzvf` : Décompresse et extrait l'archive vers le répertoire web.
-
-7.2.  **Attribution des permissions (Propriétaire)**. L'utilisateur système d'Apache (`www-data`) doit posséder les droits complets sur le dossier de l'application.
+7.2.  **Externalisation des dossiers sensibles**. GLPI exige que les dossiers de configuration et de données soient isolés de la racine web.
 
 ```bash title="Terminal"
-chown -R www-data:www-data /var/www/html/glpi
-chmod -R 755 /var/www/html/glpi
+mkdir /etc/glpi /var/lib/glpi
+mv /var/www/html/glpi/config/* /etc/glpi/
+mv /var/www/html/glpi/files/* /var/lib/glpi/
 ```
 
-## 8. Configuration du VirtualHost Apache
+7.3.  **Création des liens de routage PHP**. 
 
-8.1.  **Création du fichier de configuration**. Création du fichier pour exposer uniquement le sous-dossier sécurisé `/public`.
+Création de `downstream.php` :
 
 ```bash title="Terminal"
-nano /etc/apache2/sites-available/glpi.conf
+nano /var/www/html/glpi/inc/downstream.php
+```
+
+```php title="/var/www/html/glpi/inc/downstream.php"
+<?php
+define('GLPI_CONFIG_DIR', '/etc/glpi/');
+if (file_exists(GLPI_CONFIG_DIR . '/local_define.php')) {
+    require_once GLPI_CONFIG_DIR . '/local_define.php';
+}
+```
+
+Création de `local_define.php` :
+
+```bash title="Terminal"
+nano /etc/glpi/local_define.php
+```
+
+```php title="/etc/glpi/local_define.php"
+<?php
+define('GLPI_VAR_DIR', '/var/lib/glpi');
+define('GLPI_DOC_DIR', GLPI_VAR_DIR);
+define('GLPI_CRON_DIR', GLPI_VAR_DIR . '/_cron');
+define('GLPI_DUMP_DIR', GLPI_VAR_DIR . '/_dumps');
+define('GLPI_GRAPH_DIR', GLPI_VAR_DIR . '/_graphs');
+define('GLPI_LOCK_DIR', GLPI_VAR_DIR . '/_lock');
+define('GLPI_PICTURE_DIR', GLPI_VAR_DIR . '/_pictures');
+define('GLPI_PLUGIN_DOC_DIR', GLPI_VAR_DIR . '/_plugins');
+define('GLPI_RSS_DIR', GLPI_VAR_DIR . '/_rss');
+define('GLPI_SESSION_DIR', GLPI_VAR_DIR . '/_sessions');
+define('GLPI_TMP_DIR', GLPI_VAR_DIR . '/_tmp');
+define('GLPI_UPLOAD_DIR', GLPI_VAR_DIR . '/_uploads');
+define('GLPI_CACHE_DIR', GLPI_VAR_DIR . '/_cache');
+define('GLPI_LOG_DIR', GLPI_VAR_DIR . '/_log');
+```
+
+7.4.  **Attribution des permissions**. L'utilisateur d'Apache (`www-data`) doit posséder les droits sur tous les dossiers associés.
+
+```bash title="Terminal"
+chown -R www-data:www-data /var/www/html/glpi /etc/glpi /var/lib/glpi
+```
+
+## 8. Configuration du routage Apache
+
+8.1.  **Création du fichier d'Alias**. Redirection du trafic vers le sous-dossier `/public` obligatoire.
+
+```bash title="Terminal"
+nano /etc/apache2/conf-available/glpi.conf
 ```
 
 Contenu à insérer :
 
-```apacheconf title="/etc/apache2/sites-available/glpi.conf"
-<VirtualHost *:80>
-    ServerName glpiecocert
-    DocumentRoot /var/www/html/glpi/public
+```apacheconf title="/etc/apache2/conf-available/glpi.conf"
+Alias /glpi /var/www/html/glpi/public
+
+<Directory /var/www/html/glpi/public>
+    Require all granted
+    RewriteEngine On
+    RewriteBase /glpi/
     
-    <Directory /var/www/html/glpi/public>
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
+    # Autoriser la transmission des en-têtes d'API
+    RewriteCond %{HTTP:Authorization} ^(.+)$
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    
+    # Redirection vers le routeur GLPI
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</Directory>
 ```
 
-8.2.  **Activation et redémarrage des services**. Activation du site GLPI, du module de réécriture d'URL, et redémarrage d'Apache pour appliquer les modifications (dont la timezone PHP).
+8.2.  **Activation et redémarrage**.
 
 ```bash title="Terminal"
-a2dissite 000-default.conf
-a2ensite glpi.conf
 a2enmod rewrite
+a2enconf glpi
+systemctl restart apache2
+```
+
+8.3.  **Configuration du HTTPS (SSL) sur la racine**. Pour que GLPI réponde directement sur le port 443 sans avoir à spécifier le sous-dossier `/glpi` dans l'URL, il faut ajuster le VirtualHost SSL par défaut.
+
+```bash title="Terminal"
+nano /etc/apache2/sites-available/default-ssl.conf
+```
+
+Dans ce fichier, modifiez le `DocumentRoot` et ajoutez le bloc de routage :
+
+```apacheconf title="/etc/apache2/sites-available/default-ssl.conf"
+DocumentRoot /var/www/html/glpi/public
+
+<Directory /var/www/html/glpi/public>
+    Require all granted
+    RewriteEngine On
+    RewriteBase /
+    
+    # Autoriser la transmission des en-têtes d'API
+    RewriteCond %{HTTP:Authorization} ^(.+)$
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    
+    # Redirection vers le routeur GLPI
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</Directory>
+```
+
+8.4.  **Redémarrage final**. Relancez le service web pour qu'il prenne en compte le nouveau chemin sur le port 443.
+
+```bash title="Terminal"
 systemctl restart apache2
 ```
 
 ## 9. Installation finale (Interface Web)
 
-L'installation en ligne de commande est terminée. L'initialisation finale (peuplement de la base de données et création des comptes administrateurs par défaut) s'effectue via un navigateur web.
+L'installation en ligne de commande est terminée. L'initialisation finale s'effectue via un navigateur web de manière sécurisée (HTTPS).
 
 1. Sur un poste client, ouvrez un navigateur web.
-2. Accédez à l'URL suivante : [http://172.16.54.40](http://172.16.54.40).
+2. Accédez à l'URL suivante (directement sur la racine) : [https://172.16.54.40](https://172.16.54.40)
 3. Suivez l'assistant d'installation graphique de GLPI.
