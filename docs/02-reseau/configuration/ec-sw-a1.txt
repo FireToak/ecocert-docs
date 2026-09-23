@@ -1,0 +1,244 @@
+Current configuration : 4501 bytes
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ec-sw-a1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+username admin privilege 15 secret 5 $1$98O.$/wggcZoGYTmg73itnRo9Q1
+!
+!
+no aaa new-model
+system mtu routing 1500
+!
+!
+no ip domain-lookup
+ip domain-name ecocert.local
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+ip ssh time-out 60
+ip ssh version 2
+!
+interface FastEthernet0/1
+ switchport access vlan 11
+ switchport mode access
+!
+interface FastEthernet0/2
+ switchport access vlan 11
+ switchport mode access
+!
+interface FastEthernet0/3
+ switchport access vlan 11
+ switchport mode access
+!
+interface FastEthernet0/4
+ switchport access vlan 11
+ switchport mode access
+!
+interface FastEthernet0/5
+ switchport access vlan 11
+ switchport mode access
+!
+interface FastEthernet0/6
+ switchport access vlan 11
+ switchport mode access
+!
+interface FastEthernet0/7
+ switchport access vlan 21
+ switchport mode access
+!
+interface FastEthernet0/8
+ switchport access vlan 21
+ switchport mode access
+!         
+interface FastEthernet0/9
+ switchport access vlan 21
+ switchport mode access
+!
+interface FastEthernet0/10
+ switchport access vlan 21
+ switchport mode access
+!
+interface FastEthernet0/11
+ switchport access vlan 21
+ switchport mode access
+!
+interface FastEthernet0/12
+ switchport access vlan 21
+ switchport mode access
+!
+interface FastEthernet0/13
+ switchport access vlan 81
+ switchport mode access
+!
+interface FastEthernet0/14
+ switchport access vlan 81
+ switchport mode access
+!
+interface FastEthernet0/15
+ switchport access vlan 81
+ switchport mode access
+!
+interface FastEthernet0/16
+ switchport access vlan 81
+ switchport mode access
+!
+interface FastEthernet0/17
+ switchport access vlan 81
+ switchport mode access
+!
+interface FastEthernet0/18
+ switchport access vlan 81
+ switchport mode access
+!
+interface FastEthernet0/19
+ switchport access vlan 61
+ switchport mode access
+!
+interface FastEthernet0/20
+ switchport access vlan 61
+ switchport mode access
+!
+interface FastEthernet0/21
+ switchport access vlan 61
+ switchport mode access
+!
+interface FastEthernet0/22
+ switchport access vlan 61
+ switchport mode access
+!
+interface FastEthernet0/23
+ switchport access vlan 61
+ switchport mode access
+!
+interface FastEthernet0/24
+ switchport access vlan 61
+ switchport mode access
+!
+interface FastEthernet0/25
+ switchport access vlan 31
+ switchport mode access
+!
+interface FastEthernet0/26
+ switchport access vlan 31
+ switchport mode access
+!
+interface FastEthernet0/27
+ switchport access vlan 31
+ switchport mode access
+!
+interface FastEthernet0/28
+ switchport access vlan 31
+ switchport mode access
+!
+interface FastEthernet0/29
+ switchport access vlan 31
+ switchport mode access
+!
+interface FastEthernet0/30
+ switchport access vlan 31
+ switchport mode access
+!
+interface FastEthernet0/31
+ switchport access vlan 71
+ switchport mode access
+!         
+interface FastEthernet0/32
+ switchport access vlan 71
+ switchport mode access
+!
+interface FastEthernet0/33
+ switchport access vlan 71
+ switchport mode access
+!
+interface FastEthernet0/34
+ switchport access vlan 71
+ switchport mode access
+!
+interface FastEthernet0/35
+ switchport access vlan 71
+ switchport mode access
+!
+interface FastEthernet0/36
+ switchport access vlan 71
+ switchport mode access
+!
+interface FastEthernet0/37
+ switchport access vlan 41
+ switchport mode access
+!
+interface FastEthernet0/38
+ switchport access vlan 41
+ switchport mode access
+!
+interface FastEthernet0/39
+ switchport access vlan 41
+ switchport mode access
+!
+interface FastEthernet0/40
+ switchport access vlan 41
+ switchport mode access
+!
+interface FastEthernet0/41
+ switchport access vlan 41
+ switchport mode access
+!
+interface FastEthernet0/42
+ switchport access vlan 41
+ switchport mode access
+!
+interface FastEthernet0/43
+!         
+interface FastEthernet0/44
+!
+interface FastEthernet0/45
+!
+interface FastEthernet0/46
+!
+interface FastEthernet0/47
+!
+interface FastEthernet0/48
+ description Trunk_Vers_ec-sw-a1_G1/0/22
+ switchport trunk allowed vlan 11,21,31,41,61,71,81
+ switchport mode trunk
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ no ip address
+ no ip route-cache
+!
+interface Vlan71
+ ip address 192.168.4.205 255.255.255.240
+ no ip route-cache
+!
+ip http server
+ip http secure-server
+!
+line con 0
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login local
+ transport input ssh
+!
+end

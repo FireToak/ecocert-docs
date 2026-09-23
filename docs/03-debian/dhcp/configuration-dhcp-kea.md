@@ -126,12 +126,12 @@ sudo nano /etc/kea/kea-dhcp4.conf
       {
         "id": 71,
         "subnet": "192.168.4.192/28",
-        "pools": [ { "pool": "192.168.4.193 - 192.168.4.200" } ],
+        "pools": [ { "pool": "192.168.4.195 - 192.168.4.200" } ],
         "option-data": [
           { "name": "routers", "data": "192.168.4.206" },
-          { "name": "domain-name-servers", "data": "172.16.54.1, 1.1.1.1" }
+          { "name": "domain-name-servers", "data": "1.1.1.1" }
         ],
-        "user-context": { "description": "VLAN 71 - Technique" }
+        "user-context": { "description": "VLAN 71 - Services techniques" }
       },
       {
         "id": 41,
