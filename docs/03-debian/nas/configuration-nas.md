@@ -1,8 +1,5 @@
-
 ---
-
 description: Initialisation du stockage RAIDZ1 TrueNAS, configuration réseau, et intégration Active Directory (SMB).
-
 ---
 
 # Configuration Initiale et Réseau TrueNAS
