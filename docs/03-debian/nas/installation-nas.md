@@ -15,11 +15,11 @@ description: Procédure de création de la VM et d'installation de l'OS TrueNAS 
 
 ## 1. Sommaire
 
-- [1. Sommaire](#1-sommaire)
-- [2. Contexte](#2-contexte)
-- [3. Création de la Machine Virtuelle (Proxmox)](#3-creation-de-la-machine-virtuelle-proxmox)
-- [4. Ajout des disques de stockage (SATA)](#4-ajout-des-disques-de-stockage-sata)
-- [5. Installation du système TrueNAS](#5-installation-du-systeme-truenas)
+1. Sommaire
+2. Contexte
+3. Création de la Machine Virtuelle (Proxmox)
+4. Ajout des disques de stockage (SATA)
+5. Installation du système TrueNAS
 
 ## 2. Contexte
 
@@ -44,8 +44,8 @@ Le serveur **NASECOCERT** nécessite un socle solide pour opérer en tant que se
 4. **Disk size (GiB) :** Spécifiez `20` pour créer un disque de 20 Go.
 5. Répétez cette opération pour obtenir le nombre de disques requis (au moins 3 disques de 20 Go pour un RAID 5 fonctionnel).
 
-![Ajout Disque Proxmox](img-nas/proxmox-disk.jpg)
-![Configuration Disque SATA](img-nas/disk-sata.jpg)
+![Ajout Disque Proxmox](./assets/installation-nas/proxmox-disk.jpg)
+![Configuration Disque SATA](./assets/installation-nas/disk-sata.jpg)
 
 > [!important] Architecture ZFS
 > L'utilisation du bus SATA et la présentation de disques bruts permet à TrueNAS d'avoir un accès direct aux disques pour gérer efficacement le système de fichiers ZFS et la redondance.

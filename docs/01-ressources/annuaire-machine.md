@@ -28,7 +28,7 @@
 
 | Nom machine   | FQDN                            | Adresse IP et Port                             |
 | ---           | ---                             | ---                                            |
-| GLPIECOCERT   | [glpiecocert.local.ecocert4.fr](https://glpiecocert.local.ecocert4.fr)   | [172.16.54.40](http://172.16.54.40) |
+| GLPIECOCERT   | [glpiecocert.local.ecocert4.fr](https://glpiecocert.local.ecocert4.fr)   | [172.16.54.40](https://172.16.54.40) |
 | NASECOCERT    | [nasecocert.local.ecocert4.fr](https://nasecocert.local.ecocert4.fr) | [172.16.54.20](https://172.16.54.20) |
 | STORMSHIELD01 | [stormshield01.local.ecocert4.fr](https://stormshield01.local.ecocert4.fr) | [192.168.14.254](https://192.168.14.254) |
 | WIFIECOCERT   | [wifiecocert.local.ecocert4.fr](https://wifiecocert.local.ecocert4.fr) | [172.16.54.30:11443](https://172.16.54.30:11443) |

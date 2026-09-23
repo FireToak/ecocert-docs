@@ -15,21 +15,21 @@ description: Installation système du moteur GLPI 11 et de la pile LAMP en ligne
 
 ## 1. Sommaire
 
-- [1. Sommaire](#1-sommaire)
-- [2. Contexte](#2-contexte)
-- [3. Préparation du système d'exploitation](#3-preparation-du-systeme-dexploitation)
-- [4. Installation de la pile LAMP & PHP 8.4](#4-installation-de-la-pile-lamp--php-84)
-- [5. Sécurisation et configuration (MariaDB & PHP)](#5-securisation-et-configuration-mariadb--php)
-- [6. Création de la base de données MariaDB](#6-creation-de-la-base-de-donnees-mariadb)
-- [7. Téléchargement et sécurisation de GLPI](#7-telechargement-et-securisation-de-glpi)
-- [8. Configuration du routage Apache](#8-configuration-du-routage-apache)
-- [9. Installation finale (Interface Web)](#9-installation-finale-interface-web)
+1. Sommaire
+2. Contexte
+3. Préparation du système d'exploitation
+4. Installation de la pile LAMP & PHP 8.4
+5. Sécurisation et configuration (MariaDB & PHP)
+6. Création de la base de données MariaDB
+7. Téléchargement et sécurisation de GLPI
+8. Configuration du routage Apache
+9. Installation finale (Interface Web)
 
 ## 2. Contexte
 
 La **Mission 3** requiert l'installation en ligne de commande (CLI) du système de Helpdesk et d'inventaire GLPI (version 11). Ce déploiement s'effectue sur le nœud hyperviseur `pve2` (ID : 20805) via la machine virtuelle Debian 13 nommée **GLPIECOCERT** (IP : `172.16.54.40`, Passerelle : `172.16.54.253`). Cette documentation intègre toutes les bonnes pratiques de sécurité (PHP 8.4 FPM, sécurisation MariaDB, externalisation des dossiers sensibles et routage par Alias).
 
-## 3. Préparation du système d'exploitation
+## 3. Préparation du système d'exploitation {#3-preparation-du-systeme-dexploitation}
 
 3.1.  **Mise à jour**. Avant toute installation, il est nécessaire de mettre à jour la liste des paquets et le système Debian.
 
@@ -71,7 +71,7 @@ a2enconf php8.4-fpm
 systemctl restart apache2 php8.4-fpm
 ```
 
-## 5. Sécurisation et configuration (MariaDB & PHP)
+## 5. Sécurisation et configuration (MariaDB & PHP) {#5-securisation-et-configuration-mariadb--php}
 
 5.1.  **Sécurisation de MariaDB**. Lancement du script de sécurité pour fermer les failles par défaut (répondre 'Y' à toutes les questions).
 
