@@ -1,8 +1,5 @@
-
 ---
-
 description: Procédure de création de la VM et d'installation de l'OS TrueNAS sur l'hyperviseur Proxmox.
-
 ---
 
 # Installation du NAS TrueNAS
