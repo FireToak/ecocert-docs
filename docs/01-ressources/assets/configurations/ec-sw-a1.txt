@@ -1,10 +1,9 @@
-Current configuration : 4505 bytes
+! Last configuration change at 11:34:50 UTC Tue Sep 22 2026 by dreamlike
 !
-version 12.2
 no service pad
 service timestamps debug datetime msec
 service timestamps log datetime msec
-no service password-encryption
+service password-encryption
 !
 hostname ec-sw-a1
 !
@@ -277,6 +276,7 @@ ip http server
 ip http secure-server
 !
 line con 0
+ login local
 line vty 0 4
  login local
  transport input ssh
