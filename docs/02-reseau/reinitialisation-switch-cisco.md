@@ -28,6 +28,7 @@ Cette procédure décrit la réinitialisation matérielle et la restauration de 
 3.1. **Effacement de la configuration.** Suppression de la configuration de démarrage actuelle pour remettre le commutateur à son état d'usine.
 
 ```ios
+enable
 write erase
 ```
 
