@@ -53,7 +53,7 @@ reload
 
 ## 4. Déploiement de la configuration {#4-deploiement-de-la-configuration}
 
-Les fichiers de configurations doit être récupéré depuis les sources Git ci-dessous :
+Les fichiers de configuration doivent être récupérés depuis les sources Git ci-dessous :
 
 - [ec-sw-c1](https://ecocert.bts.loutik.fr/01-ressources/assets/configurations/ec-sw-c1.txt).
 - [ec-sw-a1](https://ecocert.bts.loutik.fr/01-ressources/assets/configurations/ec-sw-a1.txt).
