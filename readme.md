@@ -21,7 +21,12 @@ ecocert-docs/
 │   ├── index.md
 │   └── configuration-stormshield.md
 ├── 03-debian/
+│   ├── dhcp/
+│   ├── glpi/
+│   └── nas/
 └── 04-windows/
+    ├── ad/
+    └── commun/
 ```
 
 * **`01-ressources/`** : Regroupe les documents d'architecture globale (schémas topologiques, plans d'adressage IP et de routage, tables NAT).
