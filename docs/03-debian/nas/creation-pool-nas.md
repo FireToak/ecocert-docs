@@ -26,6 +26,7 @@ description: Procédure de création d'un pool de stockage ZFS sous TrueNAS virt
 - [6. Configuration des journaux ZIL](#6-configuration-des-journaux-zil)
 - [7. Options ZFS avancées](#7-options-zfs-avancees)
 - [8. Validation](#8-validation)
+- [9. Vérification finale du Pool](#9-verification-finale-du-pool)
 
 ## 2. Contexte
 
@@ -95,3 +96,12 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 - `Create Pool` : Provisionne les disques, construit le système de fichiers ZFS et effectue le montage automatique.
 
 ![Revue](./assets/creation-pool-nas/05-revue-pool-truenas.png)
+
+## 9. Vérification finale du Pool {#9-verification-finale-du-pool}
+
+9.1. **Validation du datastore**. Une fois le pool créé, vérifiez sa présence et sa capacité dans le gestionnaire.
+
+1. L'interface retourne automatiquement sur la page **Storage > Pools**.
+2. Vérifiez que le pool **datastore** est bien monté et fonctionnel (statut *ONLINE*).
+
+![Pool NAS](./assets/configuration-nas/pool-nas.jpg)

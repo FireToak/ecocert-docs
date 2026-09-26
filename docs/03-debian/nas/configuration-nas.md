@@ -22,10 +22,9 @@ description: Initialisation du stockage RAIDZ1 TrueNAS, configuration réseau, e
 - [2. Contexte](#2-contexte)
 - [3. Configuration de l'Interface Réseau](#3-configuration-de-linterface-reseau)
 - [4. Configuration Globale (Passerelle & DNS)](#4-configuration-globale-passerelle--dns)
-- [5. Création du Pool de Stockage (RAID 5)](#5-creation-du-pool-de-stockage-raid-5)
-- [6. Configuration NTP & Active Directory](#6-configuration-ntp--active-directory)
-- [7. Partage de fichiers (SMB) et Droits (ACL)](#7-partage-de-fichiers-smb-et-droits-acl)
-- [8. Validation Côté Client (Windows)](#8-validation-cote-client-windows)
+- [5. Configuration NTP & Active Directory](#5-configuration-ntp--active-directory)
+- [6. Partage de fichiers (SMB) et Droits (ACL)](#6-partage-de-fichiers-smb-et-droits-acl)
+- [7. Validation Côté Client (Windows)](#7-validation-cote-client-windows)
 
 ## 2. Contexte
 
@@ -55,26 +54,16 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 
 ![Configuration Réseau](assets/configuration-nas/network-nas.jpg)
 
-## 5. Création du Pool de Stockage (RAID 5)
+## 5. Configuration NTP & Active Directory
 
-5.1.  **Initialisation des disques**. Cette étape s'effectue depuis l'interface web d'administration (`http://172.16.54.20`).
-
-1. Rendez-vous dans le menu **Storage > Pools**.
-2. Cliquez sur **Add** pour créer un nouveau pool en sélectionnant au moins 3 disques virtuels disponibles.
-3. Validez la création en choisissant l'agencement **RAIDZ1** (équivalent au RAID 5 logiciel sous ZFS) pour initialiser l'espace de stockage. Vérifiez d'avoir au moins **20 Go** d'espace disponible pour les données.
-
-![Pool NAS](assets/configuration-nas/pool-nas.jpg)
-
-## 6. Configuration NTP & Active Directory
-
-6.1.  **Configuration NTP (Pré-requis)**. L'intégration à un domaine Active Directory requiert une synchronisation temporelle stricte.
+5.1.  **Configuration NTP (Pré-requis)**. L'intégration à un domaine Active Directory requiert une synchronisation temporelle stricte.
 
 1. Naviguez dans **System > NTP Servers**.
 2. Ajoutez ou modifiez un serveur NTP pour pointer vers votre contrôleur de domaine (`172.16.54.1`).
 
 ![Configuration NTP](assets/configuration-nas/config-ntp.jpg)
 
-6.2.  **Intégration à l'annuaire (Active Directory)**. Liaison du NAS avec l'annuaire pour l'authentification centralisée.
+5.2.  **Intégration à l'annuaire (Active Directory)**. Liaison du NAS avec l'annuaire pour l'authentification centralisée.
 
 1. Allez dans le menu **Directory Services > Active Directory**.
 2. Renseignez le domaine `local.ecocert4.fr` et les identifiants de l'administrateur du domaine.
@@ -84,9 +73,9 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 ![Configuration AD - Étape 1](assets/configuration-nas/1config-ad.jpg)
 ![Configuration AD - Étape 2](assets/configuration-nas/2config-ad.jpg)
 
-## 7. Partage de fichiers (SMB) et Droits (ACL)
+## 6. Partage de fichiers (SMB) et Droits (ACL)
 
-7.1.  **Activation du service SMB**. Permet le partage de fichiers sur le réseau Windows.
+6.1.  **Activation du service SMB**. Permet le partage de fichiers sur le réseau Windows.
 
 1. Naviguez dans le menu **Services**.
 2. Activez le service **SMB** et cochez "Start Automatically".
@@ -94,7 +83,7 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 ![Services Système](assets/configuration-nas/system-service.jpg)
 ![Service SMB](assets/configuration-nas/service-smb.jpg)
 
-7.2.  **Création du partage et gestion des permissions (ACL)**.
+6.2.  **Création du partage et gestion des permissions (ACL)**.
 
 1. Naviguez dans **Sharing > Windows Shares (SMB)** et cliquez sur **Add**.
 2. Sélectionnez le chemin correspondant à votre pool de stockage (ex: `Sauvegardes`).
@@ -103,9 +92,9 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 ![Permissions Dataset](assets/configuration-nas/permission-dataset.jpg)
 ![Ajout ACL NAS](assets/configuration-nas/ajout-acl-nas.jpg)
 
-## 8. Validation Côté Client (Windows)
+## 7. Validation Côté Client (Windows)
 
-8.1.  **Accès au partage réseau**. Vérification depuis un poste client joint au domaine.
+7.1.  **Accès au partage réseau**. Vérification depuis un poste client joint au domaine.
 
 1. Ouvrez l'Explorateur de fichiers Windows.
 2. Cliquez sur **Réseau** ou tapez directement `\\172.16.54.20` ou `\\NASECOCERT` dans la barre d'adresse.
