@@ -35,3 +35,9 @@ Ce document centralise les ressources et définit le cadre global du projet. Il 
 Cette phase initiale détaille le déploiement de base des services et de la topologie réseau requise pour le fonctionnement du système d'information.
 
 * 📄 **Document technique :** [Situation 0 - Infrastructure et services](./assets/situations/situation-0-Infrastructure-services.pdf)
+
+### 3.2. Situation 1 : Automatisation de la création et modification des comptes utilisateurs AD
+
+Cette phase vise à automatiser la gestion des comptes utilisateurs dans l'annuaire Active Directory afin de sécuriser, standardiser et accélérer les opérations de création, de modification et de maintenance des identités.
+
+* 📄 **Document technique :** [Situation 1 - Automatisation de la gestion des utilisateurs AD](./assets/situations/situation-1-automatisation-gestion-utilsateurs-ad.pdf)
