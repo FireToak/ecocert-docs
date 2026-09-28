@@ -12,7 +12,7 @@ description: Procédure complète de déploiement et d'interconnexion sécurisé
 
     - **Auteur :** Amine KADA
     - **Date :** 28/09/2026
-    - **Domaine :** Systèmes et Réseaux / Identité et Gestion de Parc
+    - **Domaine :** Windows Serveur 2025
 
 ---
 
@@ -27,7 +27,6 @@ description: Procédure complète de déploiement et d'interconnexion sécurisé
 - [7. Validation LDAPS locale et export du certificat CA racine](#7-validation-ldaps-locale-et-export-du-certificat-ca-racine)
 - [8. Création des objets Active Directory (UO, Service Account, Utilisateur)](#8-creation-des-objets-active-directory-uo-service-account-utilisateur)
 - [9. Intégration du certificat et validation OpenLDAP sur le serveur GLPI](#9-integration-du-certificat-et-validation-openldap-sur-le-serveur-glpi)
-- [10. Configuration de l'annuaire LDAPS et synchronisation dans GLPI](#10-configuration-de-lannuaire-ldaps-et-synchronisation-dans-glpi)
 
 ---
 
@@ -80,7 +79,7 @@ Install-ADDSForest -DomainName "local.ecocert4.fr" -DomainNetbiosName "ECOCERT4"
 
 ## 5. Installation et configuration de l'autorité de certification (AD CS)
 
-5.1. **Déploiement du rôle d'autorité de certification.** Installer le rôle ADCS et configurer l'autorité d'entreprise racine Ecocert-Root-CA[cite: 1].
+5.1. **Déploiement du rôle d'autorité de certification.** Installer le rôle ADCS et configurer l'autorité d'entreprise racine Ecocert-Root-CA.
 
 ```powershell title="PowerShell (Admin)"
 Install-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
@@ -92,9 +91,9 @@ Install-AdcsCertificationAuthority -CAType EnterpriseRootCA `
 ```
 
 - `-CAType EnterpriseRootCA` : Autorité de certification d'entreprise intégrée à Active Directory.
-- `-CACommonName "Ecocert-Root-CA"` : Nom public de la CA émettrice[cite: 1].
-- `-KeyLength 4096` : Taille de la clé cryptographique privée en bits[cite: 1].
-- `-ValidityPeriodUnits 10` : Durée de validité de 10 ans pour le certificat racine[cite: 1].
+- `-CACommonName "Ecocert-Root-CA"` : Nom public de la CA émettrice.
+- `-KeyLength 4096` : Taille de la clé cryptographique privée en bits.
+- `-ValidityPeriodUnits 10` : Durée de validité de 10 ans pour le certificat racine.
 
 5.2. **Validation du statut opérationnel de la CA.** Contrôler l'état d'exécution du service de certificats et la configuration de l'autorité.
 
@@ -111,11 +110,24 @@ certutil -cainfo
 ## 6. Modèle de certificat serveur et inscription automatique
 
 6.1. **Création du modèle de certificat LDAPS.** Exécuter la console de gestion des modèles (`certtmpl.msc`) :
+
 - Dupliquer le modèle existant **Authentification Kerberos**.
+
+![Dupliquer le modèle](assets/configuration-ldaps/dupliquer-modele.png)
+
 - **Onglet Compatibilité :** Autorité de certification et Destinataire du certificat définis sur **Windows Server 2016**.
 - **Onglet Général :** Nom complet défini sur `LDAPS-DC`, période de validité de **1 an**, période de renouvellement à **6 semaines**. Cocher **Publier le certificat dans Active Directory**.
-- **Onglet Traitement de la demande :** Laisser **Autoriser l'exportation de la clé privée** décoché.
+
+![Publier dans l'AD](assets/configuration-ldaps/publier-ad.png)
+
+- **Onglet Traitement de la demande :** Laisser **Autoriser l'exportation de la clé privée** coché.
+
+![Traitement de la demande](assets/configuration-ldaps/onglet-traitement-demande.png)
+
 - **Onglet Nom du sujet :** Choisir **Construire à partir de ces informations Active Directory**, Format du nom du sujet sur **Nom DNS**, et cocher **Nom DNS** en nom alternatif (SAN).
+
+![Nom du sujet](assets/configuration-ldaps/nom-sujet-ad.png)
+
 - **Onglet Sécurité :** Ajouter le groupe **Contrôleurs de domaine** et lui attribuer les droits **Lecture**, **Inscription** et **Inscription automatique**.
 
 6.2. **Publication du modèle sur l'autorité de certification.** Ouvrir la console `certsrv.msc` :
@@ -271,58 +283,3 @@ sudo systemctl restart apache2
 # Si installation en PHP-FPM : sudo systemctl restart php*-fpm
 ```
 
----
-
-## 10. Configuration de l'annuaire LDAPS et synchronisation dans GLPI
-
-10.1. **Formulaire de configuration du serveur d'annuaire.** Naviguer dans GLPI : `Configuration` > `Authentification` > `Annuaires LDAP` > `Ajouter` (modèle **Active Directory**).
-
-| Champ | Valeur préconisée | Description |
-| :--- | :--- | :--- |
-| **Nom** | `AD`[cite: 2, 3] | Libellé d'affichage de la source LDAP |
-| **Serveur par défaut** | `Oui` | Utilisé prioritairement lors des ouvertures de session |
-| **Actif** | `Oui` | Active le connecteur pour l'authentification |
-| **Serveur** | `ldaps://adecocert.local.ecocert4.fr`[cite: 2] | URI FQDN sécurisée (LDAPS obligatoire)[cite: 2] |
-| **Port** | `636`[cite: 2, 3] | Port réseau chiffré TLS[cite: 2, 3] |
-| **Filtre de connexion** | `(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))` | Exclut les comptes d'ordinateurs et désactivés |
-| **BaseDN** | `OU=Utilisateurs,DC=local,DC=ecocert4,DC=fr`[cite: 2, 3] | Conteneur racine ciblant les comptes utilisateurs[cite: 2, 3] |
-| **Utiliser bind** | `Oui` | Force l'authentification via un compte de lecture |
-| **RootDN** | `CN=svc_glpi,OU=Services,DC=local,DC=ecocert4,DC=fr` | Identifiant DN du compte de service |
-| **Mot de passe root** | `SvcGlpiSecuredPassword2026!` | Mot de passe associé au compte `svc_glpi` |
-| **Champ de l'identifiant** | `samaccountname` | Attribut d'authentification Active Directory |
-| **Champ de synchronisation** | `objectguid` | Identifiant immuable pour le suivi d'annuaire |
-
-> [!note] Informations avancées
-> Dans l'onglet **Informations avancées**, laisser le paramètre **Utiliser TLS** sur **Non**. L'activation de cette option correspond à l'usage de StartTLS, incompatible avec l'appel direct d'un endpoint `ldaps://` sur le port 636.
-
-![Configuration LDAPS Étape 1](assets/configuration-ldaps/auth-glpi-ladps.jpg)
-![Configuration LDAPS Étape 2](assets/configuration-ldaps/2-auth-glpi-ladps.jpg)
-
-10.2. **Validation de la connectivité GLPI.**
-- Accéder à l'onglet **Tester** de la fiche annuaire.
-- Le moteur GLPI déroule l'analyse séquentielle :
-  1. *Flux TCP* : Connexion sur le port 636 réussie.
-  2. *Base DN* : Validité syntaxique du conteneur `OU=Utilisateurs,DC=local,DC=ecocert4,DC=fr`.
-  3. *LDAP URI* : Analyse du protocole d'URI validée.
-  4. *Connexion Bind* : Authentification réussie pour le compte de liaison.
-  5. *Chercher* : Interrogation positive avec affichage des enregistrements détectés.
-
-![Test de connectivité LDAPS](assets/configuration-ldaps/test-glpi-ladps.jpg)
-
-10.3. **Importation et synchronisation des utilisateurs.**
-1. Se rendre dans `Administration` > `Utilisateurs`.
-2. Sélectionner `Liaison annuaire LDAP` > `Importation de nouveaux utilisateurs`.
-3. Cliquer sur `Rechercher` : cocher le compte `jdupont` et appliquer l'action **Importer**.
-
-![Import de l'utilisateur jdupont](assets/configuration-ldaps/ad-user-jdupont.jpg)
-
-10.4. **Test de connexion applicative.**
-- Ouvrir une fenêtre de navigation privée.
-- Naviguer sur `http://172.16.54.40/glpi`.
-- Saisir l'identifiant `jdupont` (sans suffixe `@local.ecocert4.fr` ni préfixe `ECOCERT4\`) et le mot de passe utilisateur Active Directory associé.
-
-![Authentification jdupont](assets/configuration-ldaps/ad-login-glpi.jpg)
-
-- La session s'ouvre avec le rôle attribué par défaut (**Self-Service / Post-Only**).
-
-![Accueil GLPI jdupont](assets/configuration-ldaps/accueil-glpi-ad.jpg)
