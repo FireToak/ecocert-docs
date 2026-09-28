@@ -91,14 +91,3 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 
 ![Permissions Dataset](assets/configuration-nas/permission-dataset.jpg)
 ![Ajout ACL NAS](assets/configuration-nas/ajout-acl-nas.jpg)
-
-## 7. Validation Côté Client (Windows)
-
-7.1.  **Accès au partage réseau**. Vérification depuis un poste client joint au domaine.
-
-1. Ouvrez l'Explorateur de fichiers Windows.
-2. Cliquez sur **Réseau** ou tapez directement `\\172.16.54.20` ou `\\NASECOCERT` dans la barre d'adresse.
-3. Vérifiez la présence du dossier partagé et testez la lecture/écriture.
-
-![Vue Réseau](assets/configuration-nas/win-reseau.png)
-![Ce PC](assets/configuration-nas/win-cepc.png)
