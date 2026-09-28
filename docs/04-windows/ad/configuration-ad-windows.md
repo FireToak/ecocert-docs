@@ -43,7 +43,7 @@ Finalisation du déploiement en promouvant le serveur en tant que premier contr�
 
 4.1.  **Correction du script PowerShell d'importation.** Le script original `ad-config-origin.ps1` comportait des défauts empêchant la création des comptes depuis le CSV. Il doit être corrigé avant son exécution.
 
-[script pour la création des utilisateurs](./assets/configuration-ad-windows/creationUtilisateurEcocert.ps1)
+[script pour la création des utilisateurs](./assets/configuration-ad-windows/creationUtilisateurEcocert.ps1) et [fichier csv contenant les utilisateurs](./assets/configuration-ad-windows/users.csv)
 
 - `-ErrorAction Stop` : Intercepte correctement l'erreur si l'utilisateur n'existe pas, permettant de passer au bloc `catch`.
 - `$login` : Utilisation de la variable concaténée correctement (`prenom.nom`).
