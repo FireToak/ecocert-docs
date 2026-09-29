@@ -54,13 +54,27 @@ Ecocert/
   ServiceNom/
     Utilisateurs/
     Ordinateurs/
+    Groupes/
   ServiceNom/
     Utilisateurs/
     Ordinateurs/
+    Groupes/
 ```
 
 !!! note "Gestion de l'arborescence"
-    Le script PowerShell provisionne automatiquement les OUs "ServiceNom" et les sous-OUs "Utilisateurs" si elles sont manquantes lors du parcours du CSV. L'OU "Ordinateurs" doit être ajoutée via une autre procédure ou module d'automatisation.
+    Le script PowerShell provisionne automatiquement les OUs "ServiceNom", "Utilisateurs" et "Groupes" si elles sont manquantes lors du parcours du CSV. L'OU "Ordinateurs" doit être ajoutée via une autre procédure ou module d'automatisation.
+
+### 4.2. Groupes de sécurité par service
+
+Pour chaque service présent dans le fichier CSV, le script crée un groupe de sécurité global portant le même nom que le service. Le groupe est placé dans l'OU `Groupes` du service :
+
+```text
+OU=ServiceNom,OU=Ecocert,DC=local,DC=ecocert4,DC=fr
+└── OU=Groupes
+    └── CN=ServiceNom
+```
+
+Chaque utilisateur est ajouté automatiquement au groupe correspondant à son service. Cette appartenance est vérifiée à chaque exécution afin d'ajouter uniquement les membres manquants.
 
 ## 5. Fonctionnement et utilisation du script
 
@@ -77,6 +91,8 @@ Le script analyse le fichier `UtilisateursEcocert.csv` (stocké dans le même r�
 - `-CsvPath` : Spécifie le chemin d'accès vers le fichier CSV contenant la liste des utilisateurs.
 - `-Domaine` : Définit le nom de domaine utilisé pour la génération des suffixes UPN et des adresses e-mail.
 - `-BaseOU` : Détermine le Distinguished Name (DN) de l'Unité Organisationnelle racine dans laquelle l'arborescence sera déployée.
+
+Le service indiqué dans la colonne `Service` du CSV détermine à la fois l'OU cible de l'utilisateur et son groupe de sécurité. Par exemple, un utilisateur dont le service est `RH` est créé dans `OU=Utilisateurs,OU=RH,...` et ajouté au groupe global `RH` situé dans `OU=Groupes,OU=RH,...`.
 
 ## 6. Fonctionnement du script {#6-logique-et-fonctionnement-technique-du-script}
 
@@ -103,10 +119,16 @@ $User.Telephone -notmatch "^33 [1-9] \d{2} \d{2} \d{2} \d{2}$"
 
 6.3. **Provisioning dynamique des unités organisationnelles.** Le script interroge l'AD (`Get-ADOrganizationalUnit`) pour vérifier l'existence de l'OU du service et de la sous-OU "Utilisateurs". Si absentes, il les crée à la volée (`New-ADOrganizationalUnit`).
 
-6.4. **Gestion de l'idempotence.** Le cœur du script repose sur `Get-ADUser` pour déterminer si le compte existe.
+6.4. **Création des groupes de service.** Pour chaque service, le script vérifie l'existence de l'OU "Groupes" et la crée si nécessaire. Il vérifie ensuite l'existence du groupe global de sécurité portant le nom du service et le crée dans cette OU s'il est absent (`New-ADGroup`).
+
+6.5. **Gestion de l'idempotence.** Le cœur du script repose sur `Get-ADUser` pour déterminer si le compte existe.
 
 - `New-ADUser` : Instanciation si le compte est inexistant.
 - `Set-ADUser` : Mise à jour granulaire uniquement si une différence est détectée entre les attributs de l'AD et ceux du CSV (Email, Service, Téléphone, Fonction, Bureau) via une table de hachage dynamique.
+- `Get-ADPrincipalGroupMembership` : Vérification de l'appartenance de l'utilisateur au groupe de son service.
+- `Add-ADGroupMember` : Ajout au groupe uniquement si l'utilisateur n'en est pas déjà membre.
+
+La synchronisation ne retire pas les utilisateurs des autres groupes : elle garantit uniquement l'appartenance au groupe correspondant au service indiqué dans le CSV.
 
 ## 7. Points de vigilance
 
@@ -116,3 +138,5 @@ $User.Telephone -notmatch "^33 [1-9] \d{2} \d{2} \d{2} \d{2}$"
 7.1. **Mot de passe par défaut.** Les nouveaux comptes sont générés avec le mot de passe initial `ChangezMoiSVP@37ù`. L'option `ChangePasswordAtLogon = $true` est active pour forcer le changement à la première connexion.
 
 7.2. **Consultation des logs.** En cas d'anomalie, analyser le fichier généré dans le répertoire courant (ex: `Sync-Users-2026-09-29-08-35.txt`), qui consigne avec précision chaque succès, avertissement ou échec.
+
+7.3. **Groupes de service.** Le nom du service doit être cohérent dans tout le CSV. Il est utilisé pour nommer l'OU du service, l'OU `Groupes` et le groupe global de sécurité. Une modification du nom d'un service crée une nouvelle arborescence et un nouveau groupe ; elle ne renomme pas automatiquement les éléments précédents.
