@@ -79,21 +79,21 @@ New-Partition -DiskNumber 0 -UseMaximumSize -DriveLetter U | Format-Volume -File
 5.1. **Création du répertoire partagé.** Création du dossier racine destiné aux fichiers utilisateurs.
 
 ```powershell
-New-Item -Path "U:\Données" -ItemType Directory
+New-Item -Path "U:\Donnees" -ItemType Directory
 ```
 
 - `New-Item` : Crée un nouvel élément dans l'arborescence.
-- `-Path "A:\Données"` : Définit l'emplacement du dossier partagé.
+- `-Path "A:\Donnees"` : Définit l'emplacement du dossier partagé.
 - `-ItemType Directory` : Indique que l'élément créé est un répertoire.
 
 5.2. **Déploiement du partage SMB.** Publication du dossier sur le réseau avec des droits de modification pour les utilisateurs du domaine.
 
 ```powershell
-New-SmbShare -Name "Données" -Path "U:\Données" -ChangeAccess "Utilisateurs du domaine" -FolderEnumerationMode AccessBased
+New-SmbShare -Name "Donnees" -Path "U:\Donnees" -ChangeAccess "Utilisateurs du domaine" -FolderEnumerationMode AccessBased
 ```
 
 - `New-SmbShare` : Crée le point de montage réseau via le protocole SMB.
-- `-Name "Données"` : Définit le nom du partage visible sur le réseau.
+- `-Name "Donnees"` : Définit le nom du partage visible sur le réseau.
 - `-Path "A:\Données"` : Indique le répertoire publié.
 - `-ChangeAccess "Utilisateurs du domaine"` : Autorise la modification des fichiers aux utilisateurs appartenant au groupe du domaine.
 - `-FolderEnumerationMode AccessBased` : Masque les fichiers et dossiers auxquels l'utilisateur n'a pas accès.

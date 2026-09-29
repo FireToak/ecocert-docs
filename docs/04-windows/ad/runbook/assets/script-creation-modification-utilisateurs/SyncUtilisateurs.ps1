@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Synchronisation des utilisateurs depuis un CSV vers l'Active Directory.
 .DESCRIPTION
@@ -13,7 +13,8 @@
 # ==========================================
 Param(
     [string]$CsvPath = ".\UtilisateursEcocert.csv",
-    [string]$LogPath = ".\Sync-Users-$(Get-Date -Format 'yyyy-MM-dd-hh-mm').txt",
+    [string]$LogDir = "A:\Logs\Scripts\SyncUtilisateurs",
+    [string]$LogPath = "$LogDir\Sync-Users-$(Get-Date -Format 'yyyy-MM-dd-hh-mm').txt",
     [string]$Domaine = "local.ecocert4.fr",
     [string]$BaseOU = "OU=Ecocert,DC=local,DC=ecocert4,DC=fr",
     [string]$DefaultPassword = "ChangezMoiSVP@37ù"
@@ -22,6 +23,12 @@ Param(
 # ==========================================
 # FONCTION DE LOG
 # ==========================================
+
+# Création du dossier de logs s'il n'existe pas
+if (-not (Test-Path $logDir)) {
+    New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+}
+
 Function Write-Log {
     Param([string]$Message)$LogLine = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')]$Message"
     Write-Host $LogLine
@@ -151,7 +158,7 @@ ForEach ($User in $Utilisateurs) {
                 Office               = $User.Bureau
                 Path                 = $TargetOU
                 HomeDrive            = "P:"
-                HomeDirectory        = "\\ADECOCERT\Données\$SamAccountName"
+                HomeDirectory        = "\\ADECOCERT\Donnees\$SamAccountName"
                 AccountPassword      = $SecurePwd
                 Enabled              = $true
                 ChangePasswordAtLogon = $true
@@ -172,7 +179,7 @@ ForEach ($User in $Utilisateurs) {
             $UserSID = [System.Security.Principal.SecurityIdentifier]$ADUserObj.SID
 
             # Définition du chemin et création physique
-            $UserFolderPath = "U:\Données\$SamAccountName"
+            $UserFolderPath = "U:\Donnees\$SamAccountName"
             New-Item -Path $UserFolderPath -ItemType Directory -Force
 
             # Préparation des ACL
