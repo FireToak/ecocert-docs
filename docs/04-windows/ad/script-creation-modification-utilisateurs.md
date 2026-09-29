@@ -51,6 +51,7 @@ Le script génère dynamiquement la sous-arborescence pour chaque service identi
 
 ```text
 Ecocert/
+  Desactives/
   ServiceNom/
     Utilisateurs/
     Ordinateurs/
@@ -140,3 +141,8 @@ La synchronisation ne retire pas les utilisateurs des autres groupes : elle gara
 7.2. **Consultation des logs.** En cas d'anomalie, analyser le fichier généré dans le répertoire courant (ex: `Sync-Users-2026-09-29-08-35.txt`), qui consigne avec précision chaque succès, avertissement ou échec.
 
 7.3. **Groupes de service.** Le nom du service doit être cohérent dans tout le CSV. Il est utilisé pour nommer l'OU du service, l'OU `Groupes` et le groupe global de sécurité. Une modification du nom d'un service crée une nouvelle arborescence et un nouveau groupe ; elle ne renomme pas automatiquement les éléments précédents.
+
+Commande pour mettre à jour la configuration :
+```
+Get-ADUser -Filter * -SearchBase "OU=Ecocert,DC=local,DC=ecocert4,DC=fr" | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -HomeDrive "P:" -HomeDirectory "\\ADECOCERT\Données\$($_.SamAccountName)" }
+```

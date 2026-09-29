@@ -8,25 +8,31 @@
     Auteur: Louis MEDO
 #>
 
+# ==========================================
+# VARIABLES
+# ==========================================
 Param(
     [string]$CsvPath = ".\UtilisateursEcocert.csv",
     [string]$LogPath = ".\Sync-Users-$(Get-Date -Format 'yyyy-MM-dd-hh-mm').txt",
-    [string]$Domaine = "local.ecocert4.lan",
+    [string]$Domaine = "local.ecocert4.fr",
     [string]$BaseOU = "OU=Ecocert,DC=local,DC=ecocert4,DC=fr",
     [string]$DefaultPassword = "ChangezMoiSVP@37ù"
 )
 
-# Fonction de journalisation
+# ==========================================
+# FONCTION DE LOG
+# ==========================================
 Function Write-Log {
     Param([string]$Message)$LogLine = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')]$Message"
     Write-Host $LogLine
     Add-Content -Path $LogPath -Value $LogLine
 }
 
-Write-Log "CsvPath : $CsvPath"
-Write-Log "LogPath : $LogPath"
-Write-Log "Domaine : $Domaine"
-Write-Log "BaseOU : $BaseOU"
+# A activer pour les tests
+# Write-Log "CsvPath : $CsvPath"
+# Write-Log "LogPath : $LogPath"
+# Write-Log "Domaine : $Domaine"
+# Write-Log "BaseOU : $BaseOU"
 
 # -----------------------------------------------------------------------------
 # INITIALISATION
@@ -47,7 +53,7 @@ $Utilisateurs = Import-Csv -Path $CsvPath -Delimiter ","
 Write-Log "Utilisateurs : $Utilisateurs"
 
 # -----------------------------------------------------------------------------
-# BOUCLE
+# EXECUTION
 # -----------------------------------------------------------------------------
 ForEach ($User in $Utilisateurs) {
     Try {
@@ -76,6 +82,9 @@ ForEach ($User in $Utilisateurs) {
                 Continue # Passe a l'utilisateur suivant
             }
         }
+
+        # Determination de l'OU cible
+        $TargetOU = "OU=Utilisateurs,OU=$($User.Service),$BaseOU"
 
         # Verifier et creer l'OU Utilisateurs dans le Service si elle n'existe pas
         If (-not (Get-ADOrganizationalUnit -Filter "Name -eq 'Utilisateurs'" -SearchBase $ServiceOUPath -SearchScope OneLevel -ErrorAction SilentlyContinue)) {
@@ -110,9 +119,6 @@ ForEach ($User in $Utilisateurs) {
             Try { New-ADGroup -Name $GroupName -GroupCategory Security -GroupScope Global -Path $GroupesOUPath -ErrorAction Stop } Catch {}
         }
 
-        # Determination de l'OU cible
-        $TargetOU = "OU=Utilisateurs,OU=$($User.Service),$BaseOU"
-
         # --- Verification de l'existence dans l'AD ---
         $ADUser = Get-ADUser -Filter "SamAccountName -eq '$SamAccountName'" -Properties EmailAddress, OfficePhone, Title, Office, Department -ErrorAction SilentlyContinue
 
@@ -144,6 +150,8 @@ ForEach ($User in $Utilisateurs) {
                 Department           = $User.Service
                 Office               = $User.Bureau
                 Path                 = $TargetOU
+                HomeDrive            = "P:"
+                HomeDirectory        = "\\ADECOCERT\Données\$SamAccountName"
                 AccountPassword      = $SecurePwd
                 Enabled              = $true
                 ChangePasswordAtLogon = $true
@@ -158,6 +166,43 @@ ForEach ($User in $Utilisateurs) {
             New-ADUser @NewUserParams
 
             Write-Log "SUCCES : Creation de $SamAccountName"
+
+            # Récupération de l'objet utilisateur fraîchement créé pour extraire son SID unique
+            $ADUserObj = Get-ADUser -Identity $SamAccountName
+            $UserSID = [System.Security.Principal.SecurityIdentifier]$ADUserObj.SID
+
+            # Définition du chemin et création physique
+            $UserFolderPath = "U:\Données\$SamAccountName"
+            New-Item -Path $UserFolderPath -ItemType Directory -Force
+
+            # Préparation des ACL
+            $Acl = Get-Acl $UserFolderPath
+
+            # Désactivation de l'héritage parent ($true) et suppression des règles héritées ($false)
+            $Acl.SetAccessRuleProtection($true, $false)
+
+            # Utilisation des "Well-Known SIDs" pour les groupes systèmes (Indépendant de la langue de l'OS)
+            # S-1-5-32-544 = Administrateurs locaux
+            $AdminSID = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-32-544')
+            $AdminRule = New-Object System.Security.AccessControl.FileSystemAccessRule($AdminSID, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+            $Acl.AddAccessRule($AdminRule)
+
+            # S-1-5-18 = Système local
+            $SystemSID = New-Object System.Security.Principal.SecurityIdentifier('S-1-5-18')
+            $SystemRule = New-Object System.Security.AccessControl.FileSystemAccessRule($SystemSID, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+            $Acl.AddAccessRule($SystemRule)
+
+            # Contrôle Total exclusif pour le SID de l'utilisateur
+            $UserRule = New-Object System.Security.AccessControl.FileSystemAccessRule($UserSID, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+            $Acl.AddAccessRule($UserRule)
+
+            # Définition du SID de l'utilisateur comme propriétaire légitime du dossier
+            $Acl.SetOwner($UserSID)
+
+            # Application stricte de la configuration sur le système de fichiers
+            Set-Acl -Path $UserFolderPath -AclObject $Acl
+
+            Write-Log "SUCCES : Dossier personnel cree pour $SamAccountName"
         }
         Else {
             # --- Modification (Set-ADUser) ---
