@@ -86,11 +86,11 @@ description: [Description en moins de 20 mots de la procédure]
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** [Prénom NOM]
-    - **Date :** [JJ/MM/DDDD]
-    - **Domaine :** [Domaine]
+> [!note] "Informations"
+>
+> - **Auteur :** [Prénom NOM]
+> - **Date :** [JJ/MM/DDDD]
+> - **Domaine :** [Domaine]
 
 ---
 
