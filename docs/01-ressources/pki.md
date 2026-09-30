@@ -173,12 +173,14 @@ Voici le cycle de vie officiel d'un certificat, incluant la suspension temporair
 
 ```mermaid
 stateDiagram-v2
+    direction LR
+    
     classDef valide fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#155724
     classDef attente fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#856404
     classDef danger fill:#f8d7da,stroke:#dc3545,stroke-width:2px,color:#721c24
     classDef neutre fill:#e2e3e5,stroke:#6c757d,stroke-width:2px
 
-    [*] --> En_Attente : 1. Soumission du CSR
+    [*] --> En_Attente : 1. Soumission
     
     state "En Attente de Validation" as En_Attente
     state "Certificat Valide" as Valide
@@ -196,25 +198,25 @@ stateDiagram-v2
     class Renouvellement attente
     class Expire neutre
 
-    En_Attente --> Valide : Identité vérifiée
-    En_Attente --> Rejet : Identité fausse
+    En_Attente --> Valide : 2. Validation
+    En_Attente --> Rejet : 2. Refus (Faux)
     Rejet --> [*]
     
-    Valide --> Suspendu : Doute sur un vol de clé
-    Suspendu --> Valide : Vol écarté (Restauration)
-    Suspendu --> Revoque : Vol confirmé
+    Valide --> Suspendu : 3. Doute (Hold)
+    Suspendu --> Valide : 3. Restauration
+    Suspendu --> Revoque : 3. Vol confirmé
     
-    Valide --> Revoque : Départ collaborateur / Piratage
+    Valide --> Revoque : 4. Départ/Piratage
     
-    Valide --> Renouvellement : Le certificat expire bientôt (-30 jours)
-    Renouvellement --> Valide : Nouveau certificat généré
+    Valide --> Renouvellement : 5. Avant expiration
+    Renouvellement --> Valide : 5. Émission
     
-    Valide --> Expire : Date de fin atteinte
+    Valide --> Expire : 6. Expiration naturelle
     
     Expire --> [*]
     Revoque --> [*]
     
-    note right of Revoque : État définitif et irréversible.<br/>Le certificat est inscrit dans la CRL.
+    note right of Revoque : État irréversible (CRL).
 ```
 
 ---
