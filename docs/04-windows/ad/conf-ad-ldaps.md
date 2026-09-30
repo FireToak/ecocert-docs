@@ -8,10 +8,12 @@ description: Procédure complète de déploiement et d'interconnexion sécurisé
 
 ---
 
-!!! note "Informations"
+!!! note "Méta-informations"
 
-    - **Auteur :** Amine KADA
-    - **Date :** 28/09/2026
+    - **Auteur(s) :** Amine KADA Amine KADA
+    - **Date de MAJ :** 30/09/2026
+    - **Temps estimé :** 20 minutes
+    - **Criticité :** Haute 28/09/2026
     - **Domaine :** Windows Serveur 2025
 
 ---
@@ -283,3 +285,17 @@ sudo systemctl restart apache2
 # Si installation en PHP-FPM : sudo systemctl restart php*-fpm
 ```
 
+
+---
+
+## 10. Tests et Validation (Recette)
+- [ ] Le port 636 est bien à l'écoute sur le contrôleur de domaine (`netstat -ano | findstr 636`).
+- [ ] La résolution DNS du FQDN du contrôleur fonctionne depuis les machines clientes.
+- [ ] Le certificat exporté est correctement importé sur les clients Linux/Windows nécessitant le LDAPS.
+
+---
+
+## 11. Plan de Retour Arrière (Rollback)
+En cas de corruption de l'annuaire ou de problème avec l'autorité de certification :
+1. **Restauration de snapshot** : Revenir au snapshot Proxmox précédant l'installation du rôle AD CS.
+2. **Désinstallation du rôle** : En dernier recours, supprimer le rôle AD CS via le gestionnaire de serveur et redémarrer la machine.
