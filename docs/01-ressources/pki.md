@@ -46,39 +46,41 @@ Son but est d'établir un cadre de confiance pour sécuriser les échanges sur u
 Pour des raisons de sécurité, une PKI d'entreprise utilise généralement cette architecture hiérarchique à deux niveaux :
 
 ```mermaid
-graph TD
+graph LR
     classDef critique fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#c62828
     classDef interne fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#1565c0
     classDef client fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#2e7d32
     classDef annuaire fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#e65100
 
-    subgraph Legende ["Légende des composants"]
-        L1("Hors-ligne / Critique"):::critique
-        L2("Serveur PKI En ligne"):::interne
-        L3("Poste / Équipement cible"):::client
-        L4[("Base de données")]:::annuaire
+    subgraph Legende ["Légende"]
+        L1("Hors-ligne"):::critique
+        L2("PKI En ligne"):::interne
+        L3("Cible"):::client
+        L4[("Annuaire")]:::annuaire
     end
 
-    subgraph Zone_Haute_Securite ["Zone Isolée (Hors-ligne)"]
-        RootCA["fa:fa-lock Root CA<br/>(Autorité Racine)"]:::critique
+    subgraph Zone_Haute_Securite ["Zone Isolée"]
+        RootCA["fa:fa-lock Root CA"]:::critique
     end
 
     subgraph Infra_Reseau_Interne ["Réseau Local (En ligne)"]
-        SubCA["fa:fa-server Subordinate CA<br/>(Autorité Émettrice)"]:::interne
-        RA["fa:fa-id-card Registration Authority<br/>(Enregistrement)"]:::interne
-        VA["fa:fa-check-circle Validation Authority<br/>(Révocation OCSP/CRL)"]:::interne
-        AD[("fa:fa-users Annuaire<br/>(Active Directory)")]:::annuaire
+        direction TB
+        RA["fa:fa-id-card Registration Auth<br/>(Vérification)"]:::interne
+        AD[("fa:fa-users Active Directory")]:::annuaire
+        SubCA["fa:fa-server Subordinate CA<br/>(Émission)"]:::interne
+        VA["fa:fa-check-circle Validation Auth<br/>(Révocation)"]:::interne
+        
+        RA -- "Vérifie l'identité" --> AD
+        RA -- "Transmet demande" --> SubCA
+        SubCA -. "Met à jour liste" .-> VA
     end
 
-    Client["fa:fa-laptop Poste client / Switch / Serveur"]:::client
+    Client["fa:fa-laptop Client / Serveur"]:::client
 
-    RootCA == "1. Délègue signature" ==> SubCA
-    Client -- "2. Envoie requête (CSR)" --> RA
-    RA -- "3. Vérifie identité" --> AD
-    RA -- "4. Transmet demande validée" --> SubCA
-    SubCA -- "5. Émet certificat signé" --> Client
-    SubCA -. "Met à jour liste révoqués" .-> VA
-    Client -. "6. Vérifie si valide" .-> VA
+    RootCA == "Délègue signature" ==> SubCA
+    Client -- "1. Envoie CSR" --> RA
+    SubCA -- "2. Émet certificat" --> Client
+    Client -. "3. Vérifie statut" .-> VA
 ```
 
 ### 2.3. L'Héritage de la Chaîne de Confiance
