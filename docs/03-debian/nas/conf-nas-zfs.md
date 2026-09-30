@@ -39,7 +39,7 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 - `Storage` : Module de gestion globale des disques physiques et des pools ZFS sous TrueNAS.
 - `Create Pool` : Déclenche l'assistant de création pour agréger de nouveaux disques.
 
-![Accès Création Pool](./assets/creation-pool-nas/01-chemin-creation-pool-truenas.png)
+![Accès Création Pool](./assets/conf-nas-zfs/01-chemin-creation-pool-truenas.png)
 
 ## 4. Informations générales {#4-informations-generales}
 
@@ -51,7 +51,7 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 > [!warning] Bonnes pratiques
 > Sur une infrastructure bare-metal (matériel physique), l'option `Allow non-unique serialed disks` ne doit **jamais** être activée, sous peine de risquer une perte totale de données lors d'un changement de port SATA/SAS.
 
-![Nommage du Datastore](./assets/creation-pool-nas/02-informations-genererales-pool-truenas.png)
+![Nommage du Datastore](./assets/conf-nas-zfs/02-informations-genererales-pool-truenas.png)
 
 ## 5. Topologie des données - RAIDZ1 {#5-topologie-des-donnees---raidz1}
 
@@ -61,7 +61,7 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 - `RAIDZ1` : Implémentation ZFS équivalente au RAID 5 (Parité répartie). Permet la perte d'un disque sans perte de données.
 - `Width` : Le nombre de disques engagés dans le VDEV (3 disques de 20 GiB).
 
-![Configuration RAIDZ1](./assets/creation-pool-nas/03-configuration-structure-pool-truenas.png)
+![Configuration RAIDZ1](./assets/conf-nas-zfs/03-configuration-structure-pool-truenas.png)
 
 ## 6. Configuration des journaux ZIL {#6-configuration-des-journaux-zil}
 
@@ -73,7 +73,7 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 > [!note] Architecture de production
 > Si un périphérique de Log est utilisé en production, il est fortement recommandé d'utiliser une topologie `Mirror` pour le SLOG. La perte d'un SLOG en mode Stripe lors d'un crash système entraîne la perte des transactions synchrones en attente.
 
-![Configuration SLOG](./assets/creation-pool-nas/04-choix-log-pool-truenas.png)
+![Configuration SLOG](./assets/conf-nas-zfs/04-choix-log-pool-truenas.png)
 
 ## 7. Options ZFS avancées {#7-options-zfs-avancees}
 
@@ -95,7 +95,7 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 - `Warnings` : L'alerte rouge rappelle de manière préventive que les numéros de série ne sont pas uniques.
 - `Create Pool` : Provisionne les disques, construit le système de fichiers ZFS et effectue le montage automatique.
 
-![Revue](./assets/creation-pool-nas/05-revue-pool-truenas.png)
+![Revue](./assets/conf-nas-zfs/05-revue-pool-truenas.png)
 
 ## 9. Vérification finale du Pool {#9-verification-finale-du-pool}
 
@@ -104,4 +104,4 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 1. L'interface retourne automatiquement sur la page **Storage > Pools**.
 2. Vérifiez que le pool **datastore** est bien monté et fonctionnel (statut *ONLINE*).
 
-![Pool NAS](./assets/configuration-nas/pool-nas.jpg)
+![Pool NAS](./assets/conf-nas-truenas/pool-nas.jpg)

@@ -33,11 +33,11 @@ Ce document décrit la procédure d'implémentation du routage sur le pare-feu S
 
 **Capture d'écran pour l'accès à l'onglet de création de l'objet :**
 
-![Chemin pour créer un objet](./assets/configuration-routage-stormshield/chemin-creation-objet.png)
+![Chemin pour créer un objet](./assets/conf-stormshield-routage/chemin-creation-objet.png)
 
 **Capture d'écran de la création de l'objet :**
 
-![Création objet](./assets/configuration-routage-stormshield/creation-objet-routeur.png)
+![Création objet](./assets/conf-stormshield-routage/creation-objet-routeur.png)
 
 - `Nom de l'objet` : Utilisation de la convention de nommage pour donner un nom à l'objet (Ex. MACHINE_SW-L3).
 - `Adresse IPv4` : Adresse IP de la machine sur le réseau.
@@ -46,7 +46,7 @@ Ce document décrit la procédure d'implémentation du routage sur le pare-feu S
 
 4.1. **Assignation de la passerelle.** Définition du routeur par défaut vers lequel le trafic non spécifié sera orienté (Route S* `0.0.0.0/0`). Rendez-vous dans **Configuration** > **Réseau** > **Routage** > **Routes statiques IPv4**. Puis sélectionner l'objet de votre prochain routeur via le menu déroulant (Objet créé précédemment).
 
-![Route par défaut](./assets/configuration-routage-stormshield/chemin-configuration-routage.png)
+![Route par défaut](./assets/conf-stormshield-routage/chemin-configuration-routage.png)
 
 ## 5. Configuration des routes statiques {#5-configuration-des-routes-statiques}
 
@@ -55,7 +55,7 @@ Ce document décrit la procédure d'implémentation du routage sur le pare-feu S
 
 5.1.  **Ajout des routes statiques.** Déclaration de la route de type S pour joindre le réseau LAN à travers l'interface d'interconnexion.
 
-![Routes statiques](./assets/configuration-routage-stormshield/configuration-routage.png)
+![Routes statiques](./assets/conf-stormshield-routage/configuration-routage.png)
 
 - `Réseau de destination` : Sélectionner l'objet correspondant au LAN (Ex. `RESEAU_LAN`).
 - `Interface` : Sélectionner l'interface de sortie appropriée (Ex. `INTER-CO`).

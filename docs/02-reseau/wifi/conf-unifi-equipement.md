@@ -41,7 +41,7 @@ Cette procédure décrit l'intégration d'un nouvel équipement Ubiquiti dans le
 
 4.2. **Adoption de l'équipement.** Naviguer dans le menu **Unifi Devices** pour visualiser l'équipement en attente, puis procéder à son adoption.
 
-![Adoption de l'équipement Unifi](./assets/ajouter-equipement-unifi/01-adopter-equipement.png)
+![Adoption de l'équipement Unifi](./assets/conf-unifi-equipement/01-adopter-equipement.png)
 
 ## 5. Configuration de l'adresse IP fixe
 
@@ -54,6 +54,6 @@ Cette procédure décrit l'intégration d'un nouvel équipement Ubiquiti dans le
 - `Preferred DNS` : 9.9.9.9
 - `Alternative DNS` : 1.1.1.1
 
-![Configuration IP fixe de l'équipement](./assets/ajouter-equipement-unifi/02-configuration-ip-equipement.png)
+![Configuration IP fixe de l'équipement](./assets/conf-unifi-equipement/02-configuration-ip-equipement.png)
 
 5.2. **Restauration du contrôleur.** Remettre l'adresse IP du serveur hébergeant le contrôleur à sa configuration standard d'origine (ex: `172.16.54.30`).

@@ -25,19 +25,19 @@ Finalisation du déploiement en promouvant le serveur en tant que premier contr�
 
 3.1.  **Démarrage de l'assistant de promotion.** Cliquer sur "Promouvoir ce serveur en contrôleur de domaine" dans le Gestionnaire de serveur.
 
-![Configuration AD étape 11](./assets/configuration-ad-windows/windows-server-2025-install-adds-11-600x291.webp)
+![Configuration AD étape 11](./assets/conf-ad-windows/windows-server-2025-install-adds-11-600x291.webp)
 
 3.2.  **Configuration du déploiement.** Choisir "Ajouter une nouvelle forêt" et spécifier le nom du domaine racine de l'entreprise (ex: `local.ecocertX.lan`).
 
-![Configuration AD étape 12](./assets/configuration-ad-windows/windows-server-2025-install-adds-12-543x400.webp)
+![Configuration AD étape 12](./assets/conf-ad-windows/windows-server-2025-install-adds-12-543x400.webp)
 
 3.3.  **Options du contrôleur de domaine.** Définir le mot de passe de restauration des services d'annuaire nécessaire en cas de maintenance ou de récupération.
 
-![Configuration AD étape 13](./assets/configuration-ad-windows/windows-server-2025-install-adds-13-543x400.webp)
+![Configuration AD étape 13](./assets/conf-ad-windows/windows-server-2025-install-adds-13-543x400.webp)
 
 3.4.  **Vérification de la configuration.** S'assurer que toutes les vérifications préalables ont réussi avant de cliquer sur "Installer" pour lancer la promotion finale.
 
-![Configuration AD étape 18](./assets/configuration-ad-windows/windows-server-2025-install-adds-18-547x400.webp)
+![Configuration AD étape 18](./assets/conf-ad-windows/windows-server-2025-install-adds-18-547x400.webp)
 
 ## 4. Intégration des utilisateurs {#4-integration-des-utilisateurs}
 

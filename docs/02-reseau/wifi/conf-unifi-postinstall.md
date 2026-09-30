@@ -33,7 +33,7 @@ Cette procédure détaille les actions de configuration système à effectuer im
 
 3.2. **Navigation vers les paramètres.** Une fois authentifié, aller dans le menu symbolisé par un engrenage (Settings) situé dans la barre de navigation latérale gauche.
 
-![Accès aux paramètres](./assets/configuration-post-installation-unifi/01-acces-parametre.png)
+![Accès aux paramètres](./assets/conf-unifi-postinstall/01-acces-parametre.png)
 
 ## 4. Configuration des paramètres système {#4-configuration-des-parametres-systeme}
 
@@ -48,4 +48,4 @@ Assurez-vous de définir les variables suivantes :
 > [!note] Découverte réseau
 > L'activation de la fonctionnalité **Network Discovery** est indispensable pour que le contrôleur puisse identifier automatiquement les nouveaux points d'accès et commutateurs branchés sur le réseau de management.
 
-![Configuration Système](./assets/configuration-post-installation-unifi/02-configuration-system.png)
+![Configuration Système](./assets/conf-unifi-postinstall/02-configuration-system.png)

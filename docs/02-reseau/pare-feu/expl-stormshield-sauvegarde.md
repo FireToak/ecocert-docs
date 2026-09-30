@@ -27,7 +27,7 @@ Cette procédure décrit les étapes permettant de sauvegarder la configuration 
 
 3.1. **Accéder au module de sauvegarde.** Dans l'interface d'administration Stormshield, naviguez dans le menu `Système` > `Maintenance`, puis sélectionnez l'onglet `SAUVEGARDER`.
 
-![Interface de sauvegarde Stormshield](./assets/sauvegarde-configuration-stormshield/chemin-sauvegarde.png)
+![Interface de sauvegarde Stormshield](./assets/expl-stormshield-sauvegarde/chemin-sauvegarde.png)
 
 3.2. **Sécuriser la configuration.** Renseignez le mot de passe de protection dans la section `Configuration avancée`.
 

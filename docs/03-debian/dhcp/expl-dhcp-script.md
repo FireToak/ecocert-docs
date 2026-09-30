@@ -79,105 +79,86 @@ diff:192.168.4.223
 
 4.1. **Création du script Bash.** Écriture du programme chargé de convertir les masques en CIDR, d'interroger l'administrateur pour les plages d'adresses et de formater la sortie en JSON.
 
-```bash title="config_dhcp.sh" hl_lines="23 24 25"
+```bash title="config_dhcp.sh" hl_lines="15 16 23 24 64 65"
 #!/bin/bash
 # La ligne au-dessus (le shebang) indique à Linux d'utiliser l'interpréteur Bash pour lire ce fichier.
 
 # ==========================================
-# 1. DÉCLARATION DES VARIABLES
+# 1. DÉCLARATION DES VARIABLES ET SAUVEGARDE
 # ==========================================
-# On stocke les noms des fichiers dans des variables. 
-# Si un jour tu déplaces tes fichiers, tu n'auras qu'à modifier ces deux lignes.
 FICHIER_SOURCE="SP2planadressage.txt"
 FICHIER_RESULTAT="/etc/kea/blocs_sous_reseaux.json"
 
 echo "=== GÉNÉRATION DES SOUS-RÉSEAUX POUR KEA DHCP ==="
+
+# Sauvegarde automatique du fichier de configuration initial
+if [ -f /etc/kea/kea-dhcp4.conf ]; then
+    cp /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.backup_$(date +%F_%H%M%S)
+    echo "Sauvegarde du fichier initial effectuée."
+fi
+
+# Configuration des requêtes interactives globales
+read -p "Entrez les serveurs DNS (172.16.54.1, 9.9.9.9) : " serveurs_dns < /dev/tty
+read -p "Entrez le nom de domaine (local.ecocert4.fr) : " nom_domaine < /dev/tty
+
 echo "Les blocs JSON seront créés dans $FICHIER_RESULTAT"
 
-# Le chevron simple ">" écrase le fichier résultat s'il existe déjà, ou le crée s'il n'existe pas. 
-# Cela permet de repartir sur un fichier vierge à chaque exécution du script.
+# Le chevron simple ">" écrase le fichier résultat s'il existe déjà
 echo "" > "$FICHIER_RESULTAT"
-
 
 # ==========================================
 # 2. BOUCLE DE LECTURE DU FICHIER TEXTE
 # ==========================================
-# "while read ligne" lit le fichier $FICHIER_SOURCE ligne par ligne jusqu'à la fin.
-# IFS= empêche Bash de supprimer les espaces au début des lignes.
-# || [[ -n "$ligne" ]] permet de lire la toute dernière ligne même s'il manque un saut de ligne à la fin du fichier.
 while IFS= read -r ligne || [[ -n "$ligne" ]]; do
     
-    # Si la ligne est totalement vide (-z), on passe directement à la ligne suivante (continue)
     if [[ -z "$ligne" ]]; then continue; fi
     
     # --- DÉCOUPAGE DE LA LIGNE ---
-    # Exemple de ligne lue : "sr:192.168.4.0"
-    # cut -d':' -f1 -> Coupe la ligne au niveau du ":" et garde le champ 1 ("sr")
-    # cut -d':' -f2 -> Coupe la ligne au niveau du ":" et garde le champ 2 ("192.168.4.0")
-    # tr -d ' \t' -> Nettoie la chaîne en supprimant les espaces ou tabulations invisibles
     cle=$(echo "$ligne" | cut -d':' -f1 | tr -d ' \t')
     valeur=$(echo "$ligne" | cut -d':' -f2 | tr -d ' \t')
     
     # --- ANALYSE DES MOTS-CLÉS ---
-    # On vérifie ce que contient la variable "cle" (sr, masque, ou diff)
-    
     if [[ "$cle" == "sr" ]]; then
-        # Si la clé est "sr", on mémorise simplement l'adresse IP dans la variable $sr
         sr="$valeur"
         
     elif [[ "$cle" == "masque" ]]; then
-        # Si la clé est "masque", on mémorise le masque classique
         masque="$valeur"
-        
-        # Kea DHCP n'accepte pas les masques classiques (255.255.255.X), il veut du CIDR (/24, /26...).
-        # L'instruction "case" fait la traduction automatique pour ton plan d'adressage.
         case "$masque" in
             "255.255.255.192") cidr="26" ;;
             "255.255.255.224") cidr="27" ;;
             "255.255.255.240") cidr="28" ;;
-            *) cidr="24" ;; # Valeur de sécurité par défaut si le masque n'est pas reconnu
+            *) cidr="24" ;;
         esac
         
     elif [[ "$cle" == "diff" ]]; then
-        # Si la clé est "diff", c'est qu'on a fini de lire les 3 lignes d'un réseau.
-        # On a donc toutes les infos en mémoire ($sr, $masque, $cidr, $diff) pour agir.
         diff="$valeur"
         
         echo "----------------------------------------"
         echo "Réseau détecté : $sr/$cidr (Masque : $masque | Broadcast : $diff)"
         
         # --- INTERVENTION HUMAINE ---
-        # Le script met le fichier texte en pause et te demande de taper les adresses.
-        # "< /dev/tty" est obligatoire : ça force l'ordinateur à écouter ton clavier physique. 
-        # Sans ça, la commande "read" essaierait de lire la suite du fichier texte.
+        # Configuration des requêtes interactives spécifiques
         read -p "Entrez l'IP de début de plage : " ip_debut < /dev/tty
         read -p "Entrez l'IP de fin de plage : " ip_fin < /dev/tty
         read -p "Entrez l'IP de la passerelle : " passerelle < /dev/tty
         
         # --- ÉCRITURE DU BLOC JSON ---
-        # "cat <<EOF >> fichier" est une technique appelée "Heredoc". 
-        # Elle permet d'écrire tout un bloc de texte multi-lignes exactement tel qu'il est dessiné ici.
-        # Le chevron double ">>" ajoute le bloc à la fin du fichier sans écraser ce qu'il y a déjà.
-        # Les variables ($sr, $cidr...) sont remplacées par leurs vraies valeurs au moment de l'écriture.
         cat <<EOF >> "$FICHIER_RESULTAT"
         {
             "subnet": "$sr/$cidr",
             "pools": [ { "pool": "$ip_debut - $ip_fin" } ],
             "option-data": [
-                {
-                    "name": "routers",
-                    "data": "$passerelle"
-                }
+                { "name": "routers", "data": "$passerelle" },
+                { "name": "domain-name-servers", "data": "$serveurs_dns" },
+                { "name": "domain-name", "data": "$nom_domaine" }
             ]
         },
 EOF
-        # Le mot EOF signale la fin du bloc à écrire.
         
         echo "=> Bloc JSON généré pour le réseau $sr !"
     fi
-    # Fin de l'analyse du bloc, la boucle remonte au début pour lire la ligne suivante du fichier.
     
-done < "$FICHIER_SOURCE" # C'est ici qu'on "injecte" le fichier texte dans la boucle while.
+done < "$FICHIER_SOURCE"
 
 echo "----------------------------------------"
 echo "Succès ! Ouvrez $FICHIER_RESULTAT pour copier son contenu dans /etc/kea/kea-dhcp4.conf."
