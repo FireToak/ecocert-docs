@@ -47,45 +47,38 @@ Pour des raisons de sécurité, une PKI d'entreprise utilise généralement cett
 
 ```mermaid
 graph TD
-    %% Définition des styles (Légende intégrée)
     classDef critique fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#c62828
     classDef interne fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#1565c0
     classDef client fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#2e7d32
     classDef annuaire fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#e65100
-    classDef info fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1px,stroke-dasharray: 5 5
 
-    subgraph Legende [Légende des composants]
-        L1(Hors-ligne / Critique):::critique
-        L2(Serveur PKI En ligne):::interne
-        L3(Poste / Équipement cible):::client
-        L4[(Base de données)]:::annuaire
+    subgraph Legende ["Légende des composants"]
+        L1("Hors-ligne / Critique"):::critique
+        L2("Serveur PKI En ligne"):::interne
+        L3("Poste / Équipement cible"):::client
+        L4[("Base de données")]:::annuaire
     end
 
-    subgraph Zone Haute Sécurité [Zone Isolée (Hors-ligne)]
+    subgraph Zone_Haute_Securite ["Zone Isolée (Hors-ligne)"]
         RootCA["fa:fa-lock Root CA<br/>(Autorité Racine)"]:::critique
     end
 
-    subgraph Infrastructure Réseau Interne [Réseau Local (En ligne)]
+    subgraph Infra_Reseau_Interne ["Réseau Local (En ligne)"]
         SubCA["fa:fa-server Subordinate CA<br/>(Autorité Émettrice)"]:::interne
-        RA["fa:fa-id-card Registration Authority<br/>(Service d'Enregistrement)"]:::interne
-        VA["fa:fa-check-circle Validation Authority<br/>(Service de Révocation OCSP/CRL)"]:::interne
+        RA["fa:fa-id-card Registration Authority<br/>(Enregistrement)"]:::interne
+        VA["fa:fa-check-circle Validation Authority<br/>(Révocation OCSP/CRL)"]:::interne
         AD[("fa:fa-users Annuaire<br/>(Active Directory)")]:::annuaire
     end
 
     Client["fa:fa-laptop Poste client / Switch / Serveur"]:::client
 
-    %% Flux de création d'autorité
-    RootCA == "1. Délègue le pouvoir de signature" ==> SubCA
-
-    %% Flux de génération de certificat
-    Client -- "2. Envoie la requête (CSR)" --> RA
-    RA -- "3. Vérifie l'identité dans" --> AD
-    RA -- "4. Transmet la demande validée" --> SubCA
-    SubCA -- "5. Émet le certificat signé" --> Client
-
-    %% Flux de gestion et révocation
-    SubCA -. "Met à jour la liste des révoqués" .-> VA
-    Client -. "6. Vérifie si un certificat est valide" .-> VA
+    RootCA == "1. Délègue signature" ==> SubCA
+    Client -- "2. Envoie requête (CSR)" --> RA
+    RA -- "3. Vérifie identité" --> AD
+    RA -- "4. Transmet demande validée" --> SubCA
+    SubCA -- "5. Émet certificat signé" --> Client
+    SubCA -. "Met à jour liste révoqués" .-> VA
+    Client -. "6. Vérifie si valide" .-> VA
 ```
 
 ### 2.3. L'Héritage de la Chaîne de Confiance
@@ -117,31 +110,31 @@ Prenons l'exemple d'un serveur web qui souhaite passer en HTTPS. Il doit obtenir
 sequenceDiagram
     autonumber
     
-    box rgb(240, 248, 255) "Réseau Interne (Client)"
-        participant C as 💻 Serveur Web (Client)
+    box "Réseau Interne (Client)"
+        participant C as Serveur Web (Client)
     end
     
-    box rgb(255, 240, 245) "Infrastructure PKI"
-        participant RA as 📋 Autorité d'Enregistrement
-        participant CA as 🔐 Autorité de Certification
+    box "Infrastructure PKI"
+        participant RA as Autorité d'Enregistrement
+        participant CA as Autorité de Certification
     end
 
     Note over C: Génération locale de la paire de clés<br/>(Clé Publique / Clé Privée)
-    C->>RA: 1. Envoi de la demande CSR (contenant la clé publique)
+    C->>RA: 1. Envoi CSR (avec clé publique)
     
     activate RA
-    RA-->>C: 2. Défi : Demande de preuve d'identité (DNS/Fichier)
-    C->>RA: 3. Fourniture de la preuve mathématique
-    Note over RA: Vérification de l'identité RÉUSSIE
+    RA-->>C: 2. Défi : Demande de preuve d'identité
+    C->>RA: 3. Fourniture de la preuve
+    Note over RA: Vérification RÉUSSIE
     RA->>CA: 4. Transmission de la demande validée
     deactivate RA
     
     activate CA
-    Note over CA: L'Autorité signe le certificat du client<br/>avec sa propre CLÉ PRIVÉE.
-    CA-->>C: 5. Délivrance du certificat signé (Fichier .crt)
+    Note over CA: Signe le certificat du client<br/>avec sa CLÉ PRIVÉE.
+    CA-->>C: 5. Délivrance du certificat signé
     deactivate CA
     
-    Note over C: Le serveur Web installe le certificat<br/>et peut désormais proposer du HTTPS.
+    Note over C: Installation du certificat HTTPS
 ```
 
 ### 3.2. Phase de Vérification (Côté Client)
@@ -178,53 +171,48 @@ Voici le cycle de vie officiel d'un certificat, incluant la suspension temporair
 
 ```mermaid
 stateDiagram-v2
-    %% Définition des couleurs pour plus de clarté
     classDef valide fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#155724
     classDef attente fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#856404
     classDef danger fill:#f8d7da,stroke:#dc3545,stroke-width:2px,color:#721c24
     classDef neutre fill:#e2e3e5,stroke:#6c757d,stroke-width:2px
 
-    [*] --> En_Attente_Validation : 1. Soumission du CSR
+    [*] --> En_Attente : 1. Soumission du CSR
     
-    state "⏳ En Attente de Validation" as En_Attente_Validation
-    state "✅ Certificat Valide" as Certificat_Valide
-    state "❌ Demande Rejetée" as Demande_Rejetée
-    state "⚠️ Certificat Suspendu (Hold)" as Certificat_Suspendu
-    state "🚫 Certificat Révoqué" as Certificat_Révoqué
-    state "🔄 Renouvellement" as Renouvellement
-    state "⏱️ Certificat Expiré" as Certificat_Expiré
+    state "En Attente de Validation" as En_Attente
+    state "Certificat Valide" as Valide
+    state "Demande Rejetée" as Rejet
+    state "Certificat Suspendu (Hold)" as Suspendu
+    state "Certificat Révoqué" as Revoque
+    state "Renouvellement" as Renouvellement
+    state "Certificat Expiré" as Expire
 
-    class En_Attente_Validation attente
-    class Certificat_Valide valide
-    class Demande_Rejetée danger
-    class Certificat_Suspendu attente
-    class Certificat_Révoqué danger
+    class En_Attente attente
+    class Valide valide
+    class Rejet danger
+    class Suspendu attente
+    class Revoque danger
     class Renouvellement attente
-    class Certificat_Expiré neutre
+    class Expire neutre
 
-    En_Attente_Validation --> Certificat_Valide : Identité vérifiée
-    En_Attente_Validation --> Demande_Rejetée : Identité fausse
-    Demande_Rejetée --> [*]
+    En_Attente --> Valide : Identité vérifiée
+    En_Attente --> Rejet : Identité fausse
+    Rejet --> [*]
     
-    %% Gestion de la suspension
-    Certificat_Valide --> Certificat_Suspendu : Doute sur un vol de clé
-    Certificat_Suspendu --> Certificat_Valide : Vol écarté (Restauration)
-    Certificat_Suspendu --> Certificat_Révoqué : Vol confirmé
+    Valide --> Suspendu : Doute sur un vol de clé
+    Suspendu --> Valide : Vol écarté (Restauration)
+    Suspendu --> Revoque : Vol confirmé
     
-    %% Révocation directe
-    Certificat_Valide --> Certificat_Révoqué : Départ collaborateur / Piratage
+    Valide --> Revoque : Départ collaborateur / Piratage
     
-    %% Renouvellement
-    Certificat_Valide --> Renouvellement : Le certificat expire bientôt (-30 jours)
-    Renouvellement --> Certificat_Valide : Nouveau certificat généré
+    Valide --> Renouvellement : Le certificat expire bientôt (-30 jours)
+    Renouvellement --> Valide : Nouveau certificat généré
     
-    %% Expiration
-    Certificat_Valide --> Certificat_Expiré : Date de fin atteinte
+    Valide --> Expire : Date de fin atteinte
     
-    Certificat_Expiré --> [*]
-    Certificat_Révoqué --> [*]
+    Expire --> [*]
+    Revoque --> [*]
     
-    note right of Certificat_Révoqué : ⚠️ État définitif et irréversible.<br/>Le certificat est inscrit dans la CRL.
+    note right of Revoque : État définitif et irréversible.<br/>Le certificat est inscrit dans la CRL.
 ```
 
 ---
