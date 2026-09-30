@@ -270,9 +270,3 @@ Une fois l'installation graphique terminée, il est **impératif** de réaliser 
 rm -rf /var/www/html/glpi/install
 ```
 
-10.2. **Configuration du Cron (Actions automatiques)**. GLPI a besoin d'une tâche planifiée pour envoyer des mails, clôturer des tickets, etc.
-
-```bash title="Terminal"
-echo "* * * * * www-data /usr/bin/php8.4 /var/www/html/glpi/front/cron.php &>/dev/null" | tee /etc/cron.d/glpi
-systemctl restart cron
-```
