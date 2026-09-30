@@ -169,7 +169,14 @@ Si un certificat est compromis (vol de clé privée), il doit être annulé. La 
 
 ### 3.4. Diagramme d'État global
 
-Voici le cycle de vie officiel d'un certificat, incluant la suspension temporaire et le renouvellement :
+Voici le cycle de vie officiel d'un certificat, incluant la suspension temporaire et le renouvellement. La chronologie type se décompose ainsi :
+
+1. **Soumission** : Le client génère un CSR et l'envoie à l'AC.
+2. **Validation / Refus** : L'AC vérifie l'identité. En cas de succès, le certificat est valide. Sinon, il est refusé.
+3. **Doute (Cas de suspension - Hold)** : En cas de suspicion de vol, le certificat est mis en pause (restaurable si fausse alerte).
+4. **Révocation sèche** : Suite au départ d'un employé ou à un piratage avéré, le certificat est définitivement annulé (OCSP/CRL).
+5. **Renouvellement** : L'administrateur demande un nouveau certificat juste avant la date de fin (-30 jours).
+6. **Expiration naturelle** : Le certificat atteint sa date de fin sans être renouvelé et devient invalide.
 
 ```mermaid
 stateDiagram-v2
