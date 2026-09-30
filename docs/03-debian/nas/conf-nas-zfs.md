@@ -105,3 +105,15 @@ Cette procédure détaille la création d'un pool de stockage ZFS basé sur 3 di
 2. Vérifiez que le pool **datastore** est bien monté et fonctionnel (statut *ONLINE*).
 
 ![Pool NAS](./assets/conf-nas-truenas/pool-nas.jpg)
+
+## 10. Tâches de maintenance et d'intégrité (Bonnes Pratiques) {#10-taches-maintenance}
+
+Pour garantir la pérennité des données sur ZFS, il est **indispensable** de configurer des tâches automatisées de vérification (particulièrement scruté en environnement de production).
+
+10.1. **Configuration des tests S.M.A.R.T**.
+1. Naviguer dans `Data Protection` > `S.M.A.R.T. Tests`.
+2. Créer un test `Short` quotidien et un test `Long` hebdomadaire sur tous les disques du Pool. Cela permet d'anticiper les pannes matérielles.
+
+10.2. **Planification des Tâches Scrub (ZFS Scrub)**.
+1. Naviguer dans `Data Protection` > `Scrub Tasks`.
+2. S'assurer qu'une tâche est planifiée pour le pool `datastore` (par défaut, TrueNAS configure un scrub tous les 35 jours, mais une fréquence de 14 jours est recommandée). Le Scrub va lire chaque bloc de donnée et le comparer à sa somme de contrôle (checksum) pour réparer les bits corrompus (bit rot).

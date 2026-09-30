@@ -96,6 +96,7 @@ Recherchez et modifiez ces lignes pour définir l'heure française et sécuriser
 ```ini title="/etc/php/8.4/fpm/php.ini"
 date.timezone = Europe/Paris
 session.cookie_secure = on
+session.cookie_httponly = on
 ```
 
 Redémarrez PHP-FPM :
@@ -258,3 +259,20 @@ L'installation en ligne de commande est terminée. L'initialisation finale s'eff
 1. Sur un poste client, ouvrez un navigateur web.
 2. Accédez à l'URL suivante (directement sur la racine) : [https://172.16.54.40](https://172.16.54.40)
 3. Suivez l'assistant d'installation graphique de GLPI.
+
+## 10. Post-installation (Sécurité et Tâches planifiées)
+
+Une fois l'installation graphique terminée, il est **impératif** de réaliser ces deux actions pour garantir la sécurité et le bon fonctionnement en arrière-plan.
+
+10.1. **Suppression du dossier d'installation**. C'est une faille de sécurité majeure de le laisser accessible.
+
+```bash title="Terminal"
+rm -rf /var/www/html/glpi/install
+```
+
+10.2. **Configuration du Cron (Actions automatiques)**. GLPI a besoin d'une tâche planifiée pour envoyer des mails, clôturer des tickets, etc.
+
+```bash title="Terminal"
+echo "* * * * * www-data /usr/bin/php8.4 /var/www/html/glpi/front/cron.php &>/dev/null" | tee /etc/cron.d/glpi
+systemctl restart cron
+```
