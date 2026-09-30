@@ -7,17 +7,16 @@ tags:
   - AD CS
 ---
 
-# 📑 FICHE DE SYNTHÈSE : L'Infrastructure à Clés Publiques (PKI)
+# FICHE DE SYNTHÈSE : L'Infrastructure à Clés Publiques (PKI)
 
-![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
+![Bannière PKI](./assets/pki/banniere-pki.png)
 
 ---
 
 !!! note "Méta-informations"
+
     - **Auteur(s) :** Amine KADA
     - **Date de MAJ :** 30/09/2026
-    - **Temps estimé :** N/A (Fiche de révision)
-    - **Criticité :** N/A
 
 ---
 
@@ -48,37 +47,45 @@ Pour des raisons de sécurité, une PKI d'entreprise utilise généralement cett
 
 ```mermaid
 graph TD
-    subgraph Zone Haute Sécurité
-        RootCA[Root CA - Autorité Racine<br/>STATUT: Hors-ligne]
+    %% Définition des styles (Légende intégrée)
+    classDef critique fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#c62828
+    classDef interne fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#1565c0
+    classDef client fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#2e7d32
+    classDef annuaire fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#e65100
+    classDef info fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1px,stroke-dasharray: 5 5
+
+    subgraph Legende [Légende des composants]
+        L1(Hors-ligne / Critique):::critique
+        L2(Serveur PKI En ligne):::interne
+        L3(Poste / Équipement cible):::client
+        L4[(Base de données)]:::annuaire
     end
 
-    subgraph Infrastructure Réseau Interne
-        SubCA[Subordinate CA - Autorité Émettrice<br/>STATUT: En ligne]
-        RA[Registration Authority - RA<br/>RÔLE: Vérification]
-        VA[Validation Authority - VA<br/>RÔLE: Statut de révocation]
-        AD[(Annuaire<br/>Active Directory)]
+    subgraph Zone Haute Sécurité [Zone Isolée (Hors-ligne)]
+        RootCA["fa:fa-lock Root CA<br/>(Autorité Racine)"]:::critique
     end
 
-    Client[Poste client / Switch / Serveur]
+    subgraph Infrastructure Réseau Interne [Réseau Local (En ligne)]
+        SubCA["fa:fa-server Subordinate CA<br/>(Autorité Émettrice)"]:::interne
+        RA["fa:fa-id-card Registration Authority<br/>(Service d'Enregistrement)"]:::interne
+        VA["fa:fa-check-circle Validation Authority<br/>(Service de Révocation OCSP/CRL)"]:::interne
+        AD[("fa:fa-users Annuaire<br/>(Active Directory)")]:::annuaire
+    end
 
-    %% Flux d'autorité
-    RootCA -- "Signe le certificat de" --> SubCA
-    SubCA -. "Met à jour les listes (CRL)" .-> VA
+    Client["fa:fa-laptop Poste client / Switch / Serveur"]:::client
 
-    %% Flux de création d'un certificat
-    Client -- "1. Envoie la requête (CSR)" --> RA
-    RA -- "2. Vérifie l'identité" --> AD
-    RA -- "3. Transmet la demande validée" --> SubCA
-    SubCA -- "4. Émet le certificat signé" --> Client
+    %% Flux de création d'autorité
+    RootCA == "1. Délègue le pouvoir de signature" ==> SubCA
 
-    %% Flux de vérification
-    Client -. "Vérifie le statut (OCSP/CRL)" .-> VA
+    %% Flux de génération de certificat
+    Client -- "2. Envoie la requête (CSR)" --> RA
+    RA -- "3. Vérifie l'identité dans" --> AD
+    RA -- "4. Transmet la demande validée" --> SubCA
+    SubCA -- "5. Émet le certificat signé" --> Client
 
-    %% Styles
-    style RootCA fill:#f9d0c4,stroke:#333,stroke-width:2px
-    style SubCA fill:#c4e1f9,stroke:#333,stroke-width:2px
-    style Client fill:#d4f9c4,stroke:#333,stroke-width:2px
-    style AD fill:#eee,stroke:#333
+    %% Flux de gestion et révocation
+    SubCA -. "Met à jour la liste des révoqués" .-> VA
+    Client -. "6. Vérifie si un certificat est valide" .-> VA
 ```
 
 ### 2.3. L'Héritage de la Chaîne de Confiance
@@ -109,20 +116,32 @@ Prenons l'exemple d'un serveur web qui souhaite passer en HTTPS. Il doit obtenir
 ```mermaid
 sequenceDiagram
     autonumber
-    participant C as Client (Serveur Web)
-    participant RA as Autorité d'Enregistrement (RA)
-    participant CA as Autorité de Certification (CA)
+    
+    box rgb(240, 248, 255) "Réseau Interne (Client)"
+        participant C as 💻 Serveur Web (Client)
+    end
+    
+    box rgb(255, 240, 245) "Infrastructure PKI"
+        participant RA as 📋 Autorité d'Enregistrement
+        participant CA as 🔐 Autorité de Certification
+    end
 
-    Note over C: Génération de la paire de clés<br/>(Publique / Privée)
-    C->>RA: Envoi de la demande CSR (contenant la clé publique)
-    RA-->>C: Demande de preuve d'identité (Challenge)
-    C->>RA: Fourniture des preuves (ex: validation DNS/Admin)
+    Note over C: Génération locale de la paire de clés<br/>(Clé Publique / Clé Privée)
+    C->>RA: 1. Envoi de la demande CSR (contenant la clé publique)
     
-    Note over RA: Vérification réussie
-    RA->>CA: Transmission de la demande validée
+    activate RA
+    RA-->>C: 2. Défi : Demande de preuve d'identité (DNS/Fichier)
+    C->>RA: 3. Fourniture de la preuve mathématique
+    Note over RA: Vérification de l'identité RÉUSSIE
+    RA->>CA: 4. Transmission de la demande validée
+    deactivate RA
     
-    Note over CA: Signe le certificat avec<br/>sa propre clé privée
-    CA-->>C: Délivrance du certificat signé (Fichier .crt ou .pem)
+    activate CA
+    Note over CA: L'Autorité signe le certificat du client<br/>avec sa propre CLÉ PRIVÉE.
+    CA-->>C: 5. Délivrance du certificat signé (Fichier .crt)
+    deactivate CA
+    
+    Note over C: Le serveur Web installe le certificat<br/>et peut désormais proposer du HTTPS.
 ```
 
 ### 3.2. Phase de Vérification (Côté Client)
@@ -159,31 +178,53 @@ Voici le cycle de vie officiel d'un certificat, incluant la suspension temporair
 
 ```mermaid
 stateDiagram-v2
-    [*] --> En_Attente_Validation : Soumission du CSR
+    %% Définition des couleurs pour plus de clarté
+    classDef valide fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#155724
+    classDef attente fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#856404
+    classDef danger fill:#f8d7da,stroke:#dc3545,stroke-width:2px,color:#721c24
+    classDef neutre fill:#e2e3e5,stroke:#6c757d,stroke-width:2px
+
+    [*] --> En_Attente_Validation : 1. Soumission du CSR
     
-    En_Attente_Validation --> Certificat_Valide : Demande approuvée & Certificat émis
-    En_Attente_Validation --> Demande_Rejetée : Échec de l'authentification
+    state "⏳ En Attente de Validation" as En_Attente_Validation
+    state "✅ Certificat Valide" as Certificat_Valide
+    state "❌ Demande Rejetée" as Demande_Rejetée
+    state "⚠️ Certificat Suspendu (Hold)" as Certificat_Suspendu
+    state "🚫 Certificat Révoqué" as Certificat_Révoqué
+    state "🔄 Renouvellement" as Renouvellement
+    state "⏱️ Certificat Expiré" as Certificat_Expiré
+
+    class En_Attente_Validation attente
+    class Certificat_Valide valide
+    class Demande_Rejetée danger
+    class Certificat_Suspendu attente
+    class Certificat_Révoqué danger
+    class Renouvellement attente
+    class Certificat_Expiré neutre
+
+    En_Attente_Validation --> Certificat_Valide : Identité vérifiée
+    En_Attente_Validation --> Demande_Rejetée : Identité fausse
     Demande_Rejetée --> [*]
     
-    %% Gestion de la suspension (Hold)
-    Certificat_Valide --> Certificat_Suspendu : Doute sur compromission (Hold)
-    Certificat_Suspendu --> Certificat_Valide : Levée de la suspension
-    Certificat_Suspendu --> Certificat_Révoqué : Confirmation de compromission
+    %% Gestion de la suspension
+    Certificat_Valide --> Certificat_Suspendu : Doute sur un vol de clé
+    Certificat_Suspendu --> Certificat_Valide : Vol écarté (Restauration)
+    Certificat_Suspendu --> Certificat_Révoqué : Vol confirmé
     
     %% Révocation directe
-    Certificat_Valide --> Certificat_Révoqué : Compromission / Départ collaborateur
+    Certificat_Valide --> Certificat_Révoqué : Départ collaborateur / Piratage
     
-    %% Renouvellement (se fait AVANT expiration)
-    Certificat_Valide --> Renouvellement : Approche de la date de fin
-    Renouvellement --> Certificat_Valide : Nouveau certificat émis
+    %% Renouvellement
+    Certificat_Valide --> Renouvellement : Le certificat expire bientôt (-30 jours)
+    Renouvellement --> Certificat_Valide : Nouveau certificat généré
     
-    %% Expiration naturelle
-    Certificat_Valide --> Certificat_Expiré : Date de fin atteinte sans renouvellement
+    %% Expiration
+    Certificat_Valide --> Certificat_Expiré : Date de fin atteinte
     
     Certificat_Expiré --> [*]
     Certificat_Révoqué --> [*]
     
-    note right of Certificat_Révoqué : État irréversible publié dans la CRL ou via OCSP.
+    note right of Certificat_Révoqué : ⚠️ État définitif et irréversible.<br/>Le certificat est inscrit dans la CRL.
 ```
 
 ---
