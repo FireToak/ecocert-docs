@@ -44,10 +44,10 @@ ipconfig /all
 
 - `Adresse réseau ou Internet` : Saisissez l'URI cible `\\172.16.54.20\Sauvegarde`.
 
-![Configuration Réseau et Partage](./assets/rect-nas-truenas/win-reseau.png)
+![Configuration Réseau et Partage](./assets/recette-nas-truenas/win-reseau.png)
 
 4.2.  **Vérification du montage**. Ouvrez l'explorateur de fichiers Windows dans la vue **Ce PC**.
 
 - `Emplacements réseau` : Le dossier partagé doit apparaître sous le nom **Sauvegarde (NASECOCERT)** et être accessible.
 
-![Vérification Ce PC](./assets/rect-nas-truenas/win-cepc.png)
+![Vérification Ce PC](./assets/recette-nas-truenas/win-cepc.png)

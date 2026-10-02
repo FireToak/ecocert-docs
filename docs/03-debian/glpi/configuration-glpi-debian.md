@@ -48,9 +48,9 @@ DocumentRoot /var/www/glpi/public
 | Olivier TONDET | `otondet` | Admin (entité racine) | Équipe Réseau & Accès | :lucide-check: Oui |
 | Pamela TREMO | `ptremo` | Admin (entité racine) | Équipe Serveurs & Systèmes | :lucide-check: Oui |
 
-![Création des groupes](assets/conf-glpi-debian/groupe-glpi.jpg)
+![Création des groupes](assets/configuration-glpi-debian/groupe-glpi.jpg)
 
-![Création des comptes](assets/conf-glpi-debian/glpi-user.jpg)
+![Création des comptes](assets/configuration-glpi-debian/glpi-user.jpg)
 
 4.2.  **Paramétrage du routage automatique**. Les catégories d'incidents sont liées aux groupes pour permettre un dispatching ITIL sans intervention manuelle.
 
@@ -70,7 +70,7 @@ HKEY_LOCAL_MACHINE\SOFTWARE\GLPI-Agent
 
 - `server` : La valeur de la clé de registre pointe sur l'URL courte. Cela permet de contourner l'erreur HTTP 404 causée par la restriction de sécurité du dossier web (`/public`).
 
-![Agent GLPI](assets/conf-glpi-debian/client-agent-glpi.jpg)
+![Agent GLPI](assets/configuration-glpi-debian/client-agent-glpi.jpg)
 
 5.2.  **Application et Validation**. Sur les postes clients Windows, forcer l'application des stratégies et vérifier la remontée des données dans l'interface d'administration.
 
@@ -80,6 +80,6 @@ gpupdate /force
 
 - `gpupdate /force` : Oblige le poste client à récupérer immédiatement les nouvelles directives de la GPO. Les ordinateurs apparaissent ensuite automatiquement dans le menu **Parc > Ordinateurs** de l'interface GLPI avec leurs caractéristiques complètes.
 
-![Parc informatique](assets/conf-glpi-debian/client-parc-glpi.jpg)
+![Parc informatique](assets/configuration-glpi-debian/client-parc-glpi.jpg)
 
-![Inventaire détaillé](assets/conf-glpi-debian/inventaire-glpi.jpg)
+![Inventaire détaillé](assets/configuration-glpi-debian/inventaire-glpi.jpg)

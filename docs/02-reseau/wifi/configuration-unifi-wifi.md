@@ -31,21 +31,21 @@ Cette procédure détaille les étapes de provisionnement d'un nouveau réseau l
 
 3.1. **Accès au panneau de configuration des réseaux.** Se connecter à l'interface d'administration ([Lien vers le contrôleur Unifi](https://172.16.54.30:11443)), aller dans l'engrenage (Paramètres) puis sélectionner **Networks**, et enfin cliquer sur **Create New**.
 
-![Menu Networks](./assets/conf-unifi-wifi/01-acces-parametre-networks.png)
+![Menu Networks](./assets/configuration-unifi-wifi/01-acces-parametre-networks.png)
 
 3.2. **Création du réseau.** Rentrer les informations de votre réseau en spécifiant le nom et l'ID du VLAN (par exemple 228).
 
-![Création du réseau](./assets/conf-unifi-wifi/02-creer-reseau.png)
+![Création du réseau](./assets/configuration-unifi-wifi/02-creer-reseau.png)
 
 ## 4. Création du réseau sans fil (Wi-Fi) {#4-creation-du-reseau-sans-fil-wi-fi}
 
 4.1. **Accès au panneau de configuration Wi-Fi.** Toujours depuis l'interface web du contrôleur Unifi, aller dans l'engrenage puis sélectionner la section **WiFi**.
 
-![Menu Wi-Fi](./assets/conf-unifi-wifi/03-access-parametre-wifi.png)
+![Menu Wi-Fi](./assets/configuration-unifi-wifi/03-access-parametre-wifi.png)
 
 4.2. **Déploiement du SSID.** Cliquer sur **Create New**, puis donner la configuration à votre réseau wifi en paramétrant le nom (ex: `test`) et en l'associant au VLAN cible.
 
 > [!note] Association au réseau
 > Lors de la création du SSID, il est impératif de sélectionner le réseau (VLAN) préalablement créé à l'étape 3 dans le champ `Network` pour assurer le bon routage des clients sans fil.
 
-![Création du réseau Wi-Fi](./assets/conf-unifi-wifi/04-creer-wifi.png)
+![Création du réseau Wi-Fi](./assets/configuration-unifi-wifi/04-creer-wifi.png)

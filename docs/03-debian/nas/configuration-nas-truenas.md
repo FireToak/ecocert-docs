@@ -52,7 +52,7 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 > [!warning] DNS Secondaire
 > Ne pas renseigner de "DNS Secondary" avec un DNS public (ex: 8.8.8.8). En effet, le système risquerait de rejeter les requêtes ou de faire la demande à l'extérieur plutôt qu'en interne, brisant la résolution de nom pour le domaine `local.ecocert4.fr`.
 
-![Configuration Réseau](assets/conf-nas-truenas/network-nas.jpg)
+![Configuration Réseau](assets/configuration-nas-truenas/network-nas.jpg)
 
 ## 5. Configuration NTP & Active Directory
 
@@ -61,17 +61,17 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 1. Naviguez dans **System > NTP Servers**.
 2. Ajoutez ou modifiez un serveur NTP pour pointer vers votre contrôleur de domaine (`172.16.54.1`).
 
-![Configuration NTP](assets/conf-nas-truenas/config-ntp.jpg)
+![Configuration NTP](assets/configuration-nas-truenas/config-ntp.jpg)
 
 5.2.  **Intégration à l'annuaire (Active Directory)**. Liaison du NAS avec l'annuaire pour l'authentification centralisée.
 
 1. Allez dans le menu **Directory Services > Active Directory**.
 2. Renseignez le domaine `local.ecocert4.fr` et les identifiants de l'administrateur du domaine.
 
-![Annuaire LDAP/AD](assets/conf-nas-truenas/ldap-truenas.jpg)
+![Annuaire LDAP/AD](assets/configuration-nas-truenas/ldap-truenas.jpg)
 
-![Configuration AD - Étape 1](assets/conf-nas-truenas/1config-ad.jpg)
-![Configuration AD - Étape 2](assets/conf-nas-truenas/2config-ad.jpg)
+![Configuration AD - Étape 1](assets/configuration-nas-truenas/1config-ad.jpg)
+![Configuration AD - Étape 2](assets/configuration-nas-truenas/2config-ad.jpg)
 
 ## 6. Partage de fichiers (SMB) et Droits (ACL)
 
@@ -80,8 +80,8 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 1. Naviguez dans le menu **Services**.
 2. Activez le service **SMB** et cochez "Start Automatically".
 
-![Services Système](assets/conf-nas-truenas/system-service.jpg)
-![Service SMB](assets/conf-nas-truenas/service-smb.jpg)
+![Services Système](assets/configuration-nas-truenas/system-service.jpg)
+![Service SMB](assets/configuration-nas-truenas/service-smb.jpg)
 
 6.2.  **Création du partage et gestion des permissions (ACL)**.
 
@@ -89,5 +89,5 @@ Le serveur **NASECOCERT** (172.16.54.20) tourne sous TrueNAS. Il a pour rôle d'
 2. Sélectionnez le chemin correspondant à votre pool de stockage (ex: `Sauvegardes`).
 3. Modifiez les droits d'accès (ACL) sur le Dataset pour autoriser les utilisateurs et groupes de l'Active Directory.
 
-![Permissions Dataset](assets/conf-nas-truenas/permission-dataset.jpg)
-![Ajout ACL NAS](assets/conf-nas-truenas/ajout-acl-nas.jpg)
+![Permissions Dataset](assets/configuration-nas-truenas/permission-dataset.jpg)
+![Ajout ACL NAS](assets/configuration-nas-truenas/ajout-acl-nas.jpg)

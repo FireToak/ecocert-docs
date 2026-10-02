@@ -13,68 +13,11 @@ Ce dépôt centralise la documentation d'infrastructure du projet **ECOCERT**, u
 ```text
 ecocert-docs/
 ├── docs/
-│   ├── index.md                          ← Page d'accueil du site
-│   ├── 01-ressources/                    ← Architecture globale
-│   │   ├── index.md
-│   │   ├── annuaire-machine.md
-│   │   ├── plan-adressage.md
-│   │   ├── table-routage.md
-│   │   ├── table-nat.md
-│   │   ├── schemas.md
-│   │   ├── contexte.md
-│   │   ├── conf-ressources-equipements.md
-│   │   └── pki.md
-│   ├── 02-reseau/                        ← Équipements réseau
-│   │   ├── index.md
-│   │   ├── expl-cisco-reinitialisation.md
-│   │   ├── pare-feu/
-│   │   │   ├── conf-stormshield-interface.md
-│   │   │   ├── conf-stormshield-nat.md
-│   │   │   ├── conf-stormshield-routage.md
-│   │   │   ├── expl-stormshield-sauvegarde.md
-│   │   │   └── rect-stormshield-parefeu.md
-│   │   ├── commutateur/
-│   │   │   └── rect-cisco-commutateur.md
-│   │   └── wifi/
-│   │       ├── inst-unifi-controleur.md
-│   │       ├── conf-unifi-postinstall.md
-│   │       ├── conf-unifi-equipement.md
-│   │       ├── conf-unifi-wifi.md
-│   │       ├── rect-unifi-controleur.md
-│   │       └── rect-unifi-wifi.md
-│   ├── 03-debian/                        ← Serveurs Linux Debian 13
-│   │   ├── index.md
-│   │   ├── commun/
-│   │   │   ├── conf-commun-hostname.md
-│   │   │   └── expl-commun-apparmor.md
-│   │   ├── glpi/
-│   │   │   ├── inst-glpi-debian.md
-│   │   │   ├── conf-glpi-debian.md
-│   │   │   ├── conf-glpi-ldaps.md
-│   │   │   └── conf-glpi-gpo.md
-│   │   ├── dhcp/
-│   │   │   ├── inst-dhcp-kea.md
-│   │   │   ├── conf-dhcp-kea.md
-│   │   │   ├── conf-dhcp-avancer.md
-│   │   │   ├── expl-dhcp-script.md
-│   │   │   ├── rect-dhcp-kea.md
-│   │   │   └── rect-dhcp-script.md
-│   │   └── nas/
-│   │       ├── inst-nas-truenas.md
-│   │       ├── conf-nas-truenas.md
-│   │       ├── conf-nas-zfs.md
-│   │       └── rect-nas-truenas.md
-│   └── 04-windows/                       ← Serveurs Windows Server
-│       ├── index.md
-│       ├── ad/
-│       │   ├── inst-ad-windows.md
-│       │   ├── conf-ad-windows.md
-│       │   ├── conf-ad-ldaps.md
-│       │   └── rect-ad-windows.md
-│       └── commun/
-│           └── conf-commun-network.md
-├── zensical.toml                         ← Configuration du site (navigation, thème)
-├── requirements.txt
+│   ├── 01-ressources/    ← Schémas, plans d'adressage, NAT, routage, PKI
+│   ├── 02-reseau/        ← Stormshield, Cisco, UniFi
+│   ├── 03-debian/        ← GLPI 11, Kea DHCP, TrueNAS, AppArmor
+│   └── 04-windows/       ← Active Directory, LDAPS
+├── zensical.toml         ← Configuration du site
 └── README.md
 ```
 
@@ -84,10 +27,12 @@ Tous les fichiers Markdown respectent la convention `[type]-[service]-[technolog
 
 | Préfixe | Type de document |
 | :--- | :--- |
-| `inst-` | Procédure d'**installation** pas à pas |
-| `conf-` | Procédure de **configuration** d'un service |
-| `rect-` | **Fiche recette** (validation / tests) |
-| `expl-` | **Explication** / synthèse théorique |
+| `installation-` | Procédure d'installation pas à pas |
+| `configuration-` | Procédure de configuration d'un service |
+| `recette-` | Fiche recette (tests de validation) |
+| `explication-` | Explication / synthèse théorique |
+
+Les dossiers `assets/` portent le même nom que le fichier de procédure auquel ils sont rattachés.
 
 ---
 
@@ -111,13 +56,8 @@ git checkout -b feat/ajout-docs-glpi
 ### 3. Enregistrer et pousser les modifications
 
 ```bash
-# Indexer les fichiers modifiés
 git add .
-
-# Créer un commit descriptif
 git commit -m "docs: ajout de la procédure d'installation GLPI"
-
-# Pousser la branche sur GitHub
 git push origin feat/ajout-docs-glpi
 ```
 
@@ -125,14 +65,6 @@ Une fois cette étape terminée, ouvrez une **Pull Request** sur GitHub pour qu'
 
 > [!NOTE]
 > Une fois le `merge` effectué sur `main`, la chaîne CI/CD via **GitHub Actions** compilera automatiquement les fichiers et déploiera la nouvelle version du site.
-
----
-
-## Bonnes pratiques
-
-1. **Revue par les pairs (Peer Review)** : Ne jamais pousser directement sur `main`. Les Pull Requests garantissent que la documentation est claire, sans erreur, et validée avant la mise en ligne.
-2. **Convention de nommage stricte** : Tout fichier créé doit respecter la convention `[type]-[service]-[techno].md` décrite ci-dessus.
-3. **Template de procédure** : Chaque fichier doit commencer par le frontmatter YAML, la bannière ECOCERT, l'encart `!!! note "Méta-informations"` et un sommaire.
 
 ---
 

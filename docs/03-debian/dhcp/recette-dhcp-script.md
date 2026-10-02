@@ -39,11 +39,11 @@ L'exécution du script doit d'abord réaliser une sauvegarde automatique de la c
 
 - Les invites de commandes (prompts) s'affichent correctement pour récolter les données réseau de l'administrateur.
 
-![Exécution du script Bash](assets/rect-dhcp-script/lancement-script.jpg)
+![Exécution du script Bash](assets/recette-dhcp-script/lancement-script.jpg)
 
 - Le script effectue la sauvegarde du fichier `kea-dhcp4.conf` (Numéro 2) au nom de `kea-dhcp4.conf.backup_yyyy-mm-dd-serie` (numéro 3) et la création du fichier dhcp fait par le script : `bloc_sous_reseaux.json` (Numéro 1) .
 
-![Sauvegarde de configuration](assets/rect-dhcp-script/sauvegarde-dhcp.jpg)
+![Sauvegarde de configuration](assets/recette-dhcp-script/sauvegarde-dhcp.jpg)
 
 *Validation : L'interactivité du script et la sauvegarde automatique fonctionnent comme attendu.*
 
@@ -56,7 +56,7 @@ Une fois le script terminé, le fichier de résultat `/etc/kea/blocs_sous_reseau
 
 - Le terminal affiche le message final confirmant l'écriture du fichier.
 
-![Succès du script](assets/rect-dhcp-script/succes-script.jpg)
+![Succès du script](assets/recette-dhcp-script/succes-script.jpg)
 
 *Validation : Le code JSON généré est syntaxiquement correct et a été écrit avec succès pour être intégré dans le fichier de configuration principal `kea-dhcp4.conf`.*
 
@@ -69,6 +69,6 @@ Après intégration des blocs JSON et rechargement de la configuration, le servi
 
 - Le statut renvoie un code `active (running)`.
 
-![Statut Kea DHCP](assets/rect-dhcp-script/status-kea.jpg)
+![Statut Kea DHCP](assets/recette-dhcp-script/status-kea.jpg)
 
 *Validation : La configuration générée par le script est parfaitement supportée par le serveur Kea.*

@@ -115,20 +115,20 @@ certutil -cainfo
 
 - Dupliquer le modèle existant **Authentification Kerberos**.
 
-![Dupliquer le modèle](assets/conf-ad-ldaps/dupliquer-modele.png)
+![Dupliquer le modèle](assets/configuration-ad-ldaps/dupliquer-modele.png)
 
 - **Onglet Compatibilité :** Autorité de certification et Destinataire du certificat définis sur **Windows Server 2016**.
 - **Onglet Général :** Nom complet défini sur `LDAPS-DC`, période de validité de **1 an**, période de renouvellement à **6 semaines**. Cocher **Publier le certificat dans Active Directory**.
 
-![Publier dans l'AD](assets/conf-ad-ldaps/publier-ad.png)
+![Publier dans l'AD](assets/configuration-ad-ldaps/publier-ad.png)
 
 - **Onglet Traitement de la demande :** Laisser **Autoriser l'exportation de la clé privée** coché.
 
-![Traitement de la demande](assets/conf-ad-ldaps/onglet-traitement-demande.png)
+![Traitement de la demande](assets/configuration-ad-ldaps/onglet-traitement-demande.png)
 
 - **Onglet Nom du sujet :** Choisir **Construire à partir de ces informations Active Directory**, Format du nom du sujet sur **Nom DNS**, et cocher **Nom DNS** en nom alternatif (SAN).
 
-![Nom du sujet](assets/conf-ad-ldaps/nom-sujet-ad.png)
+![Nom du sujet](assets/configuration-ad-ldaps/nom-sujet-ad.png)
 
 - **Onglet Sécurité :** Ajouter le groupe **Contrôleurs de domaine** et lui attribuer les droits **Lecture**, **Inscription** et **Inscription automatique**.
 

@@ -31,7 +31,7 @@ Le provisionnement d'une interface réseau avec une adresse IP statique sur un p
 > [!tip] Audit préalable
 > Avant toute modification du plan d'adressage, vérifiez l'état de l'interface et son affectation au sein d'un éventuel pont (Bridge) pour garantir l'absence de chevauchement de sous-réseaux.
 
-![Vue d'ensemble des interfaces](./assets/conf-stormshield-interface/vu-ensemble-interfaces.png)
+![Vue d'ensemble des interfaces](./assets/configuration-stormshield-interface/vu-ensemble-interfaces.png)
 
 ## 4. Provisionnement de l'adresse IP statique
 
@@ -39,7 +39,7 @@ Le provisionnement d'une interface réseau avec une adresse IP statique sur un p
 
 4.2. **Configuration du plan d'adressage**. Définir le mode d'attribution IP de l'interface sur statique et renseigner le tuple IP/Masque.
 
-![Configuration IP fixe](./assets/conf-stormshield-interface/configuration-ip-fixe.png)
+![Configuration IP fixe](./assets/configuration-stormshield-interface/configuration-ip-fixe.png)
 
 - `État` : Placer le curseur sur `ON` pour monter l'interface (équivalent du *no shutdown*).
 - `Cette interface est` : Sélectionner `Interne (protégée)` ou `Externe (publique)` selon la zone de sécurité visée.

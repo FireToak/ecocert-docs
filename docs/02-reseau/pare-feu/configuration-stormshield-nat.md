@@ -27,7 +27,7 @@ Déploiement du service de translation d'adresses (NAT) via l'interface graphiqu
 
 3.1. **Création d'un objet réseau depuis l'IHM.** Accéder au menu **Objets** > **Tous les objets**, cliquer sur le bouton **Ajouter** et sélectionner **Réseau**. 
 
-![Création Objet IHM](./assets/conf-stormshield-nat/creation-objet-reseau.png)
+![Création Objet IHM](./assets/configuration-stormshield-nat/creation-objet-reseau.png)
 
 - `Nom de l'objet` : Identifiant de la ressource. Doit impérativement respecter la nomenclature.
 - `Adresse IP de réseau` : Plage réseau avec prise en charge de la notation CIDR.
@@ -39,15 +39,15 @@ Déploiement du service de translation d'adresses (NAT) via l'interface graphiqu
 
 4.1. **Accès au module NAT.** Dans le bandeau latéral de configuration, naviguer vers **Politique de sécurité** > **Filtrage et NAT**, puis cliquer sur l'onglet **NAT**.
 
-![Menu NAT](./assets/conf-stormshield-nat/menu-nat.png)
+![Menu NAT](./assets/configuration-stormshield-nat/menu-nat.png)
 
 4.2. **Création de la règle de Masquerading.** Dans le tableau de translation, cliquer sur **Nouvelle règle** et sélectionner **Règle de partage d'adresse source (masquerading)**.
 
-![Nouvelle règle NAT](./assets/conf-stormshield-nat/creation-regle-nat-masquerading.png)
+![Nouvelle règle NAT](./assets/configuration-stormshield-nat/creation-regle-nat-masquerading.png)
 
 4.3. **Paramétrage des champs et documentation.** Glisser-déposer les objets depuis la bibliothèque latérale vers les cellules de la règle, puis renseigner un commentaire sur les éléments qui sont NAT.
 
-![Règle configurée](./assets/conf-stormshield-nat/regle-nat-configure.png)
+![Règle configurée](./assets/configuration-stormshield-nat/regle-nat-configure.png)
 
 - `Source` : L'objet défini lors de l'étape 3 (ex: `RESEAU_LAN`).
 - `Trafic après translation (Source)` : L'interface de sortie publique du pare-feu (ex: `Firewall_out`).

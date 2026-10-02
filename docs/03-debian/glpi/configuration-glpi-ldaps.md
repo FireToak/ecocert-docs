@@ -54,8 +54,8 @@ Cette procédure s'inscrit dans la continuité du déploiement de l'infrastructu
 > [!note] Informations avancées
 > Dans l'onglet **Informations avancées**, laisser le paramètre **Utiliser TLS** sur **Non**. L'activation de cette option correspond à l'usage de StartTLS, incompatible avec l'appel direct d'un endpoint `ldaps://` sur le port 636.
 
-![Configuration LDAPS Étape 1](assets/conf-glpi-ldaps/auth-glpi-ladps.jpg)
-![Configuration LDAPS Étape 2](assets/conf-glpi-ldaps/2-auth-glpi-ladps.jpg)
+![Configuration LDAPS Étape 1](assets/configuration-glpi-ldaps/auth-glpi-ladps.jpg)
+![Configuration LDAPS Étape 2](assets/configuration-glpi-ldaps/2-auth-glpi-ladps.jpg)
 
 ## 4. Validation de la connectivité GLPI
 
@@ -66,7 +66,7 @@ Cette procédure s'inscrit dans la continuité du déploiement de l'infrastructu
 4. *Connexion Bind* : Authentification réussie pour le compte de liaison.
 5. *Chercher* : Interrogation positive avec affichage des enregistrements détectés.
 
-![Test de connectivité LDAPS](assets/conf-glpi-ldaps/test-glpi-ladps.jpg)
+![Test de connectivité LDAPS](assets/configuration-glpi-ldaps/test-glpi-ladps.jpg)
 
 ## 5. Test de connexion applicative
 
@@ -75,8 +75,8 @@ Cette procédure s'inscrit dans la continuité du déploiement de l'infrastructu
 - Naviguer sur `https://172.16.54.40`.
 - Saisir l'identifiant `jdupont` (sans suffixe `@local.ecocert4.fr` ni préfixe `ECOCERT4\`) et le mot de passe utilisateur Active Directory associé.
 
-![Authentification jdupont](assets/conf-glpi-ldaps/ad-login-glpi.jpg)
+![Authentification jdupont](assets/configuration-glpi-ldaps/ad-login-glpi.jpg)
 
 - La session s'ouvre avec le rôle attribué par défaut (**Self-Service / Post-Only**).
 
-![Accueil GLPI jdupont](assets/conf-glpi-ldaps/accueil-glpi-ad.jpg)
+![Accueil GLPI jdupont](assets/configuration-glpi-ldaps/accueil-glpi-ad.jpg)
