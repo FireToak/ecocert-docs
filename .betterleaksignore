@@ -1,0 +1,15 @@
+# BetterLeaks ignore file
+# Format: sha:path:rule:line
+#
+# Ces entrées sont des faux positifs identifiés dans la documentation.
+# Il s'agit de mots de passe d'EXEMPLE dans des procédures techniques,
+# pas de secrets de production.
+
+# [GLPI] Placeholder de documentation (ex: VotreMotDePasseIci)
+4205649e528ca2ff9dfa3d69f485211516c6e9f5:docs/03-debian/glpi/inst-glpi-debian.md:generic-password:290
+
+# [GLPI] Mot de passe d'exemple dans une procédure d'installation (commit initial)
+7ccc5a32f304be821e20b5e05c32fc3ed52c6dbb:docs/03-debian/glpi/inst-glpi-debian.md:generic-password:310
+
+# [AD] Mot de passe par défaut dans un script PowerShell (valeur intentionnellement visible)
+19b94bf317a51c54b34f9c3d048832f4e41fc34e:docs/04-windows/ad/assets/script-creation-modification-utilisateurs/SyncUtilisateurs.ps1:generic-password:16
