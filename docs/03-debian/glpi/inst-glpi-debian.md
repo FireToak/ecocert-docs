@@ -20,43 +20,22 @@ tags:
 
 ---
 
-## 1. Synthèse Exécutive et Objectifs du Rapport
+## 1. Sommaire
 
-Le présent document constitue une refonte intégrale et exhaustive de la procédure de déploiement du système de gestion des services informatiques (ITSM) GLPI 11. L'analyse de la documentation initiale a révélé des vulnérabilités conceptuelles majeures, notamment le recours paradoxal à un assistant d'installation web (interface graphique) au détriment d'une véritable approche en ligne de commande (CLI), ainsi que l'absence d'implémentation des directives de durcissement requises par l'Agence Nationale de la Sécurité des Systèmes d'Information (ANSSI) et la Commission Nationale de l'Informatique et des Libertés (CNIL).
+- [1. Sommaire](#1-sommaire)
+- [2. Contexte](#2-contexte)
+- [3. Ingénierie de l'Infrastructure et Préparation du Système d'Exploitation](#3-ingenierie-de-linfrastructure-et-preparation-du-systeme-dexploitation)
+- [4. Architecture et Déploiement de la Pile LAMP](#4-architecture-et-deploiement-de-la-pile-lamp)
+- [5. Durcissement et Sécurisation (ANSSI, MariaDB, PHP)](#5-durcissement-et-securisation-anssi-mariadb-php)
+- [6. Création et Cloisonnement de la Base de Données GLPI](#6-creation-et-cloisonnement-de-la-base-de-donnees-glpi)
+- [7. Téléchargement, Isolation et Ségrégation de l'Architecture GLPI](#7-telechargement-isolation-et-segregation-de-larchitecture-glpi)
+- [8. Configuration du Routage Front Controller Apache](#8-configuration-du-routage-front-controller-apache)
+- [9. Initialisation par l'Interface en Ligne de Commande (CLI) et Chiffrement](#9-initialisation-par-linterface-en-ligne-de-commande-cli-et-chiffrement)
+- [10. Post-Installation et Conformité Administrative (CNIL / Sécurité)](#10-post-installation-et-conformite-administrative-cnil-securite)
 
-Ce rapport de recherche et d'intégration corrige ces défaillances. Il détaille l'architecture cible, la modélisation des menaces, la ségrégation des espaces de stockage pour contrer les vulnérabilités de type exécution de code à distance (RCE), et fournit les directives techniques précises pour instancier la machine virtuelle `GLPIECOCERT` de manière hermétique, automatisée et auditable. L'approche méthodologique s'inspire des meilleures pratiques de l'industrie, tout en les élevant au standard des exigences institutionnelles françaises.
+## 2. Contexte
 
-## 2. Contexte Opérationnel et Modélisation des Menaces
-
-### 2.1 Périmètre de la Mission 3
-
-La Mission 3 requiert le déploiement d'un système de Helpdesk et d'inventaire complet basé sur GLPI version 11. Ce déploiement s'effectue sur le nœud hyperviseur `pve2` (ID : 20805) au moyen d'une machine virtuelle fonctionnant sous le système d'exploitation Debian 13.
-
-Les paramètres de l'infrastructure réseau sont strictement définis et doivent être respectés tout au long du cycle de vie du serveur :
-
-| Paramètre d'Infrastructure | Valeur Assignée |
-| :--- | :--- |
-| Nom d'hôte (Hostname) | `GLPIECOCERT` |
-| Adresse IP statique | `172.16.54.40` |
-| Passerelle par défaut (Gateway) | `172.16.54.253` |
-| Système d'Exploitation | Debian 13 (Trixie) |
-| Moteur ITSM | GLPI 11.0.0 (Architecture Front Controller) |
-
-### 2.2 Analyse des Risques et Cadre Réglementaire (ANSSI & CNIL)
-
-Un système ITSM tel que GLPI concentre des données d'une criticité absolue : cartographie du réseau, configurations matérielles, mots de passe d'équipements, annuaires d'utilisateurs et historiques d'incidents. La compromission de ce serveur offre à un attaquant une vision panoptique du système d'information, facilitant les mouvements latéraux et l'élévation de privilèges.
-
-Le déploiement doit répondre à deux cadres réglementaires majeurs :
-- **L'ANSSI**, au travers de son guide d'hygiène informatique et de ses recommandations de sécurité relatives à un système GNU/Linux (guide ANSSI-BP-028), impose une approche de défense en profondeur. Cela se traduit par le durcissement du noyau, la limitation des composants installés au strict nécessaire, la sécurisation des échanges via le protocole HTTPS exclusif, et la configuration restrictive des serveurs web (Apache) et des langages d'exécution (PHP).
-- **La CNIL**, garante du respect du RGPD, impose des mesures techniques pour protéger les données à caractère personnel contenues dans les tickets d'assistance et les profils utilisateurs. Cela implique une politique stricte de gestion des mots de passe, l'interdiction absolue de conserver des comptes par défaut, la sécurisation des cookies de session, et la mise en œuvre de l'authentification multifacteur (MFA) pour les accès à privilèges.
-
-### 2.3 Mitigation des Vulnérabilités RCE (CVE-2024-37149)
-
-L'écosystème GLPI a fait l'objet d'alertes de sécurité critiques, notamment la vulnérabilité CVE-2024-37149. Cette faille permettait à un utilisateur authentifié de téléverser des scripts PHP malveillants via le mécanisme de gestion des plugins, conduisant à une exécution de code à distance (RCE) et à la compromission totale du serveur.
-
-Pour neutraliser définitivement ce vecteur d'attaque, la nouvelle architecture de GLPI 11 impose deux changements structurels majeurs que ce rapport implémente de manière exhaustive :
-1. **L'utilisation d'un Front Controller** : L'accès direct aux scripts PHP est interdit. Toutes les requêtes HTTP doivent obligatoirement converger vers le fichier `/public/index.php`.
-2. **L'externalisation des données (Filesystem Segregation)** : Les répertoires contenant les fichiers téléchargés, les configurations et les plugins (`GLPI_MARKETPLACE_DIR`) sont physiquement déplacés en dehors de la racine web (`DocumentRoot`) du serveur Apache.
+La **Mission 3** requiert l'installation en ligne de commande (CLI) du système de Helpdesk et d'inventaire GLPI (version 11). Ce déploiement s'effectue sur le nœud hyperviseur `pve2` (ID : 20805) via la machine virtuelle Debian 13 nommée **GLPIECOCERT** (IP : `172.16.54.40`, Passerelle : `172.16.54.253`). Cette documentation intègre toutes les bonnes pratiques de sécurité (PHP 8.4 FPM, sécurisation MariaDB, externalisation des dossiers sensibles et routage par Alias).
 
 ## 3. Ingénierie de l'Infrastructure et Préparation du Système d'Exploitation
 
