@@ -146,7 +146,7 @@ Créez la base de données et l'utilisateur :
 
 ```sql title="MariaDB"
 CREATE DATABASE glpi;
-CREATE USER 'glpi_user'@'localhost' IDENTIFIED BY 'Ecocert2026!';
+CREATE USER 'glpi_user'@'localhost' IDENTIFIED BY 'VotreMotDePasseIci';
 GRANT ALL PRIVILEGES ON glpi.* TO 'glpi_user'@'localhost';
 GRANT SELECT ON mysql.time_zone_name TO 'glpi_user'@'localhost';
 FLUSH PRIVILEGES;
@@ -287,7 +287,7 @@ Lancez l'installation de la base avec l'utilisateur `www-data` :
 
 ```bash title="Terminal"
 cd /var/www/html/glpi
-sudo -u www-data php bin/console db:install --db-host=localhost --db-name=glpi --db-user=glpi_user --db-password='Ecocert2026!' --no-interaction
+sudo -u www-data php bin/console db:install --db-host=localhost --db-name=glpi --db-user=glpi_user --db-password='VotreMotDePasseIci' --no-interaction
 ```
 
 ### 9.2 Sécurisation de la clé GLPI
