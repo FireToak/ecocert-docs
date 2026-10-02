@@ -1,38 +1,93 @@
-# BTS SIO - ECOCERT - DOCUMENTATION
+# BTS SIO — ECOCERT — DOCUMENTATION
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ## Contexte
 
-Ce dépôt centralise la documentation d'infrastructure du projet ECOCERT, un organisme de certification. Hébergé sous forme de site statique généré (via Zensical/MkDocs), il documente le déploiement, la configuration et l'exploitation des environnements Windows (Active Directory, SQL Server), Debian (Apache, Glassfish) et Réseau (Stormshield, Cisco). Il est géré via une approche GitOps collaborative garantissant l'intégrité et la révision par les pairs des procédures techniques.
+Ce dépôt centralise la documentation d'infrastructure du projet **ECOCERT**, un organisme de certification de pratiques durables et de l'agriculture biologique. Hébergé sous forme de site statique généré via **Zensical**, il documente le déploiement, la configuration et l'exploitation des environnements Windows Server (Active Directory, LDAPS), Debian 13 (GLPI 11, Kea DHCP, TrueNAS) et Réseau (Stormshield, Cisco, UniFi). Il est géré via une approche GitOps collaborative garantissant l'intégrité et la révision par les pairs des procédures techniques.
 
------
+---
 
 ## Structure du dépôt
 
-L’organisation du dépôt suit la logique suivante :
-
 ```text
 ecocert-docs/
-├── 01-ressources/
-│   ├── plan-adressage.md
-│   └── schemas.md
-├── 02-reseau/
-│   ├── index.md
-│   └── configuration-stormshield.md
-├── 03-debian/
-│   ├── dhcp/
-│   ├── glpi/
-│   └── nas/
-└── 04-windows/
-    ├── ad/
-    └── commun/
+├── docs/
+│   ├── index.md                          ← Page d'accueil du site
+│   ├── 01-ressources/                    ← Architecture globale
+│   │   ├── index.md
+│   │   ├── annuaire-machine.md
+│   │   ├── plan-adressage.md
+│   │   ├── table-routage.md
+│   │   ├── table-nat.md
+│   │   ├── schemas.md
+│   │   ├── contexte.md
+│   │   ├── conf-ressources-equipements.md
+│   │   └── pki.md
+│   ├── 02-reseau/                        ← Équipements réseau
+│   │   ├── index.md
+│   │   ├── expl-cisco-reinitialisation.md
+│   │   ├── pare-feu/
+│   │   │   ├── conf-stormshield-interface.md
+│   │   │   ├── conf-stormshield-nat.md
+│   │   │   ├── conf-stormshield-routage.md
+│   │   │   ├── expl-stormshield-sauvegarde.md
+│   │   │   └── rect-stormshield-parefeu.md
+│   │   ├── commutateur/
+│   │   │   └── rect-cisco-commutateur.md
+│   │   └── wifi/
+│   │       ├── inst-unifi-controleur.md
+│   │       ├── conf-unifi-postinstall.md
+│   │       ├── conf-unifi-equipement.md
+│   │       ├── conf-unifi-wifi.md
+│   │       ├── rect-unifi-controleur.md
+│   │       └── rect-unifi-wifi.md
+│   ├── 03-debian/                        ← Serveurs Linux Debian 13
+│   │   ├── index.md
+│   │   ├── commun/
+│   │   │   ├── conf-commun-hostname.md
+│   │   │   └── expl-commun-apparmor.md
+│   │   ├── glpi/
+│   │   │   ├── inst-glpi-debian.md
+│   │   │   ├── conf-glpi-debian.md
+│   │   │   ├── conf-glpi-ldaps.md
+│   │   │   └── conf-glpi-gpo.md
+│   │   ├── dhcp/
+│   │   │   ├── inst-dhcp-kea.md
+│   │   │   ├── conf-dhcp-kea.md
+│   │   │   ├── conf-dhcp-avancer.md
+│   │   │   ├── expl-dhcp-script.md
+│   │   │   ├── rect-dhcp-kea.md
+│   │   │   └── rect-dhcp-script.md
+│   │   └── nas/
+│   │       ├── inst-nas-truenas.md
+│   │       ├── conf-nas-truenas.md
+│   │       ├── conf-nas-zfs.md
+│   │       └── rect-nas-truenas.md
+│   └── 04-windows/                       ← Serveurs Windows Server
+│       ├── index.md
+│       ├── ad/
+│       │   ├── inst-ad-windows.md
+│       │   ├── conf-ad-windows.md
+│       │   ├── conf-ad-ldaps.md
+│       │   └── rect-ad-windows.md
+│       └── commun/
+│           └── conf-commun-network.md
+├── zensical.toml                         ← Configuration du site (navigation, thème)
+├── requirements.txt
+└── README.md
 ```
 
-* **`01-ressources/`** : Regroupe les documents d'architecture globale (schémas topologiques, plans d'adressage IP et de routage, tables NAT).
-* **`02-reseau/`** : Centralise les procédures de configuration des équipements d'interconnexion (commutateurs Cisco, pare-feu Stormshield, bornes Wifi). Le fichier `index.md` définit le point d'entrée pour la navigation.
-* **`03-debian/`** : Stocke les documentations d'administration des serveurs Linux (déploiement des serveurs Web et d'applications).
-* **`04-windows/`** : Contient les procédures liées à l'écosystème Microsoft (installation et gestion d'Active Directory, DHCP, SQL Server 2022).
+### Convention de nommage des fichiers
+
+Tous les fichiers Markdown respectent la convention `[type]-[service]-[technologie].md` :
+
+| Préfixe | Type de document |
+| :--- | :--- |
+| `inst-` | Procédure d'**installation** pas à pas |
+| `conf-` | Procédure de **configuration** d'un service |
+| `rect-` | **Fiche recette** (validation / tests) |
+| `expl-` | **Explication** / synthèse théorique |
 
 ---
 
@@ -40,55 +95,48 @@ ecocert-docs/
 
 ### 1. Cloner le dépôt localement
 
-Récupération des fichiers source du projet sur votre poste de travail.
-
 ```bash
-# git clone : Télécharge une copie locale complète du dépôt distant spécifié.
 git clone https://github.com/firetoak/ecocert-docs.git
-
-# cd (change directory) : Modifie le répertoire de travail courant pour entrer dans le dossier cloné.
 cd ecocert-docs
-
 ```
 
 ### 2. Créer une branche de travail
 
-Afin de ne pas impacter la branche principale (`main`), chaque nouvelle procédure doit être rédigée dans un espace isolé.
+Toujours travailler dans une branche dédiée pour ne pas impacter `main` :
 
 ```bash
-# git checkout -b : Commande combinée permettant de créer une nouvelle branche (ex: 'ajout-docs-ad') et de basculer immédiatement dessus.
-git checkout -b ajout-docs-ad
-
+git checkout -b feat/ajout-docs-glpi
 ```
 
 ### 3. Enregistrer et pousser les modifications
 
-Une fois les fichiers Markdown modifiés ou créés, il faut sauvegarder l'état et l'envoyer sur le dépôt distant pour préparer la revue de code.
-
 ```bash
-# git add . : Ajoute (indexe) toutes les modifications et nouveaux fichiers du répertoire courant pour le prochain commit.
+# Indexer les fichiers modifiés
 git add .
 
-# git commit -m : Valide les modifications indexées dans l'historique local avec un message descriptif (-m).
-git commit -m "docs: ajout de la procédure d'installation du serveur AD"
+# Créer un commit descriptif
+git commit -m "docs: ajout de la procédure d'installation GLPI"
 
-# git push : Transfère les commits de votre branche locale vers le serveur distant (origin).
-git push origin ajout-docs-ad
-
+# Pousser la branche sur GitHub
+git push origin feat/ajout-docs-glpi
 ```
 
-Une fois cette étape terminée, il est nécessaire d'ouvrir une *Pull Request* (PR) sur GitHub afin qu'un autre administrateur puisse relire et valider la documentation avant son intégration.
+Une fois cette étape terminée, ouvrez une **Pull Request** sur GitHub pour qu'un autre administrateur relie et valide la documentation avant son intégration sur `main`.
+
+> [!NOTE]
+> Une fois le `merge` effectué sur `main`, la chaîne CI/CD via **GitHub Actions** compilera automatiquement les fichiers et déploiera la nouvelle version du site.
 
 ---
 
-## Bonnes pratiques et sécurité
+## Bonnes pratiques
 
-1. **Revue par les pairs (Peer Review)** : Ne jamais pousser de code directement sur la branche `main`. L'utilisation des Pull Requests garantit que la documentation est compréhensible, sans erreur, et validée par le binôme avant la compilation du site.
-2. **Ordre d'affichage par préfixe** : L'utilisation de préfixes numériques (ex: `01-`, `02-`) pour les noms de dossiers est requise. Cela permet au générateur de site de trier correctement les catégories dans le menu latéral tout en conservant l'auto-découverte.
+1. **Revue par les pairs (Peer Review)** : Ne jamais pousser directement sur `main`. Les Pull Requests garantissent que la documentation est claire, sans erreur, et validée avant la mise en ligne.
+2. **Convention de nommage stricte** : Tout fichier créé doit respecter la convention `[type]-[service]-[techno].md` décrite ci-dessus.
+3. **Template de procédure** : Chaque fichier doit commencer par le frontmatter YAML, la bannière ECOCERT, l'encart `!!! note "Méta-informations"` et un sommaire.
 
 ---
 
 ## 👨‍💻 Mainteneurs
 
 * **Louis MEDO** | [LinkedIn](https://www.linkedin.com/in/louismedo/) | [Portfolio](https://louis.loutik.fr/) | [GitHub](https://github.com/FireToak) | [louis.medo@loutik.fr](mailto:louis.medo@loutik.fr)
-* **Amine Kada** | [GitHub](https://github.com/IT-Amine) | [Portfolio](https://amine-it.vercel.app/) 
+* **Amine KADA** | [GitHub](https://github.com/IT-Amine) | [Portfolio](https://amine-it.vercel.app/)

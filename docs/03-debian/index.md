@@ -4,4 +4,9 @@
 
 ---
 
-Cette section centralise les procédures de déploiement, de configuration système et de maintenance des serveurs sous la distribution Debian. Vous y trouverez les documentations relatives à l'initialisation de l'OS, à la gestion des services réseau (comme le serveur DHCP), ainsi qu'à la mise en production des briques d'hébergement web et applicatives (serveur Web Apache, serveur d'application Glassfish, PHP et Java) nécessaires au portail de certification en ligne.
+Cette section centralise les procédures de déploiement, de configuration et de maintenance des serveurs sous **Debian 13 (Trixie)**. Vous y trouverez les documentations relatives à :
+
+* **Commun** : Procédures communes à tous les serveurs Debian (hostname/FQDN, AppArmor).
+* **GLPI 11** : Installation CLI sécurisée (PHP-FPM, ségrégation des dossiers, HTTPS) et configurations avancées (synchronisation LDAPS, déploiement de l'agent par GPO).
+* **Kea DHCP** : Installation, configuration des plages, réservations et script de gestion.
+* **TrueNAS** : Déploiement du NAS et configuration du système de fichiers ZFS.

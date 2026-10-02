@@ -14,9 +14,10 @@ tags:
 ---
 
 !!! note "Méta-informations"
-    - **Auteur(s) :** KADA Amine (Documentation révisée et augmentée)
-    - **Date de MAJ :** 23/09/2026
-    - **Domaine :** Infrastructures Linux Debian 13 / ITSM GLPI 11 / Cybersécurité
+
+    - **Auteur(s) :** KADA Amine
+    - **Date :** 23/09/2026
+    - **Domaine :** Debian 13
 
 ---
 
@@ -24,46 +25,46 @@ tags:
 
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
-- [3. Ingénierie de l'Infrastructure et Préparation du Système d'Exploitation](#3-ingenierie-de-linfrastructure-et-preparation-du-systeme-dexploitation)
-- [4. Architecture et Déploiement de la Pile LAMP](#4-architecture-et-deploiement-de-la-pile-lamp)
-- [5. Durcissement et Sécurisation (ANSSI, MariaDB, PHP)](#5-durcissement-et-securisation-anssi-mariadb-php)
-- [6. Création et Cloisonnement de la Base de Données GLPI](#6-creation-et-cloisonnement-de-la-base-de-donnees-glpi)
-- [7. Téléchargement, Isolation et Ségrégation de l'Architecture GLPI](#7-telechargement-isolation-et-segregation-de-larchitecture-glpi)
-- [8. Configuration du Routage Front Controller Apache](#8-configuration-du-routage-front-controller-apache)
-- [9. Initialisation par l'Interface en Ligne de Commande (CLI) et Chiffrement](#9-initialisation-par-linterface-en-ligne-de-commande-cli-et-chiffrement)
-- [10. Post-Installation et Conformité Administrative (CNIL / Sécurité)](#10-post-installation-et-conformite-administrative-cnil-securite)
+- [3. Préparation du système (Debian 13)](#3-preparation-du-systeme-debian-13)
+- [4. Installation des prérequis (Serveur Web et Base de données)](#4-installation-des-prerequis-serveur-web-et-base-de-donnees)
+- [5. Sécurisation de la base de données et de PHP](#5-securisation-de-la-base-de-donnees-et-de-php)
+- [6. Création de la base de données GLPI](#6-creation-de-la-base-de-donnees-glpi)
+- [7. Installation de GLPI et externalisation des données](#7-installation-de-glpi-et-externalisation-des-donnees)
+- [8. Configuration du site web (VirtualHost Apache)](#8-configuration-du-site-web-virtualhost-apache)
+- [9. Installation finale en ligne de commande (CLI)](#9-installation-finale-en-ligne-de-commande-cli)
+- [10. Post-installation et Sécurités](#10-post-installation-et-securites)
 
 ## 2. Contexte
 
 La **Mission 3** requiert l'installation en ligne de commande (CLI) du système de Helpdesk et d'inventaire GLPI (version 11). Ce déploiement s'effectue sur le nœud hyperviseur `pve2` (ID : 20805) via la machine virtuelle Debian 13 nommée **GLPIECOCERT** (IP : `172.16.54.40`, Passerelle : `172.16.54.253`). Cette documentation intègre toutes les bonnes pratiques de sécurité (PHP 8.4 FPM, sécurisation MariaDB, externalisation des dossiers sensibles et routage par Alias).
 
-## 3. Ingénierie de l'Infrastructure et Préparation du Système d'Exploitation
+## 3. Préparation du système (Debian 13)
 
-La fondation du déploiement repose sur un système Debian 13 sain, à jour et minimaliste. Avant de superposer les couches logicielles, il est impératif de s'assurer de l'intégrité de la distribution.
+Avant d'installer GLPI, on met à jour le système pour avoir une base propre et sécurisée.
 
-Exécutez la commande d'actualisation globale du système :
+Mettez à jour les paquets :
 
 ```bash title="Terminal"
 apt update && apt upgrade -y
 ```
 
-Le drapeau `-y` automatise l'acceptation des modifications, facilitant ainsi l'intégration de cette documentation dans des scripts de provisionnement automatisés.
+L'option `-y` valide automatiquement les installations sans vous poser de questions.
 
-## 4. Architecture et Déploiement de la Pile LAMP
+## 4. Installation des prérequis (Serveur Web et Base de données)
 
-L'acronyme LAMP désigne l'écosystème Linux, Apache, MariaDB et PHP. Pour GLPI 11, la synergie entre ces composants doit être orchestrée avec précision.
+GLPI a besoin d'un environnement classique : un serveur web (Apache), une base de données (MariaDB) et PHP.
 
-### 4.1 Installation du Serveur Web et du Moteur Relationnel
+### 4.1 Installation d'Apache et MariaDB
 
-Le serveur HTTP Apache (version 2.4) et le système de gestion de base de données MariaDB sont déployés à partir des dépôts officiels de Debian.
+On installe Apache et MariaDB depuis les dépôts officiels.
 
 ```bash title="Terminal"
 apt install apache2 mariadb-server -y
 ```
 
-### 4.2 Intégration du Dépôt SURY pour PHP 8.4
+### 4.2 Ajout du dépôt pour PHP 8.4
 
-Le cycle de vie de développement de GLPI 11 et les impératifs de performance dictent l'utilisation de PHP 8.4. Pour garantir l'accès aux correctifs de sécurité immédiats pour cette branche spécifique, l'infrastructure s'appuie sur le dépôt officiel de l'Ondřej Surý.
+GLPI 11 recommande d'utiliser PHP 8.4 pour de meilleures performances. On ajoute donc le dépôt officiel de Surý (le mainteneur PHP pour Debian).
 
 ```bash title="Terminal"
 apt install -y apt-transport-https lsb-release ca-certificates curl
@@ -72,17 +73,17 @@ sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://pa
 apt update
 ```
 
-### 4.3 Déploiement du Moteur PHP-FPM et des Extensions Applicatives
+### 4.3 Installation de PHP et ses extensions
 
-Historiquement, PHP était intégré à Apache via le module `mod_php`. Cette architecture monolithique est obsolète et contraire aux recommandations de l'ANSSI. La documentation déploie **PHP-FPM** (FastCGI Process Manager), qui crée un service d'exécution isolé.
+Pour des raisons de sécurité (recommandations ANSSI), on n'utilise plus le vieux module Apache (`mod_php`). On utilise **PHP-FPM** qui sépare l'exécution de PHP d'Apache.
 
 ```bash title="Terminal"
 apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-gd php8.4-mbstring php8.4-intl php8.4-bz2 php8.4-zip php8.4-ldap php8.4-apcu
 ```
 
-### 4.4 Interface et Activation des Modules Apache
+### 4.4 Configuration d'Apache
 
-Pour qu'Apache puisse relayer le trafic HTTP vers le socket PHP-FPM, des modules proxy spécifiques doivent être activés.
+On active les modules Apache nécessaires pour faire le lien avec PHP et pour utiliser le HTTPS.
 
 ```bash title="Terminal"
 a2enmod proxy_fcgi setenvif headers rewrite ssl
@@ -90,31 +91,31 @@ a2enconf php8.4-fpm
 systemctl restart apache2
 ```
 
-## 5. Durcissement et Sécurisation (ANSSI, MariaDB, PHP)
+## 5. Sécurisation de la base de données et de PHP
 
-### 5.1 Verrouillage du SGBD MariaDB et Gestion des Fuseaux Horaires
+### 5.1 Sécurisation de MariaDB et fuseaux horaires
 
-Le script interactif supprime les comptes anonymes, interdit les connexions distantes pour l'utilisateur root, et efface les bases de données de test.
+Lancez ce script pour sécuriser la base de données (il supprime les accès anonymes et bloque le root à distance) :
 
 ```bash title="Terminal"
 mysql_secure_installation
 ```
 
-L'exactitude temporelle est critique pour un outil ITSM. Il faut extraire les informations temporelles du système d'exploitation Debian et les injecter dans le dictionnaire interne du SGBD :
+GLPI a besoin de connaître les fuseaux horaires mondiaux pour bien dater les tickets (SLA). On les importe avec cette commande :
 
 ```bash title="Terminal"
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql
 ```
 
-### 5.2 Sécurisation Avancée de PHP-FPM (Conformité CNIL et ANSSI)
+### 5.2 Sécurisation de PHP (php.ini)
 
-Ouvrez le fichier de configuration avec un éditeur de texte :
+Éditez le fichier de configuration de PHP :
 
 ```bash title="Terminal"
 nano /etc/php/8.4/fpm/php.ini
 ```
 
-La table ci-dessous détaille les directives à modifier, leurs nouvelles valeurs et la justification de sécurité associée :
+Voici les paramètres de sécurité à modifier. Remplacez les valeurs par défaut par celles-ci :
 
 | Directive PHP (`php.ini`) | Valeur Cible | Raisonnement de Sécurité (ANSSI / CNIL) |
 | :--- | :--- | :--- |
@@ -131,17 +132,17 @@ Appliquez les changements :
 systemctl restart php8.4-fpm
 ```
 
-## 6. Création et Cloisonnement de la Base de Données GLPI
+## 6. Création de la base de données GLPI
 
-La base de données doit être isolée. L'application GLPI ne doit en aucun cas utiliser le compte d'administration global (`root`).
+Pour la sécurité, GLPI ne doit pas utiliser l'utilisateur `root`. On lui crée un utilisateur dédié (`glpi_user`).
 
-Lancez l'interpréteur de commandes MariaDB :
+Connectez-vous à MariaDB :
 
 ```bash title="Terminal"
 mysql -u root -p
 ```
 
-Exécutez les requêtes suivantes :
+Créez la base de données et l'utilisateur :
 
 ```sql title="MariaDB"
 CREATE DATABASE glpi;
@@ -152,37 +153,37 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-L'octroi du droit de lecture (`GRANT SELECT`) sur la table `mysql.time_zone_name` est vital pour gérer les changements d'heure (heure d'été/hiver).
+Le droit `GRANT SELECT` sur la table `time_zone_name` permet à GLPI de gérer automatiquement les changements d'heure.
 
-## 7. Téléchargement, Isolation et Ségrégation de l'Architecture GLPI
+## 7. Installation de GLPI et externalisation des données
 
-L'installation traditionnelle plaçait l'intégralité du code dans `/var/www/html/glpi`. Cette conception monolithique est responsable des failles d'inclusion de fichiers. La démarche suivante implémente la séparation de la logique applicative et des données persistantes.
+Par mesure de sécurité (recommandé par l'éditeur), on ne laisse plus les fichiers de données dans le dossier web `/var/www/html/`. On les déplace vers `/var/lib/` et `/etc/` pour empêcher les piratages.
 
-### 7.1 Téléchargement et Déploiement des Sources
+### 7.1 Téléchargement de GLPI 11
 
 ```bash title="Terminal"
-wget https://github.com/glpi-project/glpi/releases/download/11.0.0/glpi-11.0.0.tgz
-tar -xzvf glpi-11.0.0.tgz -C /var/www/html/
+wget https://github.com/glpi-project/glpi/releases/download/11.0.11/glpi-11.0.11.tgz
+tar -xzvf glpi-11.0.11.tgz -C /var/www/html/
 ```
 
-### 7.2 Ségrégation des Dossiers Sensibles et Externalisation
+### 7.2 Déplacement des dossiers sensibles
 
-Création de la nouvelle arborescence de stockage :
+Créez les dossiers qui vont accueillir les données :
 
 ```bash title="Terminal"
 mkdir -p /etc/glpi /var/lib/glpi/files /var/lib/glpi/plugins /var/log/glpi
 ```
 
-Déplacement des éléments fournis par défaut :
+Déplacez les configurations et les fichiers vers ces nouveaux dossiers sécurisés :
 
 ```bash title="Terminal"
 mv /var/www/html/glpi/config/* /etc/glpi/
 mv /var/www/html/glpi/files/* /var/lib/glpi/files/
 ```
 
-### 7.3 Liaison Logique via downstream.php et local_define.php
+### 7.3 Lien entre le code et les données
 
-Création du fichier d'amorçage primaire :
+Il faut dire à GLPI où se trouvent ses fichiers de configuration. Créez ce fichier :
 
 ```bash title="Terminal"
 nano /var/www/html/glpi/inc/downstream.php
@@ -196,7 +197,7 @@ if (file_exists(GLPI_CONFIG_DIR . '/local_define.php')) {
 }
 ```
 
-Ensuite, créez le registre des constantes globales qui cartographie l'architecture externalisée :
+Créez ensuite le fichier de constantes pour lui dire où se trouvent les logs et les plugins :
 
 ```bash title="Terminal"
 nano /etc/glpi/local_define.php
@@ -224,28 +225,28 @@ define('GLPI_CACHE_DIR', GLPI_VAR_DIR . '/_cache');
 // Externalisation des journaux
 define('GLPI_LOG_DIR', '/var/log/glpi');
 
-// Sécurisation critique des plugins (Mitigation CVE-2024-37149)
+// Sécurisation critique des plugins
 define('GLPI_MARKETPLACE_DIR', '/var/lib/glpi/plugins');
 ```
 
-### 7.4 Application des Stratégies de Permissions
+### 7.4 Droits d'accès
 
-L'utilisation de permissions trop laxistes (comme chmod 777) est une aberration de sécurité proscrite par l'ANSSI. Le processus `www-data` doit être le propriétaire exclusif.
+Donnez la propriété des dossiers à l'utilisateur du serveur web (`www-data`). Ne mettez jamais de chmod 777 !
 
 ```bash title="Terminal"
 chown -R www-data:www-data /var/www/html/glpi /etc/glpi /var/lib/glpi /var/log/glpi
 ```
 
-## 8. Configuration du Routage Front Controller Apache
+## 8. Configuration du site web (VirtualHost Apache)
 
-Le DocumentRoot pointe explicitement et uniquement vers le sous-dossier `/public` de GLPI. Les fichiers hors de ce dossier deviennent topologiquement invisibles depuis le réseau.
+On configure Apache pour pointer uniquement vers le sous-dossier `/public`. Les visiteurs ne peuvent donc pas accéder aux fichiers du moteur GLPI.
 
 ```bash title="Terminal"
 nano /etc/apache2/sites-available/default-ssl.conf
 ```
 
 ```apache title="/etc/apache2/sites-available/default-ssl.conf"
-# Modification du DocumentRoot pour cibler le Front Controller
+# Cibler le Front Controller
 DocumentRoot /var/www/html/glpi/public
 
 # Définition des règles d'accès et de réécriture
@@ -256,7 +257,7 @@ DocumentRoot /var/www/html/glpi/public
     RewriteEngine On
     RewriteBase /
     
-    # Sécurisation des en-têtes HTTP (Recommandations ANSSI-BP-028)
+    # Sécurisation des en-têtes HTTP
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set X-Content-Type-Options "nosniff"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -276,59 +277,59 @@ a2ensite default-ssl
 systemctl restart apache2
 ```
 
-## 9. Initialisation par l'Interface en Ligne de Commande (CLI) et Chiffrement
+## 9. Installation finale en ligne de commande (CLI)
 
-L'anomalie critique du document original résidait dans l'instruction de finaliser l'installation via un navigateur web. Exposer une procédure d'installation non finalisée sur une IP de production constitue un risque d'interception inacceptable ("Race Condition").
+Il est beaucoup plus sécurisé de lancer l'installation en ligne de commande plutôt que depuis le navigateur web (où quelqu'un d'autre pourrait s'y connecter avant vous).
 
-### 9.1 Déploiement du Schéma de Base de Données
+### 9.1 Création des tables
 
-Lancez l'installation du schéma SQL en passant les variables d'environnement silencieusement (drapeau `--no-interaction`) en tant que `www-data`.
+Lancez l'installation de la base avec l'utilisateur `www-data` :
 
 ```bash title="Terminal"
 cd /var/www/html/glpi
 sudo -u www-data php bin/console db:install --db-host=localhost --db-name=glpi --db-user=glpi_user --db-password='Ecocert2026!' --no-interaction
 ```
 
-### 9.2 Sécurisation Cryptographique du Moteur
+### 9.2 Sécurisation de la clé GLPI
 
-La génération automatisée d'une clé robuste (`glpicrypt.key`) est une exigence absolue pour se prémunir contre les fuites de données.
+On génère une clé de chiffrement forte pour protéger les mots de passe stockés dans GLPI :
 
 ```bash title="Terminal"
 sudo -u www-data php bin/console glpi:security:change_key --no-interaction
 ```
 
-### 9.3 Audit de Conformité de l'Environnement
+### 9.3 Vérification finale
 
-Avant de confier le système aux administrateurs, il est nécessaire de réaliser un auto-diagnostic. Une sortie vierge d'erreur rouge confirme l'intégrité architecturale.
+Lancer cette commande pour vérifier que l'environnement de GLPI est valide (s'il n'y a pas d'erreur rouge, c'est bon !) :
 
 ```bash title="Terminal"
 sudo -u www-data php bin/console glpi:system:check_requirements
 ```
 
-## 10. Post-Installation et Conformité Administrative (CNIL / Sécurité)
+## 10. Post-installation et Sécurités
 
-L'installation CLI est terminée. Le système est immédiatement opérationnel, fiable et accessible via l'URL sécurisée : [https://172.16.54.40](https://172.16.54.40).
+L'installation est terminée ! GLPI est accessible en HTTPS sur : [https://172.16.54.40](https://172.16.54.40).
 
-### 10.1 Éradication du Répertoire d'Installation
+### 10.1 Suppression du dossier d'installation
 
-La présence du dossier `install` constitue une menace résiduelle et doit être purgée du système de fichiers.
+Le dossier d'installation ne sert plus et doit être supprimé pour éviter les piratages :
 
 ```bash title="Terminal"
 rm -rf /var/www/html/glpi/install
 ```
 
-### 10.2 Planification des Tâches Asynchrones (Cron)
+### 10.2 Tâches automatiques (Cron)
 
-L'intégration de la commande GLPI au planificateur garantit une exécution régulière et fiable.
+On crée une tâche planifiée pour que GLPI gère les actions automatiques tout seul (comme les alertes email) :
 
 ```bash title="Terminal"
 echo "* * * * * www-data /usr/bin/php /var/www/html/glpi/front/cron.php &>/dev/null" > /etc/cron.d/glpi
 ```
 
-### 10.3 Politiques d'Identité et Authentification
+### 10.3 Sécurité des comptes
 
-Lors de la première connexion à l'interface, l'administrateur de l'infrastructure d'ECOCERT est tenu d'appliquer ce protocole :
+Lors de votre première connexion, appliquez ces règles de sécurité :
 
-- **Destruction des comptes de démonstration** : L'accès immédiat aux comptes `glpi` (mdp: glpi), `tech` (mdp: tech), `normal` (mdp: normal), et `post-only` (mdp: postonly) représente une violation flagrante. Ils doivent être modifiés immédiatement.
-- **Enrôlement MFA Obligatoire** : GLPI 11 intègre nativement l'Authentification Multi-Facteur (MFA/TOTP). Son activation doit être rendue obligatoire pour tous les profils de type "Super-Admin" et "Admin".
-- **Paramétrage des stratégies de mots de passe** : Configurez la longueur minimale du mot de passe à 12 caractères, avec expiration et rotation obligatoire.
+- **Changer les mots de passe par défaut** : Les comptes par défaut (`glpi`, `tech`, `normal`, `post-only`) doivent avoir leur mot de passe changé immédiatement ou être désactivés / supprimer.
+- **Activer le MFA (Double authentification)** : Activez le MFA pour tous les comptes administrateurs.
+- **Stratégie de mots de passe** : Forcez des mots de passe de 12 caractères minimum dans la configuration de GLPI.

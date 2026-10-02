@@ -39,23 +39,25 @@ Message pour l'ia : Tu mets à jour avec les informations données en entrée da
 
 ### Administration Windows
 
-* **Active Directory** : Mise en place de l'annuaire centralisé pour la gestion des identités, des accès utilisateurs et de l'authentification sur le domaine.
-* **DHCP** : Configuration de l'attribution dynamique des adresses IP pour l'ensemble des équipements du réseau.
-* **SQL Server 2022** : Déploiement du système de gestion de bases de données relationnelles (SGBD) hébergeant les données de certification.
+* **Active Directory (AD DS)** : Mise en place de l'annuaire centralisé pour la gestion des identités, des accès utilisateurs et de l'authentification sur le domaine `local.ecocert4.fr`.
+* **LDAPS** : Sécurisation du protocole LDAP par TLS pour permettre à GLPI de synchroniser les utilisateurs de l'AD de manière chiffrée.
 
-### Exploitation des services
+### Exploitation des services (Debian 13)
 
-* **Proxmox** : Gestion de la ferme de serveurs pour la virtualisation et la haute disponibilité de l'infrastructure.
-* **Apache 2.4.56 & Glassfish 6** : Déploiement des serveurs Web et d'applications pour héberger les services en ligne destinés au public et aux producteurs.
+* **GLPI 11** : Déploiement du système de Helpdesk et d'inventaire (ITSM) pour la gestion des tickets, des actifs et des utilisateurs du parc informatique.
+* **Kea DHCP** : Configuration du serveur DHCP pour l'attribution dynamique et réservée des adresses IP de tous les équipements du réseau.
+* **TrueNAS** : Mise en place du serveur de stockage réseau (NAS) avec système de fichiers ZFS pour la sauvegarde et le partage de données.
+* **AppArmor** : Configuration du module de sécurité du noyau Linux pour le confinement des services (profil de sécurité mandatoire).
 
 ### Administration et supervision des réseaux
 
-* **Cisco (Niveau 2 et 3)** : Configuration des commutateurs pour assurer le routage, la segmentation VLAN et la connectivité globale.
-* **Borne Wifi** : Mise en place de l'infrastructure réseau sans fil.
+* **Cisco (Niveau 2 et 3)** : Configuration des commutateurs pour assurer le routage inter-VLAN, la segmentation et la connectivité globale.
+* **Unifi (Borne Wifi)** : Déploiement et configuration de l'infrastructure réseau sans fil via le contrôleur UniFi.
 
 ### Cybersécurité
 
-* **Stormshield SN 210** : Intégration du pare-feu matériel pour filtrer les flux réseaux, sécuriser les accès externes et protéger l'infrastructure interne.
+* **Stormshield SN 210** : Intégration du pare-feu matériel pour filtrer les flux réseaux, sécuriser les accès externes et protéger l'infrastructure interne (NAT, Routage, Politique de filtrage).
+* **PKI (Infrastructure à Clés Publiques)** : Synthèse des concepts de gestion des certificats numériques, de la chaîne de confiance et du cycle de vie des certificats.
 
 ## 4. 🧠 Compétences du référentiel de BTS SIO
 
