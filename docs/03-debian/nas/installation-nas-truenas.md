@@ -1,5 +1,8 @@
+
 ---
+
 description: Procédure de création de la VM et d'installation de l'OS TrueNAS sur l'hyperviseur Proxmox.
+
 ---
 
 # Installation du NAS TrueNAS
@@ -15,11 +18,11 @@ description: Procédure de création de la VM et d'installation de l'OS TrueNAS 
 
 ## 1. Sommaire
 
-1. Sommaire
-2. Contexte
-3. Création de la Machine Virtuelle (Proxmox)
-4. Ajout des disques de stockage (SATA)
-5. Installation du système TrueNAS
+- [1. Sommaire](#1-sommaire)
+- [2. Contexte](#2-contexte)
+- [3. Création de la Machine Virtuelle (Proxmox)](#3-creation-de-la-machine-virtuelle-proxmox)
+- [4. Ajout des disques de stockage (SATA)](#4-ajout-des-disques-de-stockage-sata)
+- [5. Installation du système TrueNAS](#5-installation-du-systeme-truenas)
 
 ## 2. Contexte
 
@@ -29,7 +32,7 @@ Le serveur **NASECOCERT** nécessite un socle solide pour opérer en tant que se
 
 3.1.  **Configuration matérielle de base**. Création de la VM sur le nœud Proxmox.
 
-- `OS` : Linux (Sélectionner l'image ISO de TrueNAS préalablement uploadée).
+- `OS` : ISO de TrueNAS.
 - `Système` : Carte graphique par défaut, Qemu Agent activé.
 - `Disque système` : Créer un premier disque (ex: 32 Go) qui hébergera uniquement le système d'exploitation TrueNAS. Ne **pas** utiliser ce disque pour le stockage de données.
 - `Réseau` : Associer la carte réseau du groupe 4 qui est "PorjetD" (VLAN 54).
@@ -44,8 +47,8 @@ Le serveur **NASECOCERT** nécessite un socle solide pour opérer en tant que se
 4. **Disk size (GiB) :** Spécifiez `20` pour créer un disque de 20 Go.
 5. Répétez cette opération pour obtenir le nombre de disques requis (au moins 3 disques de 20 Go pour un RAID 5 fonctionnel).
 
-![Ajout Disque Proxmox](./assets/installation-nas/proxmox-disk.jpg)
-![Configuration Disque SATA](./assets/installation-nas/disk-sata.jpg)
+![Ajout Disque Proxmox](assets/installation-nas-truenas/proxmox-disk.jpg)
+![Configuration Disque SATA](assets/installation-nas-truenas/disk-sata.jpg)
 
 > [!important] Architecture ZFS
 > L'utilisation du bus SATA et la présentation de disques bruts permet à TrueNAS d'avoir un accès direct aux disques pour gérer efficacement le système de fichiers ZFS et la redondance.

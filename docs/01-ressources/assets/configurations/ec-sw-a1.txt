@@ -11,7 +11,7 @@ boot-start-marker
 boot-end-marker
 !
 !
-username dreamlike privilege 15 secret 5 $1$lJne$B.1OvRefZGWccbXHVqWS2/
+username dreamlike privilege 15 secret 9 $9$VPGBg9zgl6QAXE$.zJsH.FJLUZ7Zsww3v5DQerCIMAND/Bz7sMCF9zZrY6
 !
 !
 no aaa new-model
@@ -26,7 +26,7 @@ ip domain-name local.ecocert4.fr
 !
 !
 !
-spanning-tree mode pvst
+spanning-tree mode rapid-pvst
 spanning-tree extend system-id
 !
 vlan internal allocation policy ascending
@@ -245,14 +245,19 @@ interface FastEthernet0/42
  switchport mode access
 !
 interface FastEthernet0/43
+ shutdown
 !
 interface FastEthernet0/44
+ shutdown
 !
 interface FastEthernet0/45
+ shutdown
 !
 interface FastEthernet0/46
+ shutdown
 !
 interface FastEthernet0/47
+ shutdown
 !
 interface FastEthernet0/48
  description INTER CO COMMUTATEUR L3
@@ -260,8 +265,10 @@ interface FastEthernet0/48
  switchport mode trunk
 !         
 interface GigabitEthernet0/1
+ shutdown
 !
 interface GigabitEthernet0/2
+ shutdown
 !
 interface Vlan1
  no ip address
