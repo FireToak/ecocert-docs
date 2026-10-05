@@ -15,17 +15,13 @@ L’organisation du dépôt suit la logique suivante :
 ```text
 ecocert-docs/
 ├── 01-ressources/
-│   ├── plan-adressage.md
-│   └── schemas.md
 ├── 02-reseau/
-│   ├── index.md
-│   └── configuration-stormshield.md
 ├── 03-debian/
 └── 04-windows/
 ```
 
 * **`01-ressources/`** : Regroupe les documents d'architecture globale (schémas topologiques, plans d'adressage IP et de routage, tables NAT).
-* **`02-reseau/`** : Centralise les procédures de configuration des équipements d'interconnexion (commutateurs Cisco, pare-feu Stormshield, bornes Wifi). Le fichier `index.md` définit le point d'entrée pour la navigation.
+* **`02-reseau/`** : Centralise les procédures de configuration des équipements d'interconnexion (commutateurs Cisco, pare-feu Stormshield, bornes Wifi).
 * **`03-debian/`** : Stocke les documentations d'administration des serveurs Linux (déploiement des serveurs Web et d'applications).
 * **`04-windows/`** : Contient les procédures liées à l'écosystème Microsoft (installation et gestion d'Active Directory, DHCP, SQL Server 2022).
 
@@ -76,9 +72,9 @@ Une fois cette étape terminée, il est nécessaire d'ouvrir une *Pull Request* 
 
 ---
 
-## Bonnes pratiques et sécurité
+## Bonnes pratiques
 
-1. **Revue par les pairs (Peer Review)** : Ne jamais pousser de code directement sur la branche `main`. L'utilisation des Pull Requests garantit que la documentation est compréhensible, sans erreur, et validée par le binôme avant la compilation du site.
+1. **Revue par les pairs** : Ne jamais pousser de code directement sur la branche `main`. L'utilisation des Pull Requests garantit que la documentation est compréhensible, sans erreur, et validée par le binôme avant la compilation du site.
 2. **Ordre d'affichage par préfixe** : L'utilisation de préfixes numériques (ex: `01-`, `02-`) pour les noms de dossiers est requise. Cela permet au générateur de site de trier correctement les catégories dans le menu latéral tout en conservant l'auto-découverte.
 
 ---
@@ -86,4 +82,4 @@ Une fois cette étape terminée, il est nécessaire d'ouvrir une *Pull Request* 
 ## 👨‍💻 Mainteneurs
 
 * **Louis MEDO** | [LinkedIn](https://www.linkedin.com/in/louismedo/) | [Portfolio](https://louis.loutik.fr/) | [GitHub](https://github.com/FireToak) | [louis.medo@loutik.fr](mailto:louis.medo@loutik.fr)
-* **Amine Kada** | [GitHub](https://github.com/IT-Amine) | [Portfolio](https://amine-it.vercel.app/) 
+* **Amine KADA** | [GitHub](https://github.com/IT-Amine) | [Portfolio](https://amine-it.vercel.app/) 
