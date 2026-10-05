@@ -7,7 +7,7 @@
 !!! note "Informations"
     - **Auteur :** Louis MEDO
     - **Date :** 28/09/2026
-    - **Domaine :** Debian
+    - **Domaine :** Windows
 
 ---
 
