@@ -20,7 +20,7 @@ description: Procédure de déploiement et d'utilisation du script de suppressio
 
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
-- [3. Prérequis](#3-prérequis)
+- [3. Prérequis](#3-prerequis)
 - [4. Utilisation du script](#4-utilisation-du-script)
 - [5. Fonctionnement](#5-fonctionnement)
 
@@ -28,7 +28,7 @@ description: Procédure de déploiement et d'utilisation du script de suppressio
 
 Ce document décrit la procédure de déploiement et d'utilisation du script PowerShell automatisant la suppression d'utilisateurs dans l'Active Directory. Le script désactive les comptes, les déplace dans une unité d'organisation dédiée, archive leurs données personnelles et génère des journaux d'exécution. Il garantit la cohérence de l'annuaire et la sécurité des données lors du départ d'un collaborateur.
 
-## 3. Prérequis
+## 3. Prérequis {#3-prerequis}
 
 > [!warning] "Configuration requise"
 > Vous devez impérativement créer les éléments suivants avant toute exécution :

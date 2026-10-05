@@ -20,16 +20,16 @@ description: Procédure de déploiement et d'utilisation du script de synchronis
 
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
-- [3. Prérequis et Architecture](#3-prérequis-et-architecture)
+- [3. Prérequis](#3-prerequis)
 - [4. Utilisation du script](#4-utilisation-du-script)
-- [5. Fonctionnement et explication des commandes (Cours)](#5-fonctionnement-et-explication-des-commandes-cours)
+- [5. Fonctionnement](#5-fonctionnement)
 - [6. Points de vigilance](#6-points-de-vigilance)
 
 ## 2. Contexte
 
 Cette procédure décrit le déploiement et le fonctionnement du script d'automatisation pour la création et la modification des utilisateurs Active Directory. Ce script PowerShell est "idempotent" : il peut être exécuté plusieurs fois sans créer de doublons, synchronisant uniquement les différences à partir d'un fichier source CSV. Il configure les attributs AD, génère les dossiers personnels sécurisés et affecte les groupes automatiquement.
 
-## 3. Prérequis et Architecture
+## 3. Prérequis {#3-prerequis}
 
 Avant la première exécution, l'Unité Organisationnelle (OU) racine "Ecocert" doit impérativement exister dans l'Active Directory, le script ne la créant pas lui-même pour des raisons de sécurité.
 
@@ -53,6 +53,8 @@ Ecocert/
 
 ## 4. Utilisation du script
 
+Le script principal se situe à l'emplacement suivant : `A:\Scripts\SyncUtilisateurs.ps1` (Ou disponible sur le dépôt git : [SyncUtilisateurs.ps1](./assets/script-creation-modification-utilisateurs/SyncUtilisateurs.ps1) et [UtilisateursEcocert.csv](./assets/script-creation-modification-utilisateurs/UtilisateursEcocert.csv)).
+
 Le script analyse le fichier CSV pour vérifier, créer ou mettre à jour les utilisateurs.
 
 4.1. **Exécuter la synchronisation AD.** Depuis une console PowerShell lancée avec des privilèges d'administration :
@@ -65,7 +67,7 @@ Le script analyse le fichier CSV pour vérifier, créer ou mettre à jour les ut
 - `-Domaine` : Définit le nom de domaine (pour les UPN et e-mails).
 - `-BaseOU` : Détermine le Distinguished Name (DN) de l'OU racine.
 
-## 5. Fonctionnement et explication des commandes (Cours)
+## 5. Fonctionnement {#5-fonctionnement}
 
 Cette section détaille le code étape par étape pour comprendre la logique métier (idempotence) et les commandes techniques (Active Directory, système de fichiers, ACLs).
 
@@ -83,7 +85,7 @@ $Utilisateurs = Import-Csv -Path $CsvPath -Delimiter ","
 
 Le script vérifie la conformité du numéro de téléphone avant de tenter quoi que ce soit dans l'AD.
 
-```powershell hl_lines="1"
+```powershell
 If ($User.Telephone -notmatch "^33 [1-9] \d{2} \d{2} \d{2} \d{2}$") {
     Continue
 }
