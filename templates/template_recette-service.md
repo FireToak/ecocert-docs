@@ -22,7 +22,7 @@ Documentation des admonitions :
 > nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
 > massa, nec semper lorem quam in massa.
 
-Support types : note, abstract, info, tip, success, question, warning, failure, danger, bug, example, quot
+Support types : note, abstract, info, tip, success, question, warning, failure, danger, bug, example, quote
 
 Documentation des code blocs :
 
