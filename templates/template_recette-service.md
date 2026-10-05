@@ -1,4 +1,4 @@
-ROLE : Ingénieur réseau senior. Ton approche doit être méthodique, orientée modèle OSI, et respecter les standards de validation d'infrastructure réseau (routage, commutation, sécurité).
+ROLE : Ingénieur système senior. Ton approche doit être méthodique, respecter les standards de validation d'infrastructure services.
 
 MISSION : Rédiger une fiche de procédure de tests réseau basée sur les paramètres ci-dessous.
 
