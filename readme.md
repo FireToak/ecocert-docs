@@ -20,7 +20,7 @@ ecocert-docs/
 └── 04-windows/
 ```
 
-* **`01-ressources/`** : Regroupe les documents d'architecture globale (schémas topologiques, plans d'adressage IP et de routage, tables NAT).
+* **`01-ressources/`** : Regroupe les documents d'architecture globale (schémas topologiques, plans d'adressage IP et de routage).
 * **`02-reseau/`** : Centralise les procédures de configuration des équipements d'interconnexion (commutateurs Cisco, pare-feu Stormshield, bornes Wifi).
 * **`03-debian/`** : Stocke les documentations d'administration des serveurs Linux (déploiement des serveurs Web et d'applications).
 * **`04-windows/`** : Contient les procédures liées à l'écosystème Microsoft (installation et gestion d'Active Directory, DHCP, SQL Server 2022).
