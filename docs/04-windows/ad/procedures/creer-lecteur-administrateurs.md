@@ -73,7 +73,7 @@ New-Partition -DiskNumber 0 -UseMaximumSize -DriveLetter A | Format-Volume -File
 - `|` (Pipeline) : Transmet l'objet créé à la commande suivante.
 - `Format-Volume` : Prépare la partition à recevoir des données.
 - `-FileSystem NTFS` : Système de fichiers requis pour une gestion stricte des permissions.
-- `-NewFileSystemLabel` : Nomme le volume (ici "Admininistrateurs").
+- `-NewFileSystemLabel` : Nomme le volume (ici "Administrateurs").
 
 **Exemple de résultat :**
 
