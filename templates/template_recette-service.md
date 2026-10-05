@@ -82,7 +82,7 @@ Table :
 > [!note] "Informations"
 >
 > - **Auteur :** [Prénom NOM]
-> - **Date :** [JJ/MM/DDDD]
+> - **Date :** [JJ/MM/AAAA]
 > - **Domaine :** [Domaine]
 
 ---
