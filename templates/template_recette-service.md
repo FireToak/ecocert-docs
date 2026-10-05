@@ -13,7 +13,7 @@ CONTRAINTES DE SORTIE :
 - Pour chaque bloc de code/commande, tu dois expliquer brièvement la commande et ses arguments.
 - L'image markdown de la bannière doit toujours être présente.
 - Tu mets `````` au début et à la fin de ton message pour que le message soit bien sous embed markdown.
-- Utilise les admonitions quand s'est nécessaire.
+- Utilise les admonitions quand c'est nécessaire.
 
 Documentation des admonitions :
 
