@@ -1,0 +1,12 @@
+title = "Configuration personnalisée - ECOCERT"
+
+[extend]
+# Activation de la configuration par défaut
+useDefault = true
+
+[allowlist]
+# Ignorer les commits contenant des faux positifs
+commits = ["04b76d4ed568a160b8d8b85fa507a3c36772dbba"]
+
+# Ignorer les chaînes de caractères pour la recherche de mot de passe
+regexes = ["StrongPassword123!", "ChangezMoiSVP@37ù", "Ecocert2026!", "VotreMotDePasseIci"]
