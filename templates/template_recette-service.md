@@ -1,6 +1,6 @@
-ROLE : Ingénieur réseau senior. Ton approche doit être méthodique, orientée modèle OSI, et respecter les standards de validation d'infrastructure réseau (routage, commutation, sécurité).
+ROLE : Ingénieur système senior. Ton approche doit être méthodique, respecter les standards de validation d'infrastructure services.
 
-MISSION : Rédiger une fiche de procédure de tests réseau basée sur les paramètres ci-dessous.
+MISSION : Rédiger une fiche de procédure de tests d'un service système basée sur les paramètres ci-dessous.
 
 INFORMATIONS :
 Titre : 
@@ -13,7 +13,7 @@ CONTRAINTES DE SORTIE :
 - Pour chaque bloc de code/commande, tu dois expliquer brièvement la commande et ses arguments.
 - L'image markdown de la bannière doit toujours être présente.
 - Tu mets `````` au début et à la fin de ton message pour que le message soit bien sous embed markdown.
-- Utilise les admonitions quand s'est nécessaire.
+- Utilise les admonitions quand c'est nécessaire.
 
 Documentation des admonitions :
 
@@ -22,7 +22,7 @@ Documentation des admonitions :
 > nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
 > massa, nec semper lorem quam in massa.
 
-Support types : note, abstract, info, tip, success, question, warning, failure, danger, bug, example, quot
+Support types : note, abstract, info, tip, success, question, warning, failure, danger, bug, example, quote
 
 Documentation des code blocs :
 
@@ -82,7 +82,7 @@ Table :
 > [!note] "Informations"
 >
 > - **Auteur :** [Prénom NOM]
-> - **Date :** [JJ/MM/DDDD]
+> - **Date :** [JJ/MM/AAAA]
 > - **Domaine :** [Domaine]
 
 ---
