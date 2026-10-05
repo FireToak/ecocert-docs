@@ -48,22 +48,13 @@ apt update && apt upgrade -y
 apt install apache2 mariadb-server -y
 ```
 
-4.2.  **Ajout du dépôt SURY pour PHP 8.4**. Debian 13 intégrant nativement PHP 8.2 (déprécié par les nouvelles normes), il faut ajouter un dépôt officiel tiers :
-
-```bash title="Terminal"
-apt install -y apt-transport-https lsb-release ca-certificates curl
-curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
-sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-apt update
-```
-
-4.3.  **Installation de PHP 8.4 FPM et ses extensions**.
+4.2.  **Installation de PHP 8.4 FPM et ses extensions**.
 
 ```bash title="Terminal"
 apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-gd php8.4-mbstring php8.4-intl php8.4-bz2 php8.4-zip php8.4-ldap php8.4-apcu
 ```
 
-4.4.  **Activation de PHP-FPM dans Apache**.
+4.3.  **Activation de PHP-FPM dans Apache**.
 
 ```bash title="Terminal"
 a2enmod proxy_fcgi setenvif
