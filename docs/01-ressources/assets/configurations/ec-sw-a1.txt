@@ -11,7 +11,7 @@ boot-start-marker
 boot-end-marker
 !
 !
-username perennial privilege 15 secret 5 $1$/Nfs$mbAjeVmHg4MaL48WdE4Hw0
+username dreamlike privilege 15 secret 5 $1$NDup$o6dq18cUXzY9d6BqZnk4c.
 !
 !
 no aaa new-model
