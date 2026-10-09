@@ -291,5 +291,6 @@ line vty 5 15
  transport input ssh
 !
 crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
 !
 end
