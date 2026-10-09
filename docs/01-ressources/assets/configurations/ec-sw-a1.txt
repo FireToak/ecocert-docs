@@ -1,4 +1,4 @@
-! Last configuration change at 11:34:50 UTC Tue Sep 22 2026 by dreamlike
+Current configuration : 5790 bytes
 !
 no service pad
 service timestamps debug datetime msec
@@ -11,15 +11,16 @@ boot-start-marker
 boot-end-marker
 !
 !
-username dreamlike privilege 15 secret 9 $9$VPGBg9zgl6QAXE$.zJsH.FJLUZ7Zsww3v5DQerCIMAND/Bz7sMCF9zZrY6
+username dreamlike privilege 15 secret 5 $1$NDup$o6dq18cUXzY9d6BqZnk4c.
 !
 !
 no aaa new-model
 system mtu routing 1500
-!         
+!
 !
 no ip domain-lookup
 ip domain-name local.ecocert4.fr
+!
 !
 !
 !
@@ -32,7 +33,6 @@ spanning-tree extend system-id
 vlan internal allocation policy ascending
 !
 ip ssh time-out 60
-ip ssh version 2
 !
 interface FastEthernet0/1
  description ADMINISTRATION
@@ -133,7 +133,7 @@ interface FastEthernet0/20
  description CONSEIL TECH
  switchport access vlan 61
  switchport mode access
-!
+!         
 interface FastEthernet0/21
  description CONSEIL TECH
  switchport access vlan 61
@@ -245,25 +245,20 @@ interface FastEthernet0/42
  switchport mode access
 !
 interface FastEthernet0/43
- shutdown
 !
 interface FastEthernet0/44
- shutdown
 !
 interface FastEthernet0/45
- shutdown
 !
 interface FastEthernet0/46
- shutdown
 !
 interface FastEthernet0/47
- shutdown
 !
 interface FastEthernet0/48
  description INTER CO COMMUTATEUR L3
  switchport trunk allowed vlan 11,21,31,41,61,71,81
  switchport mode trunk
-!         
+!
 interface GigabitEthernet0/1
  shutdown
 !
@@ -283,12 +278,19 @@ ip http server
 ip http secure-server
 !
 line con 0
+ exec-timeout 5 0
  login local
+ stopbits 1
 line vty 0 4
+ exec-timeout 5 0
  login local
  transport input ssh
 line vty 5 15
+ exec-timeout 5 0
  login local
  transport input ssh
+!
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
 !
 end
