@@ -2,7 +2,7 @@
 description: Procédure d'extension de volume Windows en supprimant la partition de récupération bloquante via diskpart.
 ---
 
-# Redimensionner le disque d'un windows serveur avec diskpart
+# Redimensionner le disque d'un serveur Windows avec diskpart
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
