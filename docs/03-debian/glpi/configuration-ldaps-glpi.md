@@ -47,7 +47,7 @@ Cette procédure s'inscrit dans la continuité du déploiement de l'infrastructu
 | **BaseDN** | `OU=Utilisateurs,DC=local,DC=ecocert4,DC=fr` | Conteneur racine ciblant les comptes utilisateurs |
 | **Utiliser bind** | `Oui` | Force l'authentification via un compte de lecture |
 | **RootDN** | `CN=svc_glpi,OU=Services,DC=local,DC=ecocert4,DC=fr` | Identifiant DN du compte de service |
-| **Mot de passe root** | `SvcGlpiSecuredPassword2026!` | Mot de passe associé au compte `svc_glpi` |
+| **Mot de passe root** | `StrongPassword123!` | Mot de passe associé au compte `svc_glpi` |
 | **Champ de l'identifiant** | `samaccountname` | Attribut d'authentification Active Directory |
 | **Champ de synchronisation** | `objectguid` | Identifiant immuable pour le suivi d'annuaire |
 
