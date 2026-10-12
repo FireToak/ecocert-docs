@@ -60,7 +60,7 @@ Le script analyse le fichier CSV pour vérifier, créer ou mettre à jour les ut
 4.1. **Exécuter la synchronisation AD.** Depuis une console PowerShell lancée avec des privilèges d'administration :
 
 ```powershell
-.\SyncUtilisateurs.ps1 -CsvPath ".\UtilisateursEcocert.csv" -Domaine "local.ecocert4.lan" -BaseOU "OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
+.\SyncUtilisateurs.ps1 -CsvPath ".\UtilisateursEcocert.csv" -Domaine "local.ecocert4.fr" -BaseOU "OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
 ```
 
 - `-CsvPath` : Spécifie le chemin d'accès vers le fichier CSV source.

@@ -60,7 +60,7 @@ Le script principal se situe à l'emplacement suivant : `A:\Scripts\SupUtilisate
 4.2. **Exécuter le script de suppression.** Ouvrez une invite PowerShell en tant qu'administrateur et lancez le script en spécifiant si besoin les paramètres (ou laissez les valeurs par défaut définies dans le script).
 
 ```powershell
-.\SupUtilisateurs.ps1 -csvPath ".\AnciensUtilisateursEcocert.csv" -archiveShare "\\ADECOCERT\AnciensCollaborateurs"
+.\SupUtilisateurs.ps1 -csvPath ".\AnciensUtilisateursEcocert.csv" -archiveShare "U:\AnciensCollaborateurs"
 ```
 
 * `-csvPath` : Chemin d'accès au fichier CSV contenant les utilisateurs à désactiver.

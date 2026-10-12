@@ -13,7 +13,7 @@
 # ==========================================
 Param(
     [string]$csvPath = ".\AnciensUtilisateursEcocert.csv",
-    [string]$archiveShare = "\\ADECOCERT\AnciensCollaborateurs",
+    [string]$archiveShare = "U:\AnciensCollaborateurs",
     [string]$logDir = "A:\Logs\Scripts\SupUtilisateurs",
     [string]$logFile = "$logDir\DesactivationComptes-$(Get-Date -Format 'yyyy-MM-dd-HH-mm').log",
     [string]$ouDesactives = "OU=Desactives,OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
