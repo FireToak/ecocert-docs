@@ -1,8 +1,8 @@
 ---
-description: Procédure complète de déploiement et d'interconnexion sécurisée LDAPS entre Active Directory Windows Server 2025 et GLPI.
+description: Configuration et déploiement du LDAPS sur Windows Server 2025 avec Expérience de bureau (GUI) pour GLPI.
 ---
 
-# Déploiement et intégration LDAPS entre Active Directory (Windows Server 2025) et GLPI
+# Configuration et intégration LDAPS sur Windows Server 2025 (Expérience de bureau) et GLPI
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
@@ -10,11 +10,9 @@ description: Procédure complète de déploiement et d'interconnexion sécurisé
 
 !!! note "Informations"
 
-    - **Auteur(s) :** Amine KADA Amine KADA
-    - **Date de MAJ :** 30/09/2026
-    - **Temps estimé :** 20 minutes
-    - **Criticité :** Haute 28/09/2026
-    - **Domaine :** Windows Serveur 2025
+    - **Auteur :** Amine KADA
+    - **Date :** 12/10/2026
+    - **Domaine :** Windows Serveur 2025 / Expérience de bureau (GUI)
 
 ---
 
@@ -23,20 +21,22 @@ description: Procédure complète de déploiement et d'interconnexion sécurisé
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
 - [3. Prérequis et matrice d'adressage](#3-prerequis-et-matrice-dadressage)
-- [4. Déploiement du contrôleur de domaine Windows Server 2025](#4-deploiement-du-controleur-de-domaine-windows-server-2025)
+- [4. Validation de l'infrastructure Active Directory existante](#4-validation-de-linfrastructure-active-directory-existante)
 - [5. Installation et configuration de l'autorité de certification (AD CS)](#5-installation-et-configuration-de-lautorite-de-certification-ad-cs)
 - [6. Modèle de certificat serveur et inscription automatique](#6-modele-de-certificat-serveur-et-inscription-automatique)
 - [7. Validation LDAPS locale et export du certificat CA racine](#7-validation-ldaps-locale-et-export-du-certificat-ca-racine)
-- [8. Création des objets Active Directory (UO, Service Account, Utilisateur)](#8-creation-des-objets-active-directory-uo-service-account-utilisateur)
+- [8. Création des objets Active Directory (Comptes de service et test)](#8-creation-des-objets-active-directory-comptes-de-service-et-test)
 - [9. Intégration du certificat et validation OpenLDAP sur le serveur GLPI](#9-integration-du-certificat-et-validation-openldap-sur-le-serveur-glpi)
+- [10. Tests et Validation (Recette)](#10-tests-et-validation-recette)
+- [11. Plan de Retour Arrière (Rollback)](#11-plan-de-retour-arriere-rollback)
 
 ---
 
 ## 2. Contexte
 
-La présente procédure détaille l'implémentation d'une infrastructure d'authentification centralisée et sécurisée via LDAPS (LDAP over SSL - port TCP 636) entre un contrôleur de domaine Windows Server 2025 et un serveur d'inventaire et de gestion de tickets GLPI hébergé sous Debian Linux.
+La présente procédure détaille l'implémentation d'une infrastructure d'authentification centralisée et sécurisée via LDAPS (LDAP over SSL - port TCP 636) entre un contrôleur de domaine Windows Server 2025 avec interface graphique (Expérience de bureau) et un serveur d'inventaire GLPI hébergé sous Debian Linux.
 
-Sous Windows Server 2025, la signature LDAP est requise par défaut et le Channel Binding enforce les exigences d'intégrité, rendant l'usage de sessions non chiffrées (port TCP 389) obsolète et non sécurisé. Le déploiement s'articule autour d'une autorité de certification d'entreprise racine (AD CS) interne permettant d'émettre un certificat x509 conforme pour le contrôleur de domaine, de l'import de la chaîne d'autorité sur le système Linux hôte de GLPI, puis du paramétrage du connecteur d'annuaire et des mécanismes de bind au sein de GLPI.
+Sous Windows Server 2025, la signature LDAP est requise par défaut et le *Channel Binding* renforce les exigences d'intégrité, rendant l'usage de sessions non chiffrées (port TCP 389) obsolète et non sécurisé. Le déploiement s'articule autour d'une autorité de certification d'entreprise racine (AD CS) interne permettant d'émettre un certificat x509 conforme pour le contrôleur de domaine, de l'export de la chaîne de confiance vers le serveur Linux de GLPI, puis de la validation de la liaison sécurisée.
 
 ---
 
@@ -44,47 +44,64 @@ Sous Windows Server 2025, la signature LDAP est requise par défaut et le Channe
 
 | Rôle / Équipement | Nom d'hôte (FQDN) | OS | Rôle réseau / Port |
 | :--- | :--- | :--- | :--- |
-| Contrôleur de domaine & CA | `adecocert.local.ecocert4.fr` | Windows Server 2025 Standard | AD DS, DNS, AD CS (TCP/636, TCP/53) |
-| Serveur d'inventaire | `GLPIECOCERT` | Debian 12 / Apache / PHP | GLPI v10 (TCP/80, TCP/443) |
+| Contrôleur de domaine & CA | `adecocert.local.ecocert4.fr` | Windows Server 2025 (GUI) | AD DS, DNS, AD CS (TCP/636, TCP/53) |
+| Serveur GLPI | `glpiecocert.local.ecocert4.fr` | Debian 12 | Apache / PHP / GLPI (TCP/80, TCP/443) |
 
-> [!note] Contrainte d'ordre d'installation
-> L'autorité de certification d'entreprise (AD CS) doit impérativement être déployée **après** la promotion effective du serveur en contrôleur de domaine. Installer AD CS au préalable entraîne un verrouillage de la promotion du DC lié au nommage de l'autorité.
+> [!note] Environnement de production existant
+> Le domaine `local.ecocert4.fr` et le contrôleur de domaine `adecocert` sont déjà en production. L'autorité de certification d'entreprise (AD CS) est déployée sur le serveur existant pour activer automatiquement le LDAPS sans perturber les services d'annuaire en cours.
 
 ---
 
-## 4. Déploiement du contrôleur de domaine Windows Server 2025
+## 4. Validation de l'infrastructure Active Directory existante
 
-4.1. **Définition du mot de passe administrateur local.** Définir un mot de passe fort non vide avant l'exécution du script de promotion.
+4.1. **Vérification de l'état du domaine.** S'assurer que le contrôleur de domaine existant est opérationnel et que l'annuaire `local.ecocert4.fr` est joignable avant le déploiement du rôle AD CS.
 
-```powershell title="PowerShell (Admin)"
-net user Administrateur "Ecocert2026!"
-```
-
-- `Administrateur` : Compte d'administration locale qui sera converti en administrateur du domaine.
-- `"Ecocert2026!"` : Mot de passe complexe respectant les critères de sécurité de l'Active Directory.
-
-4.2. **Installation du rôle Active Directory Domain Services et promotion de la forêt.** Déployer le rôle AD DS et promouvoir le contrôleur de domaine racine `local.ecocert4.fr`.
+Depuis la console *Utilisateurs et ordinateurs Active Directory* (`dsa.msc`) ou via PowerShell :
 
 ```powershell title="PowerShell (Admin)"
-Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
-Install-ADDSForest -DomainName "local.ecocert4.fr" -DomainNetbiosName "ECOCERT4" -InstallDns -SafeModeAdministratorPassword (ConvertTo-SecureString "DSRM_P@ssw0rd2026!" -AsPlainText -Force)
+Get-ADDomain -Identity "local.ecocert4.fr"
 ```
 
-- `-DomainName "local.ecocert4.fr"` : Nom FQDN de la forêt et du domaine racine.
-- `-DomainNetbiosName "ECOCERT4"` : Identifiant NetBIOS de l'annuaire Active Directory.
-- `-SafeModeAdministratorPassword` : Mot de passe de secours pour le mode DSRM (Directory Services Restore Mode).
-
-> [!note] Redémarrage système
-> Le serveur redémarre de manière autonome à l'issue de l'exécution de la commande `Install-ADDSForest`. La session suivante doit s'ouvrir sous le compte `ECOCERT4\Administrateur`.
+- `Get-ADDomain` : Valide la présence, le niveau fonctionnel et la disponibilité du domaine existant `local.ecocert4.fr`.
 
 ---
 
 ## 5. Installation et configuration de l'autorité de certification (AD CS)
 
-5.1. **Déploiement du rôle d'autorité de certification.** Installer le rôle ADCS et configurer l'autorité d'entreprise racine Ecocert-Root-CA.
+5.1. **Déploiement du rôle d'autorité de certification (AD CS).** Installer le rôle Services de certificats Active Directory avec les outils d'administration graphique (RSAT).
+
+Depuis l'interface graphique :
+1. Ouvrir le **Gestionnaire de serveur** > **Gérer** > **Ajouter des rôles et fonctionnalités**.
+2. Choisir **Installation basée sur un rôle ou une fonctionnalité**.
+3. Sélectionner le serveur local dans le pool de serveurs.
+4. Cocher le rôle **Services de certificats Active Directory (AD CS)** et valider l'ajout des outils de gestion.
+5. Dans les services de rôle, sélectionner **Autorité de certification**.
+6. Confirmer et procéder à l'installation.
+
+*(Alternative en ligne de commande PowerShell)* :
 
 ```powershell title="PowerShell (Admin)"
 Install-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
+```
+
+- `Install-WindowsFeature` : Déploie le rôle d'autorité de certification ainsi que les consoles MMC associées (`certsrv.msc`).
+
+5.2. **Configuration de l'autorité d'entreprise racine.** Configurer l'autorité de certification pour l'intégrer au domaine Active Directory.
+
+Depuis l'interface graphique :
+1. Dans le **Gestionnaire de serveur**, cliquer sur le drapeau d'alerte > **Configurer les services de certificats Active Directory**.
+2. Spécifier les identifiants d'administrateur de domaine (`ECOCERT4\Administrateur`).
+3. Cocher le service de rôle **Autorité de certification**.
+4. Sélectionner **Autorité de certification d'entreprise** (*Enterprise CA*).
+5. Sélectionner **Autorité de certification racine** (*Root CA*).
+6. Choisir **Créer une nouvelle clé privée** (Fournisseur : RSA, Longueur : 4096 bits, Hachage : SHA256).
+7. Nom de la CA : `Ecocert-Root-CA`.
+8. Période de validité : **10 ans**.
+9. Valider et terminer la configuration.
+
+*(Alternative en ligne de commande PowerShell)* :
+
+```powershell title="PowerShell (Admin)"
 Install-AdcsCertificationAuthority -CAType EnterpriseRootCA `
   -CACommonName "Ecocert-Root-CA" `
   -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
@@ -92,20 +109,18 @@ Install-AdcsCertificationAuthority -CAType EnterpriseRootCA `
   -ValidityPeriod Years -ValidityPeriodUnits 10 -Force
 ```
 
-- `-CAType EnterpriseRootCA` : Autorité de certification d'entreprise intégrée à Active Directory.
-- `-CACommonName "Ecocert-Root-CA"` : Nom public de la CA émettrice.
-- `-KeyLength 4096` : Taille de la clé cryptographique privée en bits.
-- `-ValidityPeriodUnits 10` : Durée de validité de 10 ans pour le certificat racine.
+- `-CAType EnterpriseRootCA` : Instancie une autorité d'entreprise directement rattachée et approuvée par la forêt Active Directory.
+- `-KeyLength 4096` : Définit une clé de chiffrement robuste (4096 bits) pour le certificat racine.
 
-5.2. **Validation du statut opérationnel de la CA.** Contrôler l'état d'exécution du service de certificats et la configuration de l'autorité.
+5.3. **Validation du statut opérationnel de la CA.** Contrôler le service et l'état de l'autorité de certification.
 
 ```powershell title="PowerShell (Admin)"
 Get-Service CertSvc
 certutil -cainfo
 ```
 
-- `CertSvc` : Service Windows des Services de certificats Active Directory.
-- `-cainfo` : Affiche l'arborescence et l'état des certificats de l'autorité locale.
+- `Get-Service CertSvc` : Confirme que le service de certificats est à l'état `Running`.
+- `certutil -cainfo` : Affiche l'arborescence et l'état des certificats de l'autorité locale.
 
 ---
 
@@ -180,9 +195,9 @@ Test-NetConnection adecocert.local.ecocert4.fr -Port 636
 
 ---
 
-## 8. Création des objets Active Directory (UO, Service Account, Utilisateur)
+## 8. Création des objets Active Directory (Comptes de service et test)
 
-8.1. **Provisionnement des unités d'organisation et des comptes via PowerShell.** Créer l'arborescence, le compte de liaison pour GLPI et l'utilisateur de validation technique.
+8.1. **Provisionnement des unités d'organisation et des comptes via PowerShell.** Créer l'arborescence, le compte de liaison pour GLPI et l'utilisateur de validation technique (ou via la console graphique *Utilisateurs et ordinateurs Active Directory* `dsa.msc`).
 
 ```powershell title="PowerShell (Admin)"
 New-ADOrganizationalUnit -Name "Services" -Path "DC=local,DC=ecocert4,DC=fr"
@@ -191,15 +206,15 @@ New-ADOrganizationalUnit -Name "Utilisateurs" -Path "DC=local,DC=ecocert4,DC=fr"
 New-ADUser -Name "svc_glpi" -SamAccountName "svc_glpi" `
   -UserPrincipalName "svc_glpi@local.ecocert4.fr" `
   -Path "OU=Services,DC=local,DC=ecocert4,DC=fr" `
-  -AccountPassword (ConvertTo-SecureString "SvcGlpiSecuredPassword2026!" -AsPlainText -Force) `
-  -Enabled $true -PasswordNeverExpires$true
+  -AccountPassword (ConvertTo-SecureString "StrongPassword123!" -AsPlainText -Force) `
+  -Enabled $true -PasswordNeverExpires $true
 
 New-ADUser -Name "Jean Dupont" -GivenName "Jean" -Surname "Dupont" `
   -SamAccountName "jdupont" `
   -UserPrincipalName "jdupont@local.ecocert4.fr" `
   -EmailAddress "jdupont@local.ecocert4.fr" `
   -Path "OU=Utilisateurs,DC=local,DC=ecocert4,DC=fr" `
-  -AccountPassword (ConvertTo-SecureString "UserP@ssw0rd2026!" -AsPlainText -Force) `
+  -AccountPassword (ConvertTo-SecureString "ChangezMoiSVP@37ù" -AsPlainText -Force) `
   -Enabled $true
 ```
 
@@ -212,7 +227,7 @@ New-ADUser -Name "Jean Dupont" -GivenName "Jean" -Surname "Dupont" `
 (Get-ADUser svc_glpi).DistinguishedName
 ```
 
-> La commande doit renvoyer la valeur exacte : `CN=svc_glpi,OU=Services,DC=local,DC=ecocert4,DC=fr`.
+- Renvoie le chemin LDAP complet : `CN=svc_glpi,OU=Services,DC=local,DC=ecocert4,DC=fr`, nécessaire pour la configuration de GLPI.
 
 ---
 
@@ -226,10 +241,10 @@ sudo apt install -y php-ldap php-bcmath ldap-utils openssl ca-certificates
 ```
 
 - `php-ldap` : Module PHP indispensable pour activer le support de l'authentification externe LDAP/AD.
-- `php-bcmath` : Extension mathématique requise par GLPI (génération des QR codes et calculs internes).
-- `ldap-utils` : Paquet fournissant les binaires d'interrogation client `ldapsearch`.
+- `php-bcmath` : Extension mathématique requise par GLPI.
+- `ldap-utils` : Paquet fournissant les utilitaires clients (`ldapsearch`).
 
-9.2. **Résolution du nom d'hôte contrôleur de domaine.** Pour contourner l'interception mDNS des TLD `.local`, fixer la correspondance IP/FQDN dans le fichier d'hôtes.
+9.2. **Résolution du nom d'hôte contrôleur de domaine.** Pour contourner l'interception mDNS des TLD `.local`, renseigner la correspondance IP/FQDN dans le fichier d'hôtes.
 
 ```bash title="/etc/hosts"
 echo "172.16.54.1  adecocert.local.ecocert4.fr adecocert" | sudo tee -a /etc/hosts
@@ -270,7 +285,7 @@ openssl s_client -connect adecocert.local.ecocert4.fr:636 -verify_hostname adeco
 ```bash title="Terminal (serveur GLPI)"
 ldapsearch -x -H ldaps://adecocert.local.ecocert4.fr:636 \
   -D "CN=svc_glpi,OU=Services,DC=local,DC=ecocert4,DC=fr" \
-  -w "SvcGlpiSecuredPassword2026!" \
+  -w "StrongPassword123!" \
   -b "DC=local,DC=ecocert4,DC=fr" "(sAMAccountName=jdupont)" dn
 ```
 
@@ -282,20 +297,21 @@ ldapsearch -x -H ldaps://adecocert.local.ecocert4.fr:636 \
 
 ```bash title="Terminal (serveur GLPI)"
 sudo systemctl restart apache2
-# Si installation en PHP-FPM : sudo systemctl restart php*-fpm
 ```
-
 
 ---
 
 ## 10. Tests et Validation (Recette)
-- [ ] Le port 636 est bien à l'écoute sur le contrôleur de domaine (`netstat -ano | findstr 636`).
+
+- [ ] Le port 636 est bien à l'écoute sur le contrôleur de domaine (`Test-NetConnection -Port 636` ou `netstat -ano | findstr 636`).
 - [ ] La résolution DNS du FQDN du contrôleur fonctionne depuis les machines clientes.
-- [ ] Le certificat exporté est correctement importé sur les clients Linux/Windows nécessitant le LDAPS.
+- [ ] La commande `openssl s_client` renvoie `Verify return code: 0 (ok)`.
+- [ ] La requête `ldapsearch` via `ldaps://` renvoie bien le DN de l'utilisateur de test `jdupont`.
 
 ---
 
 ## 11. Plan de Retour Arrière (Rollback)
-En cas de corruption de l'annuaire ou de problème avec l'autorité de certification :
+
+En cas de problème avec l'autorité de certification ou les certificats :
 1. **Restauration de snapshot** : Revenir au snapshot Proxmox précédant l'installation du rôle AD CS.
-2. **Désinstallation du rôle** : En dernier recours, supprimer le rôle AD CS via le gestionnaire de serveur et redémarrer la machine.
+2. **Désinstallation du rôle** : Supprimer le rôle AD CS via le Gestionnaire de serveur et redémarrer la machine.

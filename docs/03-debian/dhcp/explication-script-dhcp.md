@@ -34,42 +34,7 @@ Dans le cadre de la réorganisation du réseau d'ECOCERT et de la remédiation (
 
 3.1. **Définition des sous-réseaux ECOCERT.** Création du fichier de base de données contenant le plan d'adressage (VLSM) qui sera traité par le script d'automatisation.
 
-```text title="SP2planadressage.txt"
-# VLAN 11 - ADMINISTRATION
-sr:192.168.4.0
-masque:255.255.255.192
-diff:192.168.4.63
-
-# VLAN 21 - CERTIFICATION
-sr:192.168.4.64
-masque:255.255.255.224
-diff:192.168.4.95
-
-# VLAN 81 - WIFI-VISITEURS
-sr:192.168.4.96
-masque:255.255.255.224
-diff:192.168.4.127
-
-# VLAN 61 - CONSEIL TECH
-sr:192.168.4.128
-masque:255.255.255.224
-diff:192.168.4.159
-
-# VLAN 31 - REFERENTIELS
-sr:192.168.4.160
-masque:255.255.255.224
-diff:192.168.4.191
-
-# VLAN 71 - TECHNIQUES
-sr:192.168.4.192
-masque:255.255.255.240
-diff:192.168.4.207
-
-# VLAN 41 - FORMA PRO
-sr:192.168.4.208
-masque:255.255.255.240
-diff:192.168.4.223
-```
+📄 **Fichier .txt du plan d'adressage réseau :** [Fichier txt réseau](./assets/context-script/SP2planadressage.txt)
 
 - `sr` : Adresse réseau du sous-réseau (Subnet).
 - `masque` : Masque de sous-réseau en notation décimale pointée.
@@ -79,90 +44,7 @@ diff:192.168.4.223
 
 4.1. **Création du script Bash.** Écriture du programme chargé de convertir les masques en CIDR, d'interroger l'administrateur pour les plages d'adresses et de formater la sortie en JSON.
 
-```bash title="config_dhcp.sh" hl_lines="15 16 23 24 64 65"
-#!/bin/bash
-# La ligne au-dessus (le shebang) indique à Linux d'utiliser l'interpréteur Bash pour lire ce fichier.
-
-# ==========================================
-# 1. DÉCLARATION DES VARIABLES ET SAUVEGARDE
-# ==========================================
-FICHIER_SOURCE="SP2planadressage.txt"
-FICHIER_RESULTAT="/etc/kea/blocs_sous_reseaux.json"
-
-echo "=== GÉNÉRATION DES SOUS-RÉSEAUX POUR KEA DHCP ==="
-
-# Sauvegarde automatique du fichier de configuration initial
-if [ -f /etc/kea/kea-dhcp4.conf ]; then
-    cp /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.backup_$(date +%F_%H%M%S)
-    echo "Sauvegarde du fichier initial effectuée."
-fi
-
-# Configuration des requêtes interactives globales
-read -p "Entrez les serveurs DNS (172.16.54.1, 9.9.9.9) : " serveurs_dns < /dev/tty
-read -p "Entrez le nom de domaine (local.ecocert4.fr) : " nom_domaine < /dev/tty
-
-echo "Les blocs JSON seront créés dans $FICHIER_RESULTAT"
-
-# Le chevron simple ">" écrase le fichier résultat s'il existe déjà
-echo "" > "$FICHIER_RESULTAT"
-
-# ==========================================
-# 2. BOUCLE DE LECTURE DU FICHIER TEXTE
-# ==========================================
-while IFS= read -r ligne || [[ -n "$ligne" ]]; do
-    
-    if [[ -z "$ligne" ]]; then continue; fi
-    
-    # --- DÉCOUPAGE DE LA LIGNE ---
-    cle=$(echo "$ligne" | cut -d':' -f1 | tr -d ' \t')
-    valeur=$(echo "$ligne" | cut -d':' -f2 | tr -d ' \t')
-    
-    # --- ANALYSE DES MOTS-CLÉS ---
-    if [[ "$cle" == "sr" ]]; then
-        sr="$valeur"
-        
-    elif [[ "$cle" == "masque" ]]; then
-        masque="$valeur"
-        case "$masque" in
-            "255.255.255.192") cidr="26" ;;
-            "255.255.255.224") cidr="27" ;;
-            "255.255.255.240") cidr="28" ;;
-            *) cidr="24" ;;
-        esac
-        
-    elif [[ "$cle" == "diff" ]]; then
-        diff="$valeur"
-        
-        echo "----------------------------------------"
-        echo "Réseau détecté : $sr/$cidr (Masque : $masque | Broadcast : $diff)"
-        
-        # --- INTERVENTION HUMAINE ---
-        # Configuration des requêtes interactives spécifiques
-        read -p "Entrez l'IP de début de plage : " ip_debut < /dev/tty
-        read -p "Entrez l'IP de fin de plage : " ip_fin < /dev/tty
-        read -p "Entrez l'IP de la passerelle : " passerelle < /dev/tty
-        
-        # --- ÉCRITURE DU BLOC JSON ---
-        cat <<EOF >> "$FICHIER_RESULTAT"
-        {
-            "subnet": "$sr/$cidr",
-            "pools": [ { "pool": "$ip_debut - $ip_fin" } ],
-            "option-data": [
-                { "name": "routers", "data": "$passerelle" },
-                { "name": "domain-name-servers", "data": "$serveurs_dns" },
-                { "name": "domain-name", "data": "$nom_domaine" }
-            ]
-        },
-EOF
-        
-        echo "=> Bloc JSON généré pour le réseau $sr !"
-    fi
-    
-done < "$FICHIER_SOURCE"
-
-echo "----------------------------------------"
-echo "Succès ! Ouvrez $FICHIER_RESULTAT pour copier son contenu dans /etc/kea/kea-dhcp4.conf."
-```
+📄 **Script Automatisation config DHCP, service Kea :** [Config script DHCP](./assets/context-script/config.sh)
 
 - `FICHIER_SOURCE` : Variable définissant le fichier texte d'adressage à analyser.
 - `FICHIER_RESULTAT` : Variable définissant le fichier JSON de sortie à générer.
@@ -173,7 +55,7 @@ echo "Succès ! Ouvrez $FICHIER_RESULTAT pour copier son contenu dans /etc/kea/k
 5.1. **Attribution des permissions.** Configuration des droits sur le fichier du script pour autoriser son exécution par le système.
 
 ```bash
-chmod +x config_dhcp.sh
+chmod +x config.sh
 ```
 
 - `+x` : Attribut de permission ajoutant le droit d'exécution (eXecute) au fichier cible.
@@ -181,13 +63,21 @@ chmod +x config_dhcp.sh
 5.2. **Exécution du processus.** Lancement de l'outil avec élévation de privilèges pour garantir l'autorisation d'écriture dans l'arborescence `/etc/kea/`.
 
 ```bash
-sudo ./config_dhcp.sh
+sudo ./config.sh
+```
+5.3. **Exécution en mode débogage (détaillé).** Exécution pas-à-pas affichant chaque instruction interprétée et le contenu des variables en temps réel pour analyser le déroulement du script et diagnostiquer d'éventuelles erreurs.
+
+```bash
+sudo bash -x ./config.sh
 ```
 
-- `sudo` : Exécute la commande en tant que superutilisateur (root).
-- `./` : Indique au terminal de chercher l'exécutable dans le répertoire courant.
+- `sudo` : Exécute la commande avec les privilèges administrateur (root), nécessaire pour l'écriture dans `/etc/kea/`.
+- `bash` : Appelle explicitement l'interpréteur de commandes Bash.
+- `-x` : Active le mode de traçage (*xtrace* / débogage) affichant chaque instruction exécutée précédée d'un symbole `+` avec les variables substituées par leur valeur réelle.
+- `./` : Indique au système d'exécuter le script situé dans le répertoire de travail courant.
 
-5.3. **Intégration à Kea DHCP.** Intégration de la configuration générée dans le fichier principal du service.
+
+5.4. **Intégration à Kea DHCP.** Intégration de la configuration générée dans le fichier principal du service.
 
 ```bash
 cat /etc/kea/blocs_sous_reseaux.json >> /etc/kea/kea-dhcp4.conf

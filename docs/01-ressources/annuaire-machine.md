@@ -12,12 +12,13 @@
 
 ---
 
-## Machnines physiques
+## Machines physiques
 
 | Nom machine   | FQDN                            | Adresse IP                                     |
 | ---           | ---                             | ---                                            |
 | ADECOCERT     | adecocert.local.ecocert4.fr     | 172.16.54.1/24                                 |
 | DHCPECOCERT   | dhcpecocert.local.ecocert4.fr   | 172.16.54.2/24                                 |
+| ADCSECOCERT   | adcsecocert.local.ecocert4.fr   | 172.16.54.3/24                                 |
 | GLPIECOCERT   | glpiecocert.local.ecocert4.fr   | 172.16.54.40/24                                |
 | NASECOCERT    | nasecocert.local.ecocert4.fr    | 172.16.54.20/24                                |
 | STORMSHIELD01 | stormshield01.local.ecocert4.fr | 192.168.14.254/29 (LAN), 172.16.32.14/24 (WAN) |
