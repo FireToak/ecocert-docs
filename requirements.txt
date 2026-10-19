@@ -4,7 +4,7 @@ Jinja2==3.1.6
 Markdown==3.11.1
 MarkupSafe==3.0.4
 Pygments==2.21.0
-pymdown-extensions==12.1
+pymdown-extensions==12.2
 PyYAML==6.0.3
 tomli==2.5.0
 zensical==0.0.70
