@@ -2,7 +2,7 @@
 description: Procédure d'installation d'Ansible sur un serveur Debian selon les bonnes pratiques.
 ---
 
-# Installation de Ansible
+# Installation d'Ansible
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
