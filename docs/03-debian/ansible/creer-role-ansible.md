@@ -40,7 +40,7 @@ Cette méthode garantit la maintenabilité du code. Si une procédure de configu
 ## 4. Création et structuration d'un nouveau rôle {#4-creation-et-structuration-dun-nouveau-role}
 
 > [!INFO]
-> URL du dépôt contennant le code Ansible : [ecocert-ansible](https://github.com/FireToak/ecocert-ansible)
+> URL du dépôt contenant le code Ansible : [ecocert-ansible](https://github.com/FireToak/ecocert-ansible)
 
 4.1. **Initialisation de l'arborescence.** Génération de la structure standard d'un rôle Ansible au sein du projet ECOCERT.
 
