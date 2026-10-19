@@ -26,22 +26,21 @@ Validation de la bonne exécution du playbook de bootstrap Ansible sur les serve
 
 *Depuis le poste client.*
 
-```bash
-cat /etc/security/pwquality.conf | grep -E "minlen|dcredit|ucredit"
-```
+~~~bash
+cat /etc/security/pwquality.conf | grep -E "^[[:space:]]*(minlen|minclass)[[:space:]]*="
+~~~
 
 * `cat` : Affiche le contenu intégral du fichier de configuration.
 * `|` (pipe) : Redirige la sortie de `cat` vers l'entrée de la commande `grep`.
 * `grep` : Commande permettant de rechercher des chaînes de caractères.
-* `-E` : Active les expressions régulières étendues pour rechercher plusieurs termes simultanément (`minlen`, `dcredit`, `ucredit`).
+* `-E` : Active les expressions régulières étendues ; l'expression ancrée ne retient que les affectations actives de `minlen` et `minclass`, en ignorant les commentaires.
 
 **Résultat attendu :**
 
-```bash
+~~~bash
 minlen = 12
-dcredit = -1
-ucredit = -1
-```
+minclass = 4
+~~~
 
 **Statut :**
 
