@@ -1,0 +1,13 @@
+$TTL 43200
+ecocert4.fr. IN SOA ns0.ecocert4.fr. postmaster.ecocert4.fr. (
+    2026092301  ; Serial
+    1D          ; Refresh
+    1H          ; Retry
+    1W          ; Expire
+    3H )        ; Negative Cache TTL
+
+; Serveurs de noms
+ecocert4.fr.      IN  NS  ns01.ecocert4.fr.
+
+; Enregistrements A
+ns01         IN  A   172.16.54.50
