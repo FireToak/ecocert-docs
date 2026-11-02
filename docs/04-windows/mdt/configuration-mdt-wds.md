@@ -20,14 +20,14 @@ description: Configuration de l'architecture WinPE x64, des séquences de tâche
 
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
-- [3. Matrice d'adressage et flux réseau](#3-matrice-dadressage-et-flux-reseau)
+- [3. Matrice d'adressage et flux réseau](#3-matrice-dadressage-et-flux-réseau)
 - [4. Configuration de l'architecture WinPE (x64)](#4-configuration-de-larchitecture-winpe-x64)
-- [5. Résolution des conflits de montage DISM](#5-resolution-des-conflits-de-montage-dism)
-- [6. Intégration du système d'exploitation et des applications](#6-integration-du-systeme-dexploitation-et-des-applications)
-- [7. Configuration de la séquence de tâches et des règles](#7-configuration-de-la-sequence-de-taches-et-des-regles)
-- [8. Génération de l'image LiteTouch et publication dans WDS](#8-generation-de-limage-litetouch-et-publication-dans-wds)
-- [9. Configuration de l'amorçage PXE sur Kea DHCP (Debian)](#9-configuration-de-lamorcage-pxe-sur-kea-dhcp-debian)
-- [10. Recette et validation du déploiement](#10-recette-et-validation-du-deploiement)
+- [5. Résolution des conflits de montage DISM](#5-résolution-des-conflits-de-montage-dism)
+- [6. Intégration du système d'exploitation et des applications](#6-intégration-du-système-dexploitation-et-des-applications)
+- [7. Configuration de la séquence de tâches et des règles](#7-configuration-de-la-séquence-de-tâches-et-des-règles)
+- [8. Génération de l'image LiteTouch et publication dans WDS](#8-génération-de-limage-litetouch-et-publication-dans-wds)
+- [9. Configuration de l'amorçage PXE sur Kea DHCP (Debian)](#9-configuration-de-lamorçage-pxe-sur-kea-dhcp-debian)
+- [10. Recette et validation du déploiement](#10-recette-et-validation-du-déploiement)
 
 ## 2. Contexte
 
@@ -35,7 +35,8 @@ Une fois les composants **WDS** et **MDT** déployés sur le serveur **MDTECOCER
 
 Cette procédure standardise la génération de l'image de préinstallation **WinPE** (restreinte à l'architecture 64 bits), le paramétrage des règles d'automatisation (`CustomSettings.ini`), l'orchestration des flux PXE hybrides (BIOS Legacy et UEFI) sur le serveur **Kea DHCP** hébergé sous Debian, ainsi que la validation complète d'un déploiement sur machine cliente.
 
-## 3. Matrice d'adressage et flux réseau {#3-matrice-dadressage-et-flux-reseau}
+<a id="3-matrice-dadressage-et-flux-réseau"></a>
+## 3. Matrice d'adressage et flux réseau
 
 | Équipement | FQDN | Rôle | IP | Ports d'écoute |
 | :--- | :--- | :--- | :--- | :--- |
@@ -44,7 +45,8 @@ Cette procédure standardise la génération de l'image de préinstallation **Wi
 | `ADECOCERT` | `adecocert.local.ecocert4.fr` | Contrôleur de domaine | `172.16.54.1` | TCP/UDP 53 (DNS), TCP 389/636 (LDAP/LDAPS) |
 | `Poste Client` | `cli-test.local.ecocert4.fr` | VM de test PXE | DHCP | N/A |
 
-## 4. Configuration de l'architecture WinPE (x64) {#4-configuration-de-larchitecture-winpe-x64}
+<a id="4-configuration-de-larchitecture-winpe-x64"></a>
+## 4. Configuration de l'architecture WinPE (x64)
 
 4.1. **Origine de l'anomalie de génération x86.** Par défaut, le Deployment Workbench tente de compiler les images de démarrage pour les architectures **x86** et **x64**. Si le module WinPE x86 n'est pas présent dans l'ADK installé (ce qui est le cas des distributions ADK récentes), DISM échoue avec l'erreur suivante :
 
@@ -62,7 +64,8 @@ Deployment Shares > ECOCERT Deployment Share > Clic droit > Properties
 - Onglet **General** : Dans *Platforms Supported*, décocher la case **x86** et conserver uniquement **x64**.
 - Onglet **Windows PE** : Sélectionner la plateforme **x64**, vérifier que l'option *Generate a Lite Touch boot image* est cochée, puis valider par **Appliquer**.
 
-## 5. Résolution des conflits de montage DISM {#5-resolution-des-conflits-de-montage-dism}
+<a id="5-résolution-des-conflits-de-montage-dism"></a>
+## 5. Résolution des conflits de montage DISM
 
 Lorsqu'une génération d'image WinPE est interrompue brutalement, des points de montage WIM orphelins peuvent verrouiller les fichiers temporaires et interdire toute recompilation ultérieure.
 
@@ -82,7 +85,8 @@ dism /Cleanup-Mountpoints
 
 - `Cleanup-Mountpoints` : Libère l'ensemble des points de montage orphelins et réinitialise l'état du pilote de filtre DISM (`wimmount.sys`).
 
-## 6. Intégration du système d'exploitation et des applications {#6-integration-du-systeme-dexploitation-et-des-applications}
+<a id="6-intégration-du-système-dexploitation-et-des-applications"></a>
+## 6. Intégration du système d'exploitation et des applications
 
 6.1. **Importation du média d'installation Windows.** Monter l'image ISO de Windows (ex: Windows 10/11 ou Windows Server) sur un lecteur virtuel (ex: `D:\`) et l'importer dans l'arborescence MDT.
 
@@ -97,7 +101,8 @@ Import-MDTOperatingSystem -Path "DS001:\Operating Systems" -SourcePath "D:\" -De
 
 6.2. **Organisation des pilotes de périphériques.** Dans la rubrique **Out-of-Box Drivers**, structurer les pilotes par système d'exploitation et modèle matériel, et injecter les pilotes réseau/stockage dans l'image WinPE afin d'assurer la reconnaissance du disque dur et de la carte réseau dès le démarrage PXE.
 
-## 7. Configuration de la séquence de tâches et des règles {#7-configuration-de-la-sequence-de-taches-et-des-regles}
+<a id="7-configuration-de-la-séquence-de-tâches-et-des-règles"></a>
+## 7. Configuration de la séquence de tâches et des règles
 
 7.1. **Création de la séquence de tâches standard.** Dans **Deployment Workbench > Task Sequences**, créer une séquence basée sur le modèle **Standard Client Task Sequence** (ID : `DEPLOY-W10`, Nom : *Déploiement Windows 10 ECOCERT*), puis sélectionner le système d'exploitation importé à l'étape précédente.
 
@@ -126,7 +131,8 @@ TimeZoneName=Romance Standard Time
 - `DomainAdmin` : Utilise le compte de service dédié `svc-mdt-join` disposant des droits délégués sur l'OU cible.
 - `MachineObjectOU` : Assigne automatiquement les nouvelles machines à l'Unité d'Organisation `OU=Postes`.
 
-## 8. Génération de l'image LiteTouch et publication dans WDS {#8-generation-de-limage-litetouch-et-publication-dans-wds}
+<a id="8-génération-de-limage-litetouch-et-publication-dans-wds"></a>
+## 8. Génération de l'image LiteTouch et publication dans WDS
 
 8.1. **Génération de l'image de démarrage WinPE.** Déclencher la compilation complète des composants LiteTouch x64 via PowerShell.
 
@@ -153,7 +159,8 @@ WDSUTIL /Add-Image /ImageFile:"S:\DeploymentShare\Boot\LiteTouchPE_x64.wim" /Ima
 WDSUTIL /Get-AllImages /Server:MDTECOCERT /Show:Boot
 ```
 
-## 9. Configuration de l'amorçage PXE sur Kea DHCP (Debian) {#9-configuration-de-lamorcage-pxe-sur-kea-dhcp-debian}
+<a id="9-configuration-de-lamorçage-pxe-sur-kea-dhcp-debian"></a>
+## 9. Configuration de l'amorçage PXE sur Kea DHCP (Debian)
 
 Sur une infrastructure combinant des postes en mode **BIOS hérité** et des postes en mode **UEFI**, un binaire d'amorçage unique ne peut convenir :
 - **BIOS Legacy :** Nécessite le binaire `boot\x64\wdsnbp.com`.
@@ -206,7 +213,8 @@ sudo systemctl status kea-dhcp4-server
 - `kea-dhcp4 -t` : Analyse la conformité du fichier JSON (doit renvoyer `0` sans erreur).
 - `systemctl restart` : Recharge le service DHCP avec les nouvelles classes PXE.
 
-## 10. Recette et validation du déploiement {#10-recette-et-validation-du-deploiement}
+<a id="10-recette-et-validation-du-déploiement"></a>
+## 10. Recette et validation du déploiement
 
 10.1. **Démarrage d'une machine virtuelle cliente.** Configurer une machine virtuelle cliente sur le réseau (VLAN 54 ou VLAN utilisateur routé) avec l'ordre de démarrage réseau (PXE) en priorité.
 

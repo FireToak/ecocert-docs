@@ -20,13 +20,13 @@ description: Installation et sécurisation des services WDS, Windows ADK, WinPE 
 
 - [1. Sommaire](#1-sommaire)
 - [2. Contexte](#2-contexte)
-- [3. Matrice d'adressage et prérequis](#3-matrice-dadressage-et-prerequis)
-- [4. Préparation du stockage et intégration au domaine](#4-preparation-du-stockage-et-integration-au-domaine)
-- [5. Déploiement des comptes de service dédiés (Active Directory)](#5-deploiement-des-comptes-de-service-dedies-active-directory)
-- [6. Installation et initialisation du rôle WDS](#6-installation-et-initialisation-du-role-wds)
+- [3. Matrice d'adressage et prérequis](#3-matrice-dadressage-et-prérequis)
+- [4. Préparation du stockage et intégration au domaine](#4-préparation-du-stockage-et-intégration-au-domaine)
+- [5. Déploiement des comptes de service dédiés (Active Directory)](#5-déploiement-des-comptes-de-service-dédiés-active-directory)
+- [6. Installation et initialisation du rôle WDS](#6-installation-et-initialisation-du-rôle-wds)
 - [7. Installation de Windows ADK, du module WinPE et de MDT](#7-installation-de-windows-adk-du-module-winpe-et-de-mdt)
-- [8. Création et sécurisation du Deployment Share](#8-creation-et-securisation-du-deployment-share)
-- [9. Vérification des flux et du service](#9-verification-des-flux-et-du-service)
+- [8. Création et sécurisation du Deployment Share](#8-création-et-sécurisation-du-deployment-share)
+- [9. Vérification des flux et du service](#9-vérification-des-flux-et-du-service)
 
 ## 2. Contexte
 
@@ -39,7 +39,8 @@ Afin de préserver les performances du contrôleur de domaine principal (**ADECO
 > - **MDT :** Retiré du support actif par Microsoft au début de l'année 2026 (dernier build stable : 8456). Il demeure pleinement fonctionnel et pertinent pour un environnement de laboratoire ou de formation (BTS SIO / ECOCERT).
 > - **WDS :** Maintenu sous Windows Server 2019, 2022 et 2025, mais sujet à dépréciation pour les futures versions de Windows Server au profit de solutions infonuagiques (Autopilot / Intune) ou MECM.
 
-## 3. Matrice d'adressage et prérequis {#3-matrice-dadressage-et-prerequis}
+<a id="3-matrice-dadressage-et-prérequis"></a>
+## 3. Matrice d'adressage et prérequis
 
 | Équipement / Rôle | Nom d'hôte (FQDN) | Système d'exploitation | Adresse IP | Rôle et flux associés |
 | :--- | :--- | :--- | :--- | :--- |
@@ -54,7 +55,8 @@ Afin de préserver les performances du contrôleur de domaine principal (**ADECO
 > - Un disque système `C:\` de 60 Go et un disque secondaire `S:\` d'au minimum 40 Go pour le stockage des images WIM et des pilotes.
 > - La connectivité réseau opérationnelle avec le contrôleur de domaine et le serveur DHCP.
 
-## 4. Préparation du stockage et intégration au domaine {#4-preparation-du-stockage-et-integration-au-domaine}
+<a id="4-préparation-du-stockage-et-intégration-au-domaine"></a>
+## 4. Préparation du stockage et intégration au domaine
 
 4.1. **Initialisation et formatage du volume de données S:.** Repérer le disque secondaire vierge attaché à la machine virtuelle et créer la partition NTFS dédiée aux données de déploiement.
 
@@ -98,7 +100,8 @@ Test-ComputerSecureChannel -Verbose
 
 - `Test-ComputerSecureChannel` : Valide l'état de la relation d'approbation (résultat attendu : `True`).
 
-## 5. Déploiement des comptes de service dédiés (Active Directory) {#5-deploiement-des-comptes-de-service-dedies-active-directory}
+<a id="5-déploiement-des-comptes-de-service-dédiés-active-directory"></a>
+## 5. Déploiement des comptes de service dédiés (Active Directory)
 
 Afin de respecter le principe du moindre privilège, aucun compte administrateur du domaine ne doit être utilisé lors des déploiements automatisés des postes clients.
 
@@ -119,7 +122,8 @@ New-ADUser -Name "adm-mdt"      -SamAccountName "adm-mdt"      -AccountPassword 
 >
 > Sur le contrôleur de domaine, ouvrir la console **Utilisateurs et ordinateurs Active Directory** (`dsa.msc`), faire un clic droit sur l'OU cible des postes (`OU=Postes,DC=local,DC=ecocert4,DC=fr`) > **Déléguer le contrôle** > Ajouter `svc-mdt-join` > Cocher l'option *Joindre un ordinateur au domaine*.
 
-## 6. Installation et initialisation du rôle WDS {#6-installation-et-initialisation-du-role-wds}
+<a id="6-installation-et-initialisation-du-rôle-wds"></a>
+## 6. Installation et initialisation du rôle WDS
 
 6.1. **Installation du rôle WDS complet.** Déployer le service de transport et le service de déploiement ainsi que les outils d'administration RSAT.
 
@@ -159,7 +163,8 @@ WDSUTIL /Get-Server /Server:MDTECOCERT /Show:Config
 - `WDSServer` : L'état du service doit être `Running`.
 - `Test-Path` : Confirme la présence du dossier racine d'installation réseau.
 
-## 7. Installation de Windows ADK, du module WinPE et de MDT {#7-installation-de-windows-adk-du-module-winpe-et-de-mdt}
+<a id="7-installation-de-windows-adk-du-module-winpe-et-de-mdt"></a>
+## 7. Installation de Windows ADK, du module WinPE et de MDT
 
 L'ordre d'installation de ces trois composants est strict : Windows ADK en premier, suivi du module complémentaire WinPE, puis de MDT en dernier.
 
@@ -186,7 +191,8 @@ Test-Path "C:\Program Files\Microsoft Deployment Toolkit\bin\MicrosoftDeployment
 
 - Les deux commandes doivent impérativement renvoyer `True`.
 
-## 8. Création et sécurisation du Deployment Share {#8-creation-et-securisation-du-deployment-share}
+<a id="8-création-et-sécurisation-du-deployment-share"></a>
+## 8. Création et sécurisation du Deployment Share
 
 8.1. **Création du dossier physique.** Créer un dossier distinct à la racine du disque `S:\` pour éviter tout conflit avec `RemoteInstall`.
 
@@ -218,7 +224,8 @@ New-PSDrive -Name "DS001" -PSProvider MDTProvider -Root "S:\DeploymentShare" -De
 - `Import-Module` : Charge les cmdlets et le fournisseur PowerShell MDT (`MDTProvider`).
 - `New-PSDrive` : Enregistre le lecteur virtuel `DS001:` pointant vers le dossier physique et son chemin réseau UNC.
 
-## 9. Vérification des flux et du service {#9-verification-des-flux-et-du-service}
+<a id="9-vérification-des-flux-et-du-service"></a>
+## 9. Vérification des flux et du service
 
 9.1. **Contrôle des règles de pare-feu WDS et SMB.** Vérifier que le pare-feu local autorise bien les ports indispensables au démarrage PXE et au téléchargement des images.
 
