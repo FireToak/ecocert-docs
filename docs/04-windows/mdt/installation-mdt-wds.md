@@ -47,7 +47,7 @@ Afin de préserver les performances du contrôleur de domaine principal (**ADECO
 | `Contrôleur de domaine` | `adecocert.local.ecocert4.fr` | Windows Server 2025 | `172.16.54.1/24` | AD DS, DNS (TCP/UDP 53, TCP 389, TCP 636) |
 | `Serveur DHCP` | `dhcpecocert.local.ecocert4.fr` | Debian 12 (Kea) | `172.16.54.2/24` | Distribution des baux IPv4 (UDP 67/68) |
 | `Serveur WDS / MDT` | `mdtecocert.local.ecocert4.fr` | Windows Server 2019 | `172.16.54.4/24` | TFTP (UDP 69), BINL (UDP 4011), SMB (TCP 445) |
-| `Passerelle par défaut` | `stormshield.local.ecocert4.fr` | Stormshield SNS | `172.16.54.254/24` | Routage inter-VLANs et pare-feu |
+| `Passerelle par défaut` | `ec-sw-c1.local.ecocert4.fr` | Switch Cisco L3 (C1) | `172.16.54.253/24` | Routage inter-VLANs (SVI VLAN 54) |
 
 > [!note] "Prérequis matériels et système"
 >
@@ -75,11 +75,11 @@ New-Partition -DiskNumber 1 -UseMaximumSize -DriveLetter S | Format-Volume -File
 
 ```powershell title="Config_Network.ps1"
 Get-NetAdapter
-New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 172.16.54.4 -PrefixLength 24 -DefaultGateway 172.16.54.254
+New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 172.16.54.4 -PrefixLength 24 -DefaultGateway 172.16.54.253
 Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 172.16.54.1
 ```
 
-- `New-NetIPAddress` : Assigne l'adresse IP statique `172.16.54.4` avec un masque `/24` et la passerelle Stormshield.
+- `New-NetIPAddress` : Assigne l'adresse IP statique `172.16.54.4` avec un masque `/24` et la passerelle par défaut `172.16.54.253` (SVI Switch L3).
 - `Set-DnsClientServerAddress` : Oriente les résolutions DNS exclusivement vers le contrôleur de domaine `ADECOCERT`.
 
 4.3. **Validation de la découverte DNS et jonction au domaine.** Vérifier que le contrôleur de domaine est résolu via son enregistrement SRV, puis joindre le serveur au domaine Active Directory.
