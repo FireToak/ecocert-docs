@@ -1,4 +1,4 @@
-# Fiche recette - Validation DNS Bind9
+# Fiche recette - DNS Bind9
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
