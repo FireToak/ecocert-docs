@@ -24,6 +24,8 @@
 | STORMSHIELD01 | stormshield01.local.ecocert4.fr | 192.168.14.254/29 (LAN), 172.16.32.14/24 (WAN) |
 | WIFIECOCERT   | wifiecocert.local.ecocert4.fr   | 172.16.54.30/24                                |
 | AP-A1         | ap-a1.local.ecocert4.fr         | 172.16.54.31/24                                |
+| NSECOCERT01   | ns01.local.ecocert4.fr          | 172.16.54.50/24                                |
+| DNSECOCERT01  | dns01.local.ecocert4.fr         | 172.16.54.51/24                                |
 
 ## Services
 
