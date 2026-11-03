@@ -108,10 +108,13 @@ Afin de respecter le principe du moindre privilège, aucun compte administrateur
 5.1. **Création des comptes sur le contrôleur de domaine (ADECOCERT).** Déclarer des comptes de service spécifiques pour la lecture du partage MDT et la jonction au domaine.
 
 ```powershell title="Create_Service_Accounts.ps1"
-$pwd = Read-Host -AsSecureString "Mot de passe sécurisé"
-New-ADUser -Name "svc-mdt-read" -SamAccountName "svc-mdt-read" -AccountPassword $pwd -Enabled $true -PasswordNeverExpires $true -Description "Lecture du partage MDT depuis WinPE"
-New-ADUser -Name "svc-mdt-join" -SamAccountName "svc-mdt-join" -AccountPassword $pwd -Enabled $true -PasswordNeverExpires $true -Description "Jonction automatique des postes au domaine"
-New-ADUser -Name "adm-mdt"      -SamAccountName "adm-mdt"      -AccountPassword $pwd -Enabled $true -Description "Administration locale du serveur MDTECOCERT"
+$pwd = Read-Host -AsSecureString "Password"
+
+New-ADUser -Name "svc-mdt-read" -SamAccountName "svc-mdt-read" -AccountPassword $pwd -Enabled $true -PasswordNeverExpires $true -Description "Lecture du partage MDT depuis WinPE" -Path "OU=Utilisateurs,OU=ServiceAccounts,OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
+
+New-ADUser -Name "svc-mdt-join" -SamAccountName "svc-mdt-join" -AccountPassword $pwd -Enabled $true -PasswordNeverExpires $true -Description "Jonction automatique des postes au domaine" -Path "OU=Utilisateurs,OU=ServiceAccounts,OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
+
+New-ADUser -Name "adm-mdt" -SamAccountName "adm-mdt" -AccountPassword $pwd -Enabled $true -Description "Administration locale du serveur MDTECOCERT" -Path "OU=Utilisateurs,OU=ServiceAccounts,OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
 ```
 
 - `svc-mdt-read` : Compte technique utilisé dans `Bootstrap.ini` pour monter le partage réseau `\\MDTECOCERT\MDTShare$` depuis WinPE.
@@ -120,7 +123,7 @@ New-ADUser -Name "adm-mdt"      -SamAccountName "adm-mdt"      -AccountPassword 
 
 > [!note] "Délégation de contrôle pour la jonction au domaine"
 >
-> Sur le contrôleur de domaine, ouvrir la console **Utilisateurs et ordinateurs Active Directory** (`dsa.msc`), faire un clic droit sur l'OU cible des postes (`OU=Postes,DC=local,DC=ecocert4,DC=fr`) > **Déléguer le contrôle** > Ajouter `svc-mdt-join` > Cocher l'option *Joindre un ordinateur au domaine*.
+> Sur le contrôleur de domaine, ouvrir la console **Utilisateurs et ordinateurs Active Directory** (`dsa.msc`), faire un clic droit sur l'OU cible des postes (`OU=Postes,DC=local,DC=ecocert4,DC=fr`) > **Déléguer le contrôle** > Ajouter `svc-mdt-join` > Sélectionner **Créer une tâche personnalisée à déléguer** > Cocher **Seulement les objets suivants dans le dossier** puis **Objets Ordinateur** > Dans les autorisations, cocher **Créer tous les objets enfants** et **Supprimer tous les objets enfants**.
 
 <a id="6-installation-et-initialisation-du-rôle-wds"></a>
 ## 6. Installation et initialisation du rôle WDS
