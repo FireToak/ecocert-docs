@@ -20,7 +20,7 @@
 | DHCP          | dhcp.local.ecocert4.fr          | 172.16.54.2/24                                 |
 | ADCS          | adcs.local.ecocert4.fr          | 172.16.54.3/24                                 |
 | WDS           | wds.local.ecocert4.fr           | 172.16.54.4/24                                 |
-| PKI           | pki.ecocert4.fr                 | 172.16.54.5/24                                 |
+| PKI           | pki.ecocert4.fr                 | 10.0.84.1/24                                   |
 | GLPI          | glpi.local.ecocert4.fr          | 172.16.54.40/24                                |
 | NAS           | nas.local.ecocert4.fr           | 172.16.54.20/24                                |
 | STORMSHIELD01 | stormshield01.local.ecocert4.fr | 192.168.14.254/29 (LAN), 172.16.32.14/24 (WAN) |
