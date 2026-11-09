@@ -60,7 +60,7 @@ Le service Kea DHCPv4 est le composant central d'attribution IP de l'infrastruct
         "option-data": [
             {
                 "name": "domain-name-servers",
-                "data": "172.16.54.1, 1.1.1.1"
+                "data": "172.16.54.51, 1.1.1.1"
             },
             {
                 "name": "domain-name",
