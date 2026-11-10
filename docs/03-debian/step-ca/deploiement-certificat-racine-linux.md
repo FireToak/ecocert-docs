@@ -1,4 +1,4 @@
-# Déploiement du Certificat Racine sur Debian 13
+# Déploiement du Certificat Racine manuellement sur Debian 13
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
