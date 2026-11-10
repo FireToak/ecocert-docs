@@ -59,11 +59,11 @@ sudo apt install bind9 -y
 
 ```text title="/etc/resolv.conf"
 nameserver 127.0.0.1
-nameserver 9.9.9.9
+nameserver 86.54.11.1
 ```
 
 - `nameserver 127.0.0.1` : Définit l'adresse IP locale du serveur DNS primaire (bind9 lui-même).
-- `nameserver 9.9.9.9` : Définit l'adresse IP du serveur DNS de secours (résolveur public Quad9).
+- `nameserver 86.54.11.1` : Définit l'adresse IP du serveur DNS de secours (résolveur public DNS4EU).
 
 5.2. **Application de la configuration réseau.** Redémarrage du service réseau pour la prise en compte des nouveaux résolveurs.
 

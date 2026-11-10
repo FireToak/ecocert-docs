@@ -1,4 +1,4 @@
-# Recettes - Step-CA
+# Fiche recette - Step-CA
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 

@@ -7,7 +7,14 @@ ecocert4.fr. IN SOA ns0.ecocert4.fr. postmaster.ecocert4.fr. (
     3H )        ; Negative Cache TTL
 
 ; Serveurs de noms
-ecocert4.fr.      IN  NS  ns01.ecocert4.fr.
+ecocert4.fr.       IN  NS  ns01.ecocert4.fr. 
+local.ecocert4.fr. IN  NS  ad.local.ecocert4.fr.
 
 ; Enregistrements A
 ns01         IN  A   172.16.54.50
+
+; Glue record local.ecocert
+ad.local     IN  A   172.16.54.1
+
+; PKI
+pki          IN  A   10.0.84.1
