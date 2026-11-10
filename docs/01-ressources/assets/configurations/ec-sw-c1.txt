@@ -165,8 +165,8 @@ interface GigabitEthernet1/0/6
  no shutdown
 !
 interface GigabitEthernet1/0/7
- description SERVEURS
- switchport access vlan 54
+ description BASTION
+ switchport access vlan 85
  switchport mode access
  no shutdown
 !
@@ -189,8 +189,8 @@ interface GigabitEthernet1/0/10
  no shutdown
 !
 interface GigabitEthernet1/0/11
- description SERVEURS
- switchport access vlan 54
+ description PKI
+ switchport access vlan 84
  switchport mode access
  no shutdown
 !
@@ -299,6 +299,14 @@ interface Vlan81
  ip address 192.168.4.126 255.255.255.224
  ip helper-address 172.16.54.2
  no shutdown
+!
+interface Vlan84
+ description PKI
+ ip address 10.0.84.254 255.255.255.0
+!
+interface Vlan85
+ description BASTION
+ ip address 10.0.85.254 255.255.255.0
 !
 ip forward-protocol nd
 no ip http server
