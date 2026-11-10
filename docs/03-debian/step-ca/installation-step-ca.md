@@ -8,9 +8,9 @@ description: Procédure d'installation de l'autorité de certification step-ca e
 
 ---
 
-> [!note] Informations
+> [!note] "Informations"
 >
-> - **Auteur :** Équipe SRE
+> - **Auteur :** Louis MEDO
 > - **Date :** 09/11/2026
 > - **Domaine :** Debian
 
@@ -34,7 +34,7 @@ Déploiement de `step-ca`, une autorité de certification (CA) interne légère 
 sudo apt update && sudo apt install -y --no-install-recommends curl gpg ca-certificates
 ```
 
-* `--no-install-recommends` : Empêche l'installation de paquets optionnels pour garder un système minimaliste (KISS) et limiter la surface d'attaque.
+* `--no-install-recommends` : Empêche l'installation de paquets optionnels pour garder un système minimaliste et limiter la surface d'attaque.
 * `curl` : Utilitaire de transfert réseau utilisé pour rapatrier la clé de signature.
 * `gpg` : Outil de cryptographie GNU nécessaire au traitement des clés de dépôt.
 * `ca-certificates` : Fournit les autorités de certification racines pour valider les connexions HTTPS lors des téléchargements.
