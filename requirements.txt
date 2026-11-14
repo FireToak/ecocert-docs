@@ -1,7 +1,7 @@
 click==8.5.0
 deepmerge==4.0.0
 Jinja2==3.1.6
-Markdown==3.11.2
+Markdown==3.11.3
 MarkupSafe==3.0.4
 Pygments==2.21.0
 pymdown-extensions==12.3
