@@ -14,7 +14,7 @@
 
 ## 1. Contexte du test
 
-Validation de l'infrastructure d'autorité de certification `step-ca` sur serveur Debian. Ce test vise à vérifier le fonctionnement du service, le déploiement automatisé du certificat racine via stratégie de groupe (GPO) sur les clients Windows, et la reconnaissance de la chaîne de confiance cryptographique au niveau du navigateur web pour l'URL `https://pki.ecocert.fr`.
+Validation de l'infrastructure d'autorité de certification `step-ca` sur serveur Debian. Ce test vise à vérifier le fonctionnement du service, le déploiement automatisé du certificat racine via stratégie de groupe (GPO) sur les clients Windows, et la reconnaissance de la chaîne de confiance cryptographique au niveau du navigateur web pour l'URL `https://pki.ecocert4.fr`.
 
 ## 2. Procédures de validation
 
