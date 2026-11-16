@@ -6,13 +6,15 @@ description: Procédures additionnelles pour la configuration de la base de donn
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
-
-- **Auteur :** KADA Amine
-- **Date :** 23/09/2026
-- **Domaine :** Debian / GLPI
-
 ---
 
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 23/09/2026
+> - **Domaine :** Windows Server 2025
+
+---
 ## 2. Contexte
 
 Ce document annexe regroupe les actions complémentaires exigées pour le déploiement massif et la structuration avancée du serveur GLPI au sein de l'infrastructure d'EcoCert. Il détaille la configuration spécifique de la base de données, la création de la politique de groupe (GPO) pour le déploiement silencieux de l'agent, et la validation du mécanisme de remontée automatique de l'inventaire.

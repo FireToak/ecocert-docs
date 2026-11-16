@@ -1,250 +1,216 @@
 ---
-description: Installation et sécurisation des services WDS, Windows ADK, WinPE et MDT sur le serveur MDTECOCERT (Windows Server 2019).
+description: Installation du serveur MDTECOCERT sous Proxmox avec Windows Server 2019, WDS, ADK et MDT.
 ---
 
 # Installation de l'infrastructure de déploiement WDS et MDT
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
----
-
 > [!note] "Informations"
->
 > - **Auteur :** Amine KADA
-> - **Date :** 02/11/2026
 > - **Domaine :** Windows Server 2019
+> - **Objectif :** préparer le serveur de déploiement de la SP4
 
----
+## 1. Contexte et architecture
 
-## 1. Sommaire
+Le serveur **MDTECOCERT** est une machine virtuelle dédiée à l'installation des postes Windows. WDS fournit le démarrage réseau ; MDT prépare les séquences d'installation et WinPE démarre le client avant l'installation de Windows.
 
-- [1. Sommaire](#1-sommaire)
-- [2. Contexte](#2-contexte)
-- [3. Matrice d'adressage et prérequis](#3-matrice-dadressage-et-prérequis)
-- [4. Préparation du stockage et intégration au domaine](#4-préparation-du-stockage-et-intégration-au-domaine)
-- [5. Déploiement des comptes de service dédiés (Active Directory)](#5-déploiement-des-comptes-de-service-dédiés-active-directory)
-- [6. Installation et initialisation du rôle WDS](#6-installation-et-initialisation-du-rôle-wds)
-- [7. Installation de Windows ADK, du module WinPE et de MDT](#7-installation-de-windows-adk-du-module-winpe-et-de-mdt)
-- [8. Création et sécurisation du Deployment Share](#8-création-et-sécurisation-du-deployment-share)
-- [9. Vérification des flux et du service](#9-vérification-des-flux-et-du-service)
+| Élément | Valeur |
+| :--- | :--- |
+| Hyperviseur | Proxmox |
+| Serveur | MDTECOCERT, Windows Server 2019 Desktop Experience |
+| Adresse serveur | `172.16.54.4/24` |
+| Passerelle du VLAN serveurs | `172.16.54.253` |
+| DNS Active Directory | `172.16.54.1` |
+| Domaine | `local.ecocert4.fr` |
+| Volume de données | `S:` en NTFS |
+| Répertoire WDS | `S:\RemoteInstall` |
+| Répertoire MDT | `S:\DeploymentShare` |
+| Partage MDT | `\\MDTECOCERT\MDTShare$` |
 
-## 2. Contexte
+La passerelle `.253` est celle de l'interface VLAN 54 dans la configuration Cisco du dépôt. Vérifier l'adresse libre et la configuration réellement active avant de l'appliquer. Le sujet prévoit Server Core et un poste d'administration distant ; cette version centralisée avec interface graphique est une adaptation à faire valider par l'enseignant. MDT est retiré du support depuis 2026 ; Windows 10 22H2 a atteint sa fin de support ordinaire en octobre 2025. Leur utilisation ici correspond au laboratoire pédagogique.
 
-La gestion des postes de travail au sein d'ECOCERT requiert une infrastructure de déploiement réseau automatisée et reproductible. Le serveur **MDTECOCERT** héberge **WDS** (Windows Deployment Services) pour la prise en charge de l'amorçage réseau PXE et **MDT** (Microsoft Deployment Toolkit) pour l'orchestration des séquences de tâches, des images systèmes et des applications.
+## 2. Création de la machine virtuelle Proxmox
 
-Afin de préserver les performances du contrôleur de domaine principal (**ADECOCERT**), ces services sont déployés sur une machine dédiée sous **Windows Server 2019** (GUI). Les données de déploiement sont isolées sur un volume secondaire dédié (`S:\`), séparant ainsi l'arborescence PXE (`RemoteInstall`) et le partage MDT (`DeploymentShare`) du volume système.
+2.1. **Préparer les ISO.** Dans Proxmox, sélectionner le stockage des ISO > **ISO Images > Upload** et ajouter l'ISO de Windows Server 2019 et celle des pilotes VirtIO. Si la VM MDTECOCERT existe déjà, conserver sa configuration et passer à la section 3.
 
-> [!warning] "Cycle de vie des composants"
->
-> - **MDT :** Retiré du support actif par Microsoft au début de l'année 2026 (dernier build stable : 8456). Il demeure pleinement fonctionnel et pertinent pour un environnement de laboratoire ou de formation (BTS SIO / ECOCERT).
-> - **WDS :** Maintenu sous Windows Server 2019, 2022 et 2025, mais sujet à dépréciation pour les futures versions de Windows Server au profit de solutions infonuagiques (Autopilot / Intune) ou MECM.
+2.2. **Créer la VM.** Cliquer sur **Create VM** et renseigner :
 
-<a id="3-matrice-dadressage-et-prérequis"></a>
-## 3. Matrice d'adressage et prérequis
+| Onglet | Paramètre |
+| :--- | :--- |
+| General | ID libre ; nom `MDTECOCERT` |
+| OS | ISO Windows Server 2019 ; type Microsoft Windows |
+| System | Machine `q35`, BIOS `OVMF (UEFI)`, ajouter un disque EFI |
+| Disks | Disque système 80 Gio, contrôleur VirtIO SCSI single |
+| CPU | 4 vCPU pour le laboratoire |
+| Memory | 8192 Mio |
+| Network | Bridge relié au réseau serveurs, carte VirtIO, VLAN tag 54 si le bridge transporte les VLANs étiquetés |
 
-| Équipement / Rôle | Nom d'hôte (FQDN) | Système d'exploitation | Adresse IP | Rôle et flux associés |
-| :--- | :--- | :--- | :--- | :--- |
-| `Contrôleur de domaine` | `adecocert.local.ecocert4.fr` | Windows Server 2025 | `172.16.54.1/24` | AD DS, DNS (TCP/UDP 53, TCP 389, TCP 636) |
-| `Serveur DHCP` | `dhcpecocert.local.ecocert4.fr` | Debian 12 (Kea) | `172.16.54.2/24` | Distribution des baux IPv4 (UDP 67/68) |
-| `Serveur WDS / MDT` | `mdtecocert.local.ecocert4.fr` | Windows Server 2019 | `172.16.54.4/24` | TFTP (UDP 69), BINL (UDP 4011), SMB (TCP 445) |
-| `Passerelle par défaut` | `ec-sw-c1.local.ecocert4.fr` | Switch Cisco L3 (C1) | `172.16.54.253/24` | Routage inter-VLANs (SVI VLAN 54) |
+Le bridge et le tag dépendent du câblage Proxmox : si le port est déjà configuré en accès VLAN 54, ne pas ajouter un second tag. Dans **Hardware > Add > Hard Disk**, ajouter un disque de données, par exemple 150 Gio. Ajouter l'ISO VirtIO dans un second lecteur CD. Le firmware de la VM serveur ne détermine pas le mode BIOS ou UEFI des clients.
 
-> [!note] "Prérequis matériels et système"
->
-> - Une machine virtuelle provisionnée sous Windows Server 2019 avec expérience de bureau (la console MDT Workbench nécessite une interface graphique).
-> - Un disque système `C:\` de 60 Go et un disque secondaire `S:\` d'au minimum 40 Go pour le stockage des images WIM et des pilotes.
-> - La connectivité réseau opérationnelle avec le contrôleur de domaine et le serveur DHCP.
+2.3. **Installer Windows.** Démarrer la VM, ouvrir **Console**, lancer l'installation et choisir **Windows Server 2019 Standard (Desktop Experience)**. Si aucun disque n'apparaît, cliquer sur **Load driver**, parcourir le lecteur VirtIO et charger le pilote `vioscsi` correspondant à Windows Server 2019 et à l'architecture amd64. Après installation, installer le pilote réseau et l'agent QEMU depuis l'ISO VirtIO, puis activer **Options > QEMU Guest Agent** dans Proxmox.
 
-<a id="4-préparation-du-stockage-et-intégration-au-domaine"></a>
-## 4. Préparation du stockage et intégration au domaine
+## 3. Préparation du serveur Windows
 
-4.1. **Initialisation et formatage du volume de données S:.** Repérer le disque secondaire vierge attaché à la machine virtuelle et créer la partition NTFS dédiée aux données de déploiement.
+3.1. **Renommer le serveur.** Dans une fenêtre Windows PowerShell 5.1 ouverte en administrateur :
 
-```powershell title="Init_Storage.ps1"
-Get-Disk
-Initialize-Disk -Number 1 -PartitionStyle GPT
-New-Partition -DiskNumber 1 -UseMaximumSize -DriveLetter S | Format-Volume -FileSystem NTFS -NewFileSystemLabel "DEPLOY"
+```powershell
+Rename-Computer -NewName 'MDTECOCERT' -Restart
 ```
 
-- `Get-Disk` : Liste l'ensemble des disques physiques reconnus par le système d'exploitation.
-- `Initialize-Disk` : Initialise le disque vierge avec une table de partitionnement GPT.
-- `New-Partition` : Alloue la totalité de l'espace disque disponible et assigne la lettre de lecteur `S:`.
-- `Format-Volume` : Formate le volume en NTFS avec l'étiquette `DEPLOY`.
+Après redémarrage, `hostname` doit afficher `MDTECOCERT`.
 
-4.2. **Configuration de l'adressage IP statique.** Appliquer la configuration réseau statique sur l'interface connectée au VLAN Serveurs (VLAN 54).
+3.2. **Préparer le volume de données.** Dans **Gestionnaire de serveur > Outils > Gestion de l'ordinateur > Gestion des disques**, identifier le disque supplémentaire par sa taille et son état. S'il est vierge, l'initialiser en GPT, créer un **Nouveau volume simple**, choisir la lettre `S:` et formater en NTFS avec le nom `DEPLOY`. Le formatage efface les données du volume sélectionné ; ne pas reformater un volume déjà utilisé.
 
-```powershell title="Config_Network.ps1"
-Get-NetAdapter
-New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 172.16.54.4 -PrefixLength 24 -DefaultGateway 172.16.54.253
-Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 172.16.54.1
+```powershell
+Get-Disk | Format-Table Number, FriendlyName, Size, PartitionStyle
+Get-Volume | Format-Table DriveLetter, FileSystemLabel, FileSystem, SizeRemaining, Size
 ```
 
-- `New-NetIPAddress` : Assigne l'adresse IP statique `172.16.54.4` avec un masque `/24` et la passerelle par défaut `172.16.54.253` (SVI Switch L3).
-- `Set-DnsClientServerAddress` : Oriente les résolutions DNS exclusivement vers le contrôleur de domaine `ADECOCERT`.
+3.3. **Configurer IPv4 et DNS.** Ouvrir **Gestionnaire de serveur > Serveur local > Ethernet > Propriétés > Protocole Internet version 4**. Pour une nouvelle interface, renseigner : IP `172.16.54.4`, masque `255.255.255.0`, passerelle `172.16.54.253`, DNS préféré `172.16.54.1`. Ne pas ajouter une seconde passerelle à une configuration existante. Depuis PowerShell, la configuration équivalente, après identification de l'interface et vérification que l'adresse est libre, est :
 
-4.3. **Validation de la découverte DNS et jonction au domaine.** Vérifier que le contrôleur de domaine est résolu via son enregistrement SRV, puis joindre le serveur au domaine Active Directory.
-
-```powershell title="Join_Domain.ps1"
-Resolve-DnsName -Type SRV "_ldap._tcp.dc._msdcs.local.ecocert4.fr"
-Add-Computer -DomainName "local.ecocert4.fr" -Credential (Get-Credential) -Restart
+```powershell
+Get-NetIPConfiguration
+New-NetIPAddress -InterfaceAlias 'Ethernet' -IPAddress 172.16.54.4 -PrefixLength 24 -DefaultGateway 172.16.54.253
+Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 172.16.54.1
+Get-NetIPConfiguration
+Resolve-DnsName -Type SRV '_ldap._tcp.dc._msdcs.local.ecocert4.fr'
+Test-NetConnection 172.16.54.1 -Port 389
 ```
 
-- `Resolve-DnsName` : Confirme la joignabilité et la découverte du service d'annuaire avant la tentative de jonction.
-- `Add-Computer` : Intègre la machine au domaine `local.ecocert4.fr` et déclenche un redémarrage automatique.
+La résolution SRV doit retourner le contrôleur de domaine et le test LDAP doit afficher `TcpTestSucceeded : True`.
 
-4.4. **Vérification du canal sécurisé après redémarrage.** Contrôler la validité de l'authentification Kerberos entre le serveur MDT et le contrôleur de domaine.
+3.4. **Joindre le domaine.** Dans **Gestionnaire de serveur > Serveur local > Groupe de travail > Modifier**, choisir **Domaine**, saisir `local.ecocert4.fr`, puis un compte autorisé à joindre la machine. Redémarrer. Équivalent PowerShell :
 
-```powershell title="Check_SecureChannel.ps1"
-Test-ComputerSecureChannel -Verbose
+```powershell
+Add-Computer -DomainName 'local.ecocert4.fr' -Credential (Get-Credential) -Restart
 ```
 
-- `Test-ComputerSecureChannel` : Valide l'état de la relation d'approbation (résultat attendu : `True`).
+Après redémarrage :
 
-<a id="5-déploiement-des-comptes-de-service-dédiés-active-directory"></a>
-## 5. Déploiement des comptes de service dédiés (Active Directory)
-
-Afin de respecter le principe du moindre privilège, aucun compte administrateur du domaine ne doit être utilisé lors des déploiements automatisés des postes clients.
-
-5.1. **Création des comptes sur le contrôleur de domaine (ADECOCERT).** Déclarer des comptes de service spécifiques pour la lecture du partage MDT et la jonction au domaine.
-
-```powershell title="Create_Service_Accounts.ps1"
-$pwd = Read-Host -AsSecureString "Password"
-
-New-ADUser -Name "svc-mdt-read" -SamAccountName "svc-mdt-read" -AccountPassword $pwd -Enabled $true -PasswordNeverExpires $true -Description "Lecture du partage MDT depuis WinPE" -Path "OU=Utilisateurs,OU=ServiceAccounts,OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
-
-New-ADUser -Name "svc-mdt-join" -SamAccountName "svc-mdt-join" -AccountPassword $pwd -Enabled $true -PasswordNeverExpires $true -Description "Jonction automatique des postes au domaine" -Path "OU=Utilisateurs,OU=ServiceAccounts,OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
-
-New-ADUser -Name "adm-mdt" -SamAccountName "adm-mdt" -AccountPassword $pwd -Enabled $true -Description "Administration locale du serveur MDTECOCERT" -Path "OU=Utilisateurs,OU=ServiceAccounts,OU=Ecocert,DC=local,DC=ecocert4,DC=fr"
+```powershell
+Get-CimInstance Win32_ComputerSystem | Select-Object Name, Domain, PartOfDomain
+Test-ComputerSecureChannel
 ```
 
-- `svc-mdt-read` : Compte technique utilisé dans `Bootstrap.ini` pour monter le partage réseau `\\MDTECOCERT\MDTShare$` depuis WinPE.
-- `svc-mdt-join` : Compte restreint dédié à la jonction au domaine lors de l'exécution de la séquence de tâches.
-- `adm-mdt` : Compte d'administration délégué, à intégrer au groupe local `Administrateurs` de `MDTECOCERT`.
+`PartOfDomain` et le canal sécurisé doivent renvoyer `True`.
 
-> [!note] "Délégation de contrôle pour la jonction au domaine"
->
-> Sur le contrôleur de domaine, ouvrir la console **Utilisateurs et ordinateurs Active Directory** (`dsa.msc`), faire un clic droit sur l'OU cible des postes (`OU=Postes,DC=local,DC=ecocert4,DC=fr`) > **Déléguer le contrôle** > Ajouter `svc-mdt-join` > Sélectionner **Créer une tâche personnalisée à déléguer** > Cocher **Seulement les objets suivants dans le dossier** puis **Objets Ordinateur** > Dans les autorisations, cocher **Créer tous les objets enfants** et **Supprimer tous les objets enfants**.
+## 4. Installation et configuration de WDS
 
-<a id="6-installation-et-initialisation-du-rôle-wds"></a>
-## 6. Installation et initialisation du rôle WDS
+4.1. **Installer le rôle.** Dans **Gestionnaire de serveur > Gérer > Ajouter des rôles et fonctionnalités**, choisir une installation basée sur un rôle, sélectionner MDTECOCERT, puis **Services de déploiement Windows** et accepter les outils. Cocher **Serveur de déploiement** et **Serveur de transport**, puis installer.
 
-6.1. **Installation du rôle WDS complet.** Déployer le service de transport et le service de déploiement ainsi que les outils d'administration RSAT.
-
-```powershell title="Install_WDS.ps1"
+```powershell
 Install-WindowsFeature WDS -IncludeAllSubFeature -IncludeManagementTools
-Get-WindowsFeature -Name WDS*
+Get-WindowsFeature WDS*
 ```
 
-- `-IncludeAllSubFeature` : Installe simultanément `WDS-Deployment` (gestion des images PXE) et `WDS-Transport` (serveur TFTP/Multicast).
-- `-IncludeManagementTools` : Installe la console de gestion MMC (`wdsmgmt.msc`).
+4.2. **Ouvrir la console avec un compte du domaine.** Sur MDTECOCERT, ouvrir une session avec un compte du domaine disposant des droits d'administration WDS, puis lancer **Services de déploiement Windows** en administrateur. Si le serveur ne figure pas dans la liste, clic droit sur **Serveurs > Ajouter un serveur > Ordinateur local**.
 
-6.2. **Initialisation du référentiel RemoteInstall sur S:.** Configurer l'arborescence PXE sur la partition de données dédiée plutôt que sur le volume système `C:`.
+Lors du test ECOCERT, l'ajout échouait avec le compte local `MDTECOCERT\Administrateur` et l'erreur `0x52E` ; le serveur est apparu avec un compte du domaine. Ce résultat ne prouve pas que toute erreur `0x52E` a la même cause. Vérifier `whoami`, les droits et le canal sécurisé si l'erreur persiste. Ne pas réinitialiser WDS pour résoudre ce symptôme.
 
-```powershell title="Init_WDS.ps1"
+4.3. **Initialiser WDS.** Ouvrir **Outils > Services de déploiement Windows**, développer **Serveurs**, clic droit sur MDTECOCERT > **Configurer le serveur**. Choisir **Intégré à Active Directory**, définir `S:\RemoteInstall`, puis sélectionner la réponse aux clients connus et inconnus pour le laboratoire. Terminer et démarrer le service. Utiliser ce mode uniquement sur le réseau de déploiement prévu.
+
+Pour une installation neuve non encore initialisée, les commandes équivalentes sont :
+
+```powershell
 WDSUTIL /Initialize-Server /Server:MDTECOCERT /RemInst:"S:\RemoteInstall"
-```
-
-- `/Initialize-Server` : Crée l'arborescence TFTP/PXE, les répertoires d'amorçage (`boot\x64`) et configure le service.
-- `/RemInst` : Spécifie l'emplacement du dossier `RemoteInstall` sur le volume `S:\`.
-
-6.3. **Configuration de la réponse PXE.** Configurer WDS pour répondre aux requêtes de démarrage réseau.
-
-```powershell title="Config_PXE_Response.ps1"
 WDSUTIL /Set-Server /Server:MDTECOCERT /AnswerClients:All
-```
-
-- `/AnswerClients:All` : Autorise le serveur à répondre aux demandes d'amorçage PXE des machines connues et inconnues (adapté au laboratoire).
-
-6.4. **Vérification de l'état du service et des permissions.** Confirmer que le service d'écoute WDS est actif et opérationnel.
-
-```powershell title="Check_WDS.ps1"
+Start-Service WDSServer
 Get-Service WDSServer
-Test-Path "S:\RemoteInstall"
 WDSUTIL /Get-Server /Server:MDTECOCERT /Show:Config
 ```
 
-- `WDSServer` : L'état du service doit être `Running`.
-- `Test-Path` : Confirme la présence du dossier racine d'installation réseau.
+Le service doit être `Running`. Kea et WDS étant sur deux serveurs distincts, ne pas appliquer les réglages réservés à une installation DHCP et WDS sur la même machine.
 
-<a id="7-installation-de-windows-adk-du-module-winpe-et-de-mdt"></a>
-## 7. Installation de Windows ADK, du module WinPE et de MDT
+## 5. Installation d'ADK, WinPE et MDT
 
-L'ordre d'installation de ces trois composants est strict : Windows ADK en premier, suivi du module complémentaire WinPE, puis de MDT en dernier.
+5.1. **Télécharger les composants.**
 
-7.1. **Installation du Windows Assessment and Deployment Kit (ADK).** Exécuter `adksetup.exe` et sélectionner les composants minimaux nécessaires à la création d'images.
+| Composant | Téléchargement ou référence | Utilisation |
+| :--- | :--- | :--- |
+| Windows ADK pour Windows 10, version 2004 | [Télécharger l’installateur ADK](https://go.microsoft.com/fwlink/?linkid=2120254) | Lancer `adksetup.exe` et sélectionner **Deployment Tools**. |
+| Module complémentaire Windows PE pour ADK 2004 | [Télécharger l’installateur WinPE](https://go.microsoft.com/fwlink/?linkid=2120253) | Lancer `adkwinpesetup.exe` après l’ADK. |
+| Microsoft Deployment Toolkit 8456 | [Copie archivée du MSI x64 sur Internet Archive](https://web.archive.org/web/20240315155222/https://download.microsoft.com/download/3/3/9/339BE62D-B4B8-4956-B58D-73C4685FC492/MicrosoftDeploymentToolkit_x64.msi) · [Notes de version Microsoft](https://learn.microsoft.com/en-us/intune/configmgr/mdt/release-notes) | L’archive est une source tierce : vérifier signature et empreinte avant installation. Le lien historique du centre Microsoft renvoie une erreur 404. |
+| Correctif MDT KB4564442 | [Télécharger le correctif Microsoft](https://download.microsoft.com/download/3/0/6/306AC1B2-59BE-43B8-8C65-E141EF287A5E/KB4564442/MDT_KB4564442.exe) · [Notice d’installation Microsoft](https://support.microsoft.com/help/4564442) | Corrige la détection BIOS/UEFI avec MDT 8456 et l’ADK 2004. |
 
-```text title="Composants ADK sélectionnés"
-- Outils de déploiement (Deployment Tools)
+Les deux liens ADK et WinPE proviennent de la [page officielle de téléchargement des ADK](https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install#other-adk-downloads) : choisir la version Windows 10 **2004**, republiée en mai 2025. Installer dans l’ordre : **ADK**, **module Windows PE**, puis **MDT 8456**. Microsoft indique que MDT est retiré du support depuis 2026. La disponibilité des fichiers peut évoluer ; l’accès au contenu binaire n’a pas été vérifié par téléchargement complet.
+
+5.2. **Vérifier puis installer MDT 8456.** Privilégier une copie conservée par l’établissement si elle est disponible. Sinon, télécharger la copie archivée ci-dessus. Internet Archive n’est pas un canal de téléchargement Microsoft ; la disponibilité du fichier et sa signature doivent être vérifiées au moment du téléchargement.
+
+Sur MDTECOCERT, dans Windows PowerShell, remplacer le chemin suivant par celui du fichier MSI téléchargé :
+
+```powershell
+$msi = 'C:\Users\Administrateur\Downloads\MicrosoftDeploymentToolkit_x64.msi'
+Get-AuthenticodeSignature -FilePath $msi | Format-List Status, StatusMessage, SignerCertificate
+Get-FileHash -Path $msi -Algorithm SHA256
 ```
 
-> [!note] "Séparation de WinPE depuis ADK 1809"
->
-> Depuis la version 1809 de Windows 10, l'environnement de préinstallation Windows PE ne fait plus partie de l'installeur ADK principal. Il fait l'objet d'un installeur séparé (`adkwinpesetup.exe`) qui doit impérativement être installé avec le même numéro de build que l'ADK.
+La signature doit afficher `Valid` et identifier Microsoft comme signataire. Comparer également le résultat SHA-256 à cette empreinte de référence publiée par une [source communautaire spécialisée](https://www.deploymentresearch.com/to-use-or-not-to-use-mdt/) :
 
-7.2. **Installation de l'Add-on Windows PE pour ADK.** Exécuter `adkwinpesetup.exe` pour déployer les fichiers sources WinPE x64 (`winpe.wim`).
-
-7.3. **Installation du Microsoft Deployment Toolkit (MDT).** Exécuter le package `MicrosoftDeploymentToolkit_x64.msi` pour installer la console **Deployment Workbench** et le module PowerShell associé.
-
-7.4. **Validation de la présence des composants.** Contrôler la bonne présence des bibliothèques WinPE et du module MDT sur le disque système.
-
-```powershell title="Check_ADK_MDT.ps1"
-Test-Path "C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\amd64"
-Test-Path "C:\Program Files\Microsoft Deployment Toolkit\bin\MicrosoftDeploymentToolkit.psd1"
+```text
+DABFD183C525BDB4866D2D9324F064A291CA62F3A16AC429CF3338BE529D1D58
 ```
 
-- Les deux commandes doivent impérativement renvoyer `True`.
+Cette empreinte est fournie par un tiers, pas par une page Microsoft vérifiée. Si la signature n’est pas valide ou si l’empreinte diffère, ne pas installer le fichier et rechercher une copie vérifiable. Lancer ensuite le MSI, terminer l’assistant, puis ouvrir **Deployment Workbench > Help > About** : la version recherchée est **6.3.8456.1000**. Le nom du MSI seul ne prouve pas la version.
 
-<a id="8-création-et-sécurisation-du-deployment-share"></a>
-## 8. Création et sécurisation du Deployment Share
+5.3. **Appliquer le correctif KB4564442.** Ce correctif s’applique uniquement à **MDT build 8456** ; il ne met pas une version antérieure de MDT à niveau vers 8456. Après vérification de la version :
 
-8.1. **Création du dossier physique.** Créer un dossier distinct à la racine du disque `S:\` pour éviter tout conflit avec `RemoteInstall`.
+1. Fermer **Deployment Workbench** et extraire `MDT_KB4564442.exe` dans un dossier temporaire.
+2. Sauvegarder les fichiers `Microsoft.BDD.Utility.dll` existants dans les dossiers `C:\Programmes\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86` et `x64`.
+3. Copier les DLL extraites en respectant leur architecture : DLL x86 dans `x86`, DLL x64 dans `x64`.
+4. Si un partage MDT existe déjà, sauvegarder puis remplacer aussi les DLL correspondantes dans `S:\DeploymentShare\Tools\x86` et `S:\DeploymentShare\Tools\x64`. Si le partage n’existe pas encore, cette étape sera inutile lors de sa création à partir des modèles corrigés ; contrôler néanmoins les versions après création.
+5. Pour chaque partage déjà créé, rouvrir Deployment Workbench, clic droit sur le partage > **Update Deployment Share** > **Completely regenerate the boot images**. Si une image a déjà été publiée dans WDS, la remplacer par l’image régénérée.
 
-```powershell title="Create_MDT_Folder.ps1"
-New-Item -Path "S:\DeploymentShare" -ItemType Directory
+La version attendue des DLL corrigées est `6.3.8456.1001`, selon la notice Microsoft. Vérifier les copies du modèle et du partage ; contrôler aussi x86 si cette architecture est utilisée :
+
+```powershell
+(Get-Item 'C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\Microsoft.BDD.Utility.dll').VersionInfo.FileVersion
+(Get-Item 'S:\DeploymentShare\Tools\x64\Microsoft.BDD.Utility.dll').VersionInfo.FileVersion
 ```
 
-8.2. **Publication et sécurisation du partage SMB.** Créer le partage administratif masqué (`MDTShare$`) et appliquer des permissions NTFS et SMB strictes.
+5.4. **Vérifier les composants.** Contrôler les chemins ci-dessous :
 
-```powershell title="Config_MDT_Permissions.ps1"
-New-SmbShare -Name 'MDTShare$' -Path 'S:\DeploymentShare' -FullAccess "BUILTIN\Administrateurs" -ReadAccess "local\svc-mdt-read"
-icacls "S:\DeploymentShare" /inheritance:r
-icacls "S:\DeploymentShare" /grant "BUILTIN\Administrateurs:(OI)(CI)F"
-icacls "S:\DeploymentShare" /grant "NT AUTHORITY\SYSTEM:(OI)(CI)F"
-icacls "S:\DeploymentShare" /grant "local\svc-mdt-read:(OI)(CI)RX"
+```powershell
+Test-Path 'C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment\amd64'
+Test-Path 'C:\Program Files\Microsoft Deployment Toolkit\bin\MicrosoftDeploymentToolkit.psd1'
 ```
 
-- `New-SmbShare` : Crée le partage `\\MDTECOCERT\MDTShare$` avec des droits de lecture réservés au compte `svc-mdt-read`.
-- `/inheritance:r` : Supprime l'héritage des droits depuis la racine de `S:\`.
-- `(OI)(CI)RX` : Accorde les droits de lecture et d'exécution transmissibles aux sous-dossiers et fichiers.
+Les deux résultats attendus sont `True`. Ouvrir **Démarrer > Microsoft Deployment Toolkit > Deployment Workbench**.
 
-8.3. **Déclaration du Deployment Share dans la console MDT.** Enregistrer le partage de déploiement via le fournisseur PowerShell MDT.
+## 6. Comptes et partage de déploiement
 
-```powershell title="Register_DeploymentShare.ps1"
-Import-Module "C:\Program Files\Microsoft Deployment Toolkit\bin\MicrosoftDeploymentToolkit.psd1"
-New-PSDrive -Name "DS001" -PSProvider MDTProvider -Root "S:\DeploymentShare" -Description "ECOCERT Deployment Share" -NetworkPath '\\MDTECOCERT\MDTShare$' -Verbose | Add-MDTPersistentDrive -Verbose
+6.1. **Créer les comptes.** Sur ADECOCERT, ouvrir **Outils > Utilisateurs et ordinateurs Active Directory**. Dans une OU de comptes de service existante, créer `svc-mdt-read` pour la lecture du partage et `svc-mdt-join` pour la jonction des clients. Définir deux mots de passe distincts. Dans l'OU réellement destinée aux ordinateurs de test, utiliser **Délégation de contrôle** pour accorder à `svc-mdt-join` les droits nécessaires à la création des comptes ordinateurs ; vérifier les droits complémentaires nécessaires pour les comptes déjà existants. La suppression des ordinateurs n'est pas nécessaire par défaut.
+
+6.2. **Créer le partage MDT.** Dans Deployment Workbench, clic droit **Deployment Shares > New Deployment Share** :
+
+| Écran | Valeur |
+| :--- | :--- |
+| Deployment share path | `S:\DeploymentShare` |
+| Share name | `MDTShare$` |
+| Description | `ECOCERT Deployment Share` |
+| Options | Conserver les demandes interactives pour le premier déploiement |
+
+Terminer l'assistant. Si le partage existe déjà, choisir **Open Deployment Share** et le chemin existant ; ne pas recréer le dossier.
+
+6.3. **Attribuer les droits.** Dans **Gestion de l'ordinateur > Dossiers partagés > Partages**, ouvrir les propriétés de `MDTShare$` et l'onglet des autorisations de partage : conserver le contrôle total pour les administrateurs et ajouter la lecture pour `svc-mdt-read`. Dans les propriétés de `S:\DeploymentShare` > **Sécurité**, conserver les droits d'administration et de SYSTEM, et accorder lecture/exécution à `svc-mdt-read`, applicables aux sous-dossiers et fichiers. Vérifier les droits existants avant toute modification et tester depuis un client avec ce compte.
+
+```powershell
+Get-SmbShareAccess -Name 'MDTShare$'
+Get-Acl 'S:\DeploymentShare' | Format-List
 ```
 
-- `Import-Module` : Charge les cmdlets et le fournisseur PowerShell MDT (`MDTProvider`).
-- `New-PSDrive` : Enregistre le lecteur virtuel `DS001:` pointant vers le dossier physique et son chemin réseau UNC.
+La configuration de Windows, des applications, de WinPE et du PXE se poursuit dans [Configuration du déploiement PXE](configuration-mdt-wds.md).
 
-<a id="9-vérification-des-flux-et-du-service"></a>
-## 9. Vérification des flux et du service
+Les OU de postes créées dans chaque service ECOCERT sont renseignées dans les règles de la [fiche de configuration](configuration-mdt-wds.md). Accorder au compte de jonction les droits nécessaires dans chaque OU utilisée ; ne pas supposer que les droits sont déjà accordés.
 
-9.1. **Contrôle des règles de pare-feu WDS et SMB.** Vérifier que le pare-feu local autorise bien les ports indispensables au démarrage PXE et au téléchargement des images.
+## 7. Dépannage
 
-```powershell title="Check_Firewall.ps1"
-Get-NetFirewallRule -Direction Inbound -Enabled True | ForEach-Object {
-    $r = $_; $pf = $r | Get-NetFirewallPortFilter
-    if ($pf.Protocol -eq 'UDP' -and $pf.LocalPort -match '^(67|69|4011)$') {
-        [pscustomobject]@{ Regle = $r.DisplayName; Protocole = $pf.Protocol; Port = $pf.LocalPort; Profil = $r.Profile }
-    }
-}
-```
+| Symptôme | Contrôle |
+| :--- | :--- |
+| Disque absent pendant l'installation | Charger `vioscsi` depuis l'ISO VirtIO, ou contrôler le contrôleur choisi dans Proxmox. |
+| Domaine introuvable | Vérifier VLAN, passerelle, DNS `172.16.54.1`, heure et enregistrement SRV. |
+| WDS renvoie `0x52E` lors de l’ajout du serveur | Contrôler `whoami` et essayer une session avec un compte du domaine autorisé. Vérifier le canal sécurisé et les journaux si l’erreur persiste. |
+| WDS arrêté | Consulter `Get-Service WDSServer`, l'observateur d'événements et la disponibilité de `S:\RemoteInstall`. |
+| Partage refusé | Comparer autorisations de partage et de sécurité NTFS ; tester avec `svc-mdt-read`. |
 
-- **Ports requis :**
-  - **UDP 67/68 :** Découverte et réponses DHCP / PXE.
-  - **UDP 69 :** Transfert TFTP du binaire de démarrage réseau.
-  - **UDP 4011 :** Port BINL (Boot Information Negotiation Layer) géré par WDS.
-  - **TCP 445 :** Accès SMB au partage `\\MDTECOCERT\MDTShare$`.
-
-L'infrastructure WDS/MDT est désormais prête pour la configuration des séquences de tâches, de l'image WinPE et du serveur DHCP détaillée dans la procédure de configuration.
+Sources : [Préparation MDT Microsoft](https://learn.microsoft.com/fr-fr/windows/deployment/deploy-windows-mdt/prepare-for-windows-deployment-with-mdt), [problèmes connus MDT](https://learn.microsoft.com/en-us/mem/configmgr/mdt/known-issues), [retrait de MDT](https://learn.microsoft.com/en-us/troubleshoot/mem/configmgr/mdt/mdt-retirement).

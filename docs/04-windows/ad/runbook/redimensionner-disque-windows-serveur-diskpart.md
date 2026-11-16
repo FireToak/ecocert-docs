@@ -12,10 +12,9 @@ description: Procédure d'extension de volume Windows en supprimant la partition
 >
 > - **Auteur :** Louis MEDO
 > - **Date :** 09/10/2026
-> - **Domaine :** Windows
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

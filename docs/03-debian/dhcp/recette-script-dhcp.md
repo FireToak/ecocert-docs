@@ -8,14 +8,13 @@ description: Procédure de test et de validation de l'exécution du script d'aut
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 29/09/2026
-    - **Domaine :** Debian / Automatisation
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 29/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

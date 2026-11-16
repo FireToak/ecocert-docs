@@ -4,13 +4,13 @@
 
 ---
 
-!!! note "Informations"
-    - **Auteur :** Louis MEDO
-    - **Date :** 28/09/2026
-    - **Domaine :** Windows
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 28/09/2026
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

@@ -8,13 +8,13 @@ description: Procédure d'installation et de configuration du contrôleur UniFi 
 
 ---
 
-!!! note "Informations"
-    - **Auteur :** Louis MEDO
-    - **Date :** 21/09/2026
-    - **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 21/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

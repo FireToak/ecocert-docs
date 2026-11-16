@@ -1,4 +1,3 @@
-Current configuration : 5790 bytes
 !
 no service pad
 service timestamps debug datetime msec
@@ -15,7 +14,6 @@ username dreamlike privilege 15 secret 5 $1$NDup$o6dq18cUXzY9d6BqZnk4c.
 !
 !
 no aaa new-model
-system mtu routing 1500
 !
 !
 no ip domain-lookup
@@ -38,232 +36,294 @@ interface FastEthernet0/1
  description ADMINISTRATION
  switchport access vlan 11
  switchport mode access
+ exit
 !
 interface FastEthernet0/2
  description ADMINISTRATION
  switchport access vlan 11
  switchport mode access
+ exit
 !
 interface FastEthernet0/3
  description ADMINISTRATION
  switchport access vlan 11
  switchport mode access
+ exit
 !
 interface FastEthernet0/4
  description ADMINISTRATION
  switchport access vlan 11
  switchport mode access
+ exit
 !
 interface FastEthernet0/5
  description ADMINISTRATION
  switchport access vlan 11
  switchport mode access
+ exit
 !
 interface FastEthernet0/6
  description ADMINISTRATION
  switchport access vlan 11
  switchport mode access
+ exit
 !
 interface FastEthernet0/7
  description CERTIFICATION
  switchport access vlan 21
  switchport mode access
+ exit
 !
 interface FastEthernet0/8
  description CERTIFICATION
  switchport access vlan 21
  switchport mode access
+ exit
 !
 interface FastEthernet0/9
  description CERTIFICATION
  switchport access vlan 21
  switchport mode access
+ exit
 !
 interface FastEthernet0/10
  description CERTIFICATION
  switchport access vlan 21
  switchport mode access
+ exit
 !
 interface FastEthernet0/11
  description CERTIFICATION
  switchport access vlan 21
  switchport mode access
+ exit
 !
 interface FastEthernet0/12
  description CERTIFICATION
  switchport access vlan 21
  switchport mode access
+ exit
 !
 interface FastEthernet0/13
  description WIFI-VISITEURS
  switchport access vlan 81
  switchport mode access
+ exit
 !
 interface FastEthernet0/14
  description WIFI-VISITEURS
  switchport access vlan 81
  switchport mode access
+ exit
 !
 interface FastEthernet0/15
  description WIFI-VISITEURS
  switchport access vlan 81
  switchport mode access
+ exit
 !
 interface FastEthernet0/16
  description WIFI-VISITEURS
  switchport access vlan 81
  switchport mode access
+ exit
 !
 interface FastEthernet0/17
  description WIFI-VISITEURS
  switchport access vlan 81
  switchport mode access
+ exit
 !
 interface FastEthernet0/18
  description WIFI-VISITEURS
  switchport access vlan 81
  switchport mode access
+ exit
 !
 interface FastEthernet0/19
  description CONSEIL TECH
  switchport access vlan 61
  switchport mode access
+ exit
 !
 interface FastEthernet0/20
  description CONSEIL TECH
  switchport access vlan 61
  switchport mode access
-!         
+ exit
+!
 interface FastEthernet0/21
  description CONSEIL TECH
  switchport access vlan 61
  switchport mode access
+ exit
 !
 interface FastEthernet0/22
  description CONSEIL TECH
  switchport access vlan 61
  switchport mode access
+ exit
 !
 interface FastEthernet0/23
  description CONSEIL TECH
  switchport access vlan 61
  switchport mode access
+ exit
 !
 interface FastEthernet0/24
  description CONSEIL TECH
  switchport access vlan 61
  switchport mode access
+ exit
 !
 interface FastEthernet0/25
  description REFERENTIELS
  switchport access vlan 31
  switchport mode access
+ exit
 !
 interface FastEthernet0/26
  description REFERENTIELS
  switchport access vlan 31
  switchport mode access
+ exit
 !
 interface FastEthernet0/27
  description REFERENTIELS
  switchport access vlan 31
  switchport mode access
+ exit
 !
 interface FastEthernet0/28
  description REFERENTIELS
  switchport access vlan 31
  switchport mode access
+ exit
 !
 interface FastEthernet0/29
  description REFERENTIELS
  switchport access vlan 31
  switchport mode access
+ exit
 !
 interface FastEthernet0/30
  description REFERENTIELS
  switchport access vlan 31
  switchport mode access
+ exit
 !
 interface FastEthernet0/31
  description TECHNIQUES
  switchport access vlan 71
  switchport mode access
+ exit
 !
 interface FastEthernet0/32
  description TECHNIQUES
  switchport access vlan 71
  switchport mode access
+ exit
 !
 interface FastEthernet0/33
  description TECHNIQUES
  switchport access vlan 71
  switchport mode access
+ exit
 !
 interface FastEthernet0/34
  description TECHNIQUES
  switchport access vlan 71
  switchport mode access
+ exit
 !
 interface FastEthernet0/35
  description TECHNIQUES
  switchport access vlan 71
  switchport mode access
+ exit
 !
 interface FastEthernet0/36
  description TECHNIQUES
  switchport access vlan 71
  switchport mode access
+ exit
 !
 interface FastEthernet0/37
  description FORMA PRO
  switchport access vlan 41
  switchport mode access
+ exit
 !
 interface FastEthernet0/38
  description FORMA PRO
  switchport access vlan 41
  switchport mode access
+ exit
 !
 interface FastEthernet0/39
  description FORMA PRO
  switchport access vlan 41
  switchport mode access
+ exit
 !
 interface FastEthernet0/40
  description FORMA PRO
  switchport access vlan 41
  switchport mode access
+ exit
 !
 interface FastEthernet0/41
  description FORMA PRO
  switchport access vlan 41
  switchport mode access
+ exit
 !
 interface FastEthernet0/42
  description FORMA PRO
  switchport access vlan 41
  switchport mode access
+ exit
 !
 interface FastEthernet0/43
+ description Activiter port - Down
+ shutdown
+ exit
 !
 interface FastEthernet0/44
+ description Activiter port - Down
+ shutdown
+ exit
 !
 interface FastEthernet0/45
+ description Activiter port - Down
+ shutdown
+ exit
 !
 interface FastEthernet0/46
+ description Activiter port - Down
+ shutdown
+ exit
 !
 interface FastEthernet0/47
+ description Activiter port - Down
+ shutdown
+ exit
 !
 interface FastEthernet0/48
  description INTER CO COMMUTATEUR L3
  switchport trunk allowed vlan 11,21,31,41,61,71,81
  switchport mode trunk
+ exit
 !
 interface GigabitEthernet0/1
+ description Activiter port - Down
  shutdown
+ exit
 !
 interface GigabitEthernet0/2
+ description Activiter port - Down
  shutdown
+ exit
 !
 interface Vlan1
  no ip address
@@ -294,3 +354,5 @@ crypto key generate rsa general-keys modulus 2048
 ip ssh version 2
 !
 end
+!
+write

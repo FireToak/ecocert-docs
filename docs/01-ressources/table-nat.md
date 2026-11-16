@@ -4,14 +4,13 @@
 
 ---
 
-## Informations
-
-* **Auteur :** Louis MEDO
-* **Date :** 04/09/2026
-* **Domaine :** réseaux
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 04/09/2026
+> - **Domaine :** Réseau
 
 ---
-
 ## 1. Sommaire
 
 * [1. Sommaire](#1-sommaire)

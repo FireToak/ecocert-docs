@@ -8,14 +8,13 @@ description: Configuration modulaire, sécurisée et hautement disponible du ser
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 12/10/2026
-    - **Domaine :** Debian 13
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 12/10/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

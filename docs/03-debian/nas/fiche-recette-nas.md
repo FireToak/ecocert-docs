@@ -8,14 +8,13 @@ description: Fiche recette validant l'accès au partage réseau SMB du NAS depui
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** KADA Amine
-    - **Date :** 23/09/2026
-    - **Domaine :** Windows / NAS
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 23/09/2026
+> - **Domaine :** TrueNAS CORE
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

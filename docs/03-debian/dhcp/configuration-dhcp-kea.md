@@ -8,14 +8,13 @@ description: Déploiement et configuration du service Kea-dhcp4 multi-VLANs sur 
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** KADA Amine
-    - **Date :** 08/09/2026
-    - **Domaine :** Debian
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 08/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

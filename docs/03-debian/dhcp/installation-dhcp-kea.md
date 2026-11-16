@@ -8,14 +8,13 @@ description: Déploiement et vérification du serveur ISC Kea DHCP IPv4 sur Debi
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** KADA Amine
-    - **Date :** 07/09/2026
-    - **Domaine :** Debian
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 07/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

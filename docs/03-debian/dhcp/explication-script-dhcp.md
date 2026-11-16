@@ -8,14 +8,13 @@ description: Automatisation de la génération des pools DHCP pour Kea via un sc
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 28/09/2026
-    - **Domaine :** Debian
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 28/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

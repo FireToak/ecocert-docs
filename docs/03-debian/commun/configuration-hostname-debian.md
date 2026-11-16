@@ -8,14 +8,13 @@ description: Procédure de configuration, modification et vérification du nom d
 
 ---
 
-!!! note "Méta-informations"
-    - **Auteur(s) :** KADA Amine
-    - **Classe :** BTS SIO 2 - Option SISR
-    - **Date de MAJ :** 02/10/2026
-    - **Contexte :** Standardisation des noms d'hôtes (FQDN) des serveurs Debian ECOCERT
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 02/10/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

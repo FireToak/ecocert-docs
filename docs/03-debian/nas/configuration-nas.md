@@ -6,13 +6,15 @@ description: Initialisation du stockage RAIDZ1 TrueNAS, configuration réseau, e
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
-
-- **Auteur :** KADA Amine
-- **Date :** 23/09/2026
-- **Domaine :** NAS / Stockage
-
 ---
 
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 23/09/2026
+> - **Domaine :** TrueNAS CORE
+
+---
 ## 1. Sommaire
 
 1. Sommaire

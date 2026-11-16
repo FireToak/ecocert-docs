@@ -4,14 +4,13 @@
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Louis MEDO
-    - **Date :** 22/09/2026
-    - **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 22/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Contexte du test
 
 Validation post-déploiement du contrôleur réseau Unifi. Les tests visent à s'assurer de la disponibilité du service applicatif (Couche 7 du modèle OSI), de la connectivité au réseau WAN pour le téléchargement des mises à jour (Couche 3/4), et du bon provisionnement des réseaux logiques (VLAN) et sans fil (WLAN).

@@ -8,14 +8,13 @@ description: Procédure de création d'un pool de stockage ZFS sous TrueNAS virt
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Louis MEDO
-    - **Date :** 26/09/2026
-    - **Domaine :** Debian
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 26/09/2026
+> - **Domaine :** TrueNAS CORE
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)
