@@ -52,3 +52,15 @@ Cette phase vise à automatiser la génération du fichier de configuration DHCP
 Cette phase consiste à mettre en place un serveur de gestion centralisée afin d'administrer les postes Debian 13 de la salle. Elle couvre l'authentification SSH par clés, l'exécution de tâches avec les privilèges root, l'installation d'applications, les mises à jour automatiques et le contrôle de la politique de complexité des mots de passe à l'aide de playbooks Ansible.
 
 * 📄 **Document technique :** [Situation 3 - Gestion automatisée des configurations](./assets/situations/situation-3-ansible.pdf)
+
+### 3.9. Situation 9 : Mise en place d'une infrastructure PKI avec Step CA
+
+Cette phase consiste à déployer une autorité de certification interne avec Step CA afin de sécuriser les communications de l'infrastructure ECOCERT. Elle couvre la création de l'autorité racine, la gestion des certificats numériques, la génération des demandes de signature ainsi que le renouvellement et la révocation des certificats.
+
+* 📄 **Document technique :** [Situation 9 - Infrastructure PKI avec Step CA](./assets/situations/situation-9-pki-step-ca.pdf)
+
+### 3.10. Situation 10 : Infrastructure DNS faisant autorité et DNS recursif
+
+Cette phase consiste à mettre en place une infrastructure DNS composée d’un serveur faisant autorité avec Bind9 et d’un résolveur DNS récursif avec Unbound. Elle couvre la configuration de la zone DNS locale, la gestion des enregistrements, la résolution des noms internes ainsi que le relais des requêtes externes de manière sécurisée.
+
+* 📄 **Document technique :** [Situation 10 - Infrastructure DNS faisant autorité et DNS récursif](./assets/situations/situation-10-dns-unbound-bind9.pdf)
