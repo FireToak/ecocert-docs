@@ -8,9 +8,9 @@
 >
 > - **Auteur :** Louis MEDO
 > - **Date :** 04/09/2026
-> - **Domaine :** Réseau
 
 ---
+
 ## 1. Sommaire
 
 * [1. Sommaire](#1-sommaire)
@@ -52,6 +52,12 @@ Cette phase vise à automatiser la génération du fichier de configuration DHCP
 Cette phase consiste à mettre en place un serveur de gestion centralisée afin d'administrer les postes Debian 13 de la salle. Elle couvre l'authentification SSH par clés, l'exécution de tâches avec les privilèges root, l'installation d'applications, les mises à jour automatiques et le contrôle de la politique de complexité des mots de passe à l'aide de playbooks Ansible.
 
 * 📄 **Document technique :** [Situation 3 - Gestion automatisée des configurations](./assets/situations/situation-3-ansible.pdf)
+
+### 3.8. Situation 8 : Mise en place d'un bastion sécurisé avec Teleport
+
+Cette phase consiste à déployer un bastion d'administration avec Teleport afin de centraliser et de sécuriser les accès aux ressources de l'infrastructure ECOCERT. Elle couvre l'authentification des utilisateurs, le contrôle des accès, la traçabilité des sessions ainsi que la sécurisation des connexions d'administration.
+
+* 📄 **Document technique :** [Situation 8 - Bastion sécurisé avec Teleport](./assets/situations/situation-8-bastion-teleport.pdf)
 
 ### 3.9. Situation 9 : Mise en place d'une infrastructure PKI avec Step CA
 
