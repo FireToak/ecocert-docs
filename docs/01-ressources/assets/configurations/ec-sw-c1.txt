@@ -303,6 +303,7 @@ interface Vlan81
 interface Vlan84
  description PKI
  ip address 10.0.84.254 255.255.255.0
+ no shutdown
 !
 interface Vlan85
  description BASTION
