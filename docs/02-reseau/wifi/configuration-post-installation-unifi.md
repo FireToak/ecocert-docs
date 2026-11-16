@@ -8,14 +8,13 @@ description: Procédure de configuration système post-installation du contrôle
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Louis MEDO
-    - **Date :** 22/09/2026
-    - **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 22/09/2026
+> - **Domaine :** UniFi OS
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

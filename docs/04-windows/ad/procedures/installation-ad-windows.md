@@ -4,12 +4,13 @@
 
 ---
 
-- **Auteur :** Amine KADA
-- **Date :** 14/09/2026
-- **Domaine :** Windows serveur
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 14/09/2026
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

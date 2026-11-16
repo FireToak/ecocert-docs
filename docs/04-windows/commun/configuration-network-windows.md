@@ -8,14 +8,13 @@ description: Configuration réseau de l'Active Directory dans le panneau de conf
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 14/09/2026
-    - **Domaine :** Windows Serveur 2025
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 14/09/2026
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

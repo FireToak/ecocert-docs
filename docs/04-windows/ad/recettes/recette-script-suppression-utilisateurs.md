@@ -8,10 +8,9 @@
 >
 > - **Auteur :** Louis MEDO
 > - **Date :** 05/10/2026
-> - **Domaine :** Windows (Active Directory & NTFS)
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Contexte du test
 
 Validation du script PowerShell de suppression des utilisateurs depuis un fichier CSV. L'objectif est de s'assurer que les comptes sont correctement désactivés, déplacés dans l'UO de quarantaine, retirés de leurs groupes de sécurité et que leurs données sont archivées de façon sécurisée.

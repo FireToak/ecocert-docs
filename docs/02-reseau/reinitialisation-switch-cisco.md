@@ -4,14 +4,13 @@
 
 ---
 
-## Informations
-
-- **Auteur :** Louis MEDO
-- **Date :** 21/09/2026
-- **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 21/09/2026
+> - **Domaine :** Cisco IOS
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

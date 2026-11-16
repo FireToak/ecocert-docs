@@ -4,14 +4,13 @@
 
 ---
 
-## Informations
-
-- **Auteur :** Louis MEDO
-- **Date :** 12/09/2026
-- **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 12/09/2026
+> - **Domaine :** Stormshield Network Security
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

@@ -8,10 +8,9 @@
 >
 > - **Auteur :** Louis MEDO
 > - **Date :** 05/10/2026
-> - **Domaine :** Windows (Active Directory & NTFS)
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Contexte du test
 
 Validation du script PowerShell `SyncUtilisateurs.ps1` de synchronisation depuis un fichier CSV. L'objectif est de vérifier la création de l'arborescence AD (UO, Groupes), la création et modification idempotente des comptes utilisateurs, ainsi que la configuration correcte des dossiers personnels et de leurs permissions NTFS.

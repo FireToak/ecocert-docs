@@ -4,14 +4,13 @@
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Louis MEDO
-    - **Date :** 22/09/2026
-    - **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 22/09/2026
+> - **Domaine :** UniFi OS
 
 ---
-
 ## 1. Contexte du test
 
 Validation de bout en bout des accès sans fil (Couches 1 à 3 du modèle OSI) pour les réseaux `TECHNIQUE-GP4` (VLAN 71) et `VISITEURS` (VLAN 81). Les tests vérifient l'association L2 des terminaux, l'allocation dynamique des adresses IP (DHCP), la joignabilité de la passerelle par défaut assignée au sous-réseau, et le bon fonctionnement du routage inter-VLAN vers les passerelles de sécurité selon la topologie logique ECOCERT.

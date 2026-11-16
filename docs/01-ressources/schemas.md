@@ -4,14 +4,13 @@
 
 ---
 
-## Informations
-
-- **Auteur :** Louis MEDO
-- **Date :** 15/09/2026
-- **Domaine :** Réseaux
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 15/09/2026
+> - **Domaine :** Réseau
 
 ---
-
 ## Schéma physique
 
 - **PDF :** [Schéma physique de l'infrastructure ECOCERT (PDF)](./assets/schemas/ecocert-schema-physique-gp4.pdf)

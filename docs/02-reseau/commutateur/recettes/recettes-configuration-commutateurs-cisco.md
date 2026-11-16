@@ -4,14 +4,13 @@
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Louis MEDO
-    - **Date :** 21/09/2026
-    - **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 21/09/2026
+> - **Domaine :** Cisco IOS
 
 ---
-
 ## 1. Contexte
 
 Validation exhaustive de la couche de routage (Niveau 3 OSI) et des accès d'administration (Niveau 7 OSI) de l'infrastructure LAN ECOCERT. Cette procédure vérifie individuellement la disponibilité de chaque passerelle par défaut (SVI) hébergée sur le commutateur cœur de réseau `ec-sw-c1`. Elle valide également l'accessibilité sécurisée (SSH) aux équipements d'accès L2 (`ec-sw-a1`) et de cœur L3 (`ec-sw-c1`).

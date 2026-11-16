@@ -8,14 +8,13 @@ description: Procédure de création et de sécurisation d'un lecteur réseau d�
 
 ---
 
-> [!note] Informations
+> [!note] "Informations"
 >
 > - **Auteur :** Louis MEDO
 > - **Date :** 29/09/2026
-> - **Domaine :** Windows
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

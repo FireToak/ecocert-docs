@@ -8,14 +8,11 @@ description: Intégration d'une architecture LDAPS (AD CS Core) sur un domaine e
 
 ---
 
-> [!note] Informations
+> [!note] "Informations"
 >
 > - **Auteur :** Amine KADA
 > - **Date :** 12/10/2026
-> - **Domaine :** Windows Serveur 2025 / Infrastructure
-
----
-
+> - **Domaine :** Windows Server 2025 (Core)
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

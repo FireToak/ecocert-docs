@@ -4,14 +4,13 @@
 
 ---
 
-## Informations
-
-- **Auteur :** Louis MEDO
-- **Date :** 21/09/2026
-- **Domaine :** Réseaux
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 21/09/2026
+> - **Domaine :** Réseau
 
 ---
-
 ## Configuration `ec-fw-c1` (Pare-feu)
 
 - **Ficher de configuration :** [ec-fw-c1 (Protégé par mot de passe : voir gestionnaire de mots de passe)](./assets/configurations/ec-fw-c1.na)

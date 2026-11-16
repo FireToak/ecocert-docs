@@ -4,12 +4,13 @@
 
 ---
 
-- **Auteur :** Amine KADA
-- **Date :** 21/09/2026
-- **Domaine :** Debian / Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 21/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

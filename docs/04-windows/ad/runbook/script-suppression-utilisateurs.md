@@ -12,10 +12,9 @@ description: Procédure de déploiement et d'utilisation du script de suppressio
 >
 > - **Auteur :** Louis MEDO
 > - **Date :** 29/09/2026
-> - **Domaine :** Windows
+> - **Domaine :** Windows Server 2025
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

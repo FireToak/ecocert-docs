@@ -6,13 +6,15 @@ description: Installation système du moteur GLPI 11 et de la pile LAMP en ligne
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
-
-- **Auteur :** KADA Amine
-- **Date :** 23/09/2026
-- **Domaine :** Debian / GLPI
-
 ---
 
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 23/09/2026
+> - **Domaine :** Debian
+
+---
 ## 1. Sommaire
 
 1. Sommaire

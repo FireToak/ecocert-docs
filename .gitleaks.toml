@@ -8,7 +8,16 @@ useDefault = true
 
 [allowlist]
 # Ignorer les commits contenant des faux positifs
-commits = ["04b76d4ed568a160b8d8b85fa507a3c36772dbba"]
+commits = [
+  "04b76d4ed568a160b8d8b85fa507a3c36772dbba",
+  "707c66b631663d56f29a281a5ee8497e0c3199b1"
+]
 
 # Ignorer les chaînes de caractères pour la recherche de mot de passe
-regexes = ["StrongPassword123!", "ChangezMoiSVP@37ù", "Ecocert2026!", "VotreMotDePasseIci"]
+regexes = [
+  "StrongPassword123!",
+  "ChangezMoiSVP@37ù",
+  "Ecocert2026!",
+  "VotreMotDePasseIci",
+  "MotDePasseSecurise2026!"
+]

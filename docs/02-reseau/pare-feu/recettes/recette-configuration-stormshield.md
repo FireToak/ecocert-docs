@@ -4,14 +4,13 @@
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Louis MEDO
-    - **Date :** 21/09/2026
-    - **Domaine :** Réseau
+> [!note] "Informations"
+>
+> - **Auteur :** Louis MEDO
+> - **Date :** 21/09/2026
+> - **Domaine :** Stormshield Network Security
 
 ---
-
 ## 1. Contexte du test
 
 Validation de la configuration initiale du pare-feu Stormshield (`ec-fw-c1`) dans l'infrastructure ECOCERT. Les tests visent à confirmer l'accessibilité des interfaces d'administration distante (SSH et HTTPS) via l'adresse IP `192.168.14.254`, le fonctionnement de la translation d'adresse (NAT) sur l'interface de sortie (`em0`), ainsi que la connectivité de la couche 3 (OSI) avec le commutateur cœur de réseau `192.168.14.253`.

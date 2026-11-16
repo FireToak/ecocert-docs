@@ -8,14 +8,13 @@ description: Configuration et déploiement du LDAPS sur Windows Server 2025 avec
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 12/10/2026
-    - **Domaine :** Windows Serveur 2025 / Expérience de bureau (GUI)
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 12/10/2026
+> - **Domaine :** Windows Server 2025 / Expérience de bureau (GUI)
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)

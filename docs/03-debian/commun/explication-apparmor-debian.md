@@ -4,13 +4,17 @@ description: Fiche conceptuelle sur le fonctionnement d'AppArmor et la gestion d
 
 # Concepts Avancés : Sécurité du Noyau avec AppArmor
 
-> [!note] Informations
-> - **Auteur :** Amine KADA
-> - **Date :** 29/09/2026
-> - **Domaine :** Cybersécurité / Administration Système
+![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
 ---
 
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 29/09/2026
+> - **Domaine :** Debian
+
+---
 ## 1. Introduction : Qu'est-ce qu'AppArmor ?
 
 **AppArmor** (Application Armor) est un module de sécurité intégré directement dans le noyau Linux. Son objectif principal est de confiner les programmes (comme un serveur web, un serveur DHCP ou une base de données) dans un périmètre d'action strictement délimité, afin de limiter les dégâts en cas de piratage.

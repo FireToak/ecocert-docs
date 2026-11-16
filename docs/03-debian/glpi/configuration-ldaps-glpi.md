@@ -8,14 +8,13 @@ description: Procédure de configuration de l'annuaire LDAPS et de synchronisati
 
 ---
 
-!!! note "Informations"
-
-    - **Auteur :** Amine KADA
-    - **Date :** 28/09/2026
-    - **Domaine :** Debian / Identité et Gestion de Parc
+> [!note] "Informations"
+>
+> - **Auteur :** Amine KADA
+> - **Date :** 28/09/2026
+> - **Domaine :** Debian
 
 ---
-
 ## 1. Sommaire
 
 - [1. Sommaire](#1-sommaire)
