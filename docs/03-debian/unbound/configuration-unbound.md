@@ -35,7 +35,7 @@ La configuration d'Unbound vise à établir un serveur DNS récursif local perfo
 nameserver 86.54.11.1
 ```
 
-- `nameserver` : Directive indiquant l'adresse IP du serveur de noms à interroger (ici Quad9).
+- `nameserver` : Directive indiquant l'adresse IP du serveur de noms à interroger (ici DNS4EU).
 
 > [!info] Spécificité Debian 13 (DHCP)
 > Avec Debian 13, si le service `dhcpd` est présent, le fichier `/etc/resolv.conf` est en lecture seule. Renseignez les paramètres dans `/etc/resolv.conf.head`.
@@ -105,6 +105,8 @@ server:
     interface: 127.0.0.1
 
     # Contrôle d'accès : Autorisation avec traçage (dig +trace)
+    access-control: 10.0.85.0/24 allow_snoop
+    access-control: 10.0.84.0/24 allow_snoop
     access-control: 192.168.4.0/24 allow_snoop
     access-control: 172.16.54.0/24 allow_snoop
     access-control: 127.0.0.0/8 allow_snoop
