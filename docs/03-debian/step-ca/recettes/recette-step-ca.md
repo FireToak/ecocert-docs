@@ -1,4 +1,4 @@
-# Fiche recette - Step-CA
+# Fiche recette - PKI
 
 ![Bannière ECOCERT](https://ecocert.bts.loutik.fr/assets/banniere_ecocert.png)
 
@@ -7,38 +7,34 @@
 > [!note] "Informations"
 >
 > - **Auteur :** Louis MEDO
-> - **Date :** 10/11/2026
+> - **Date :** 16/11/2026
 > - **Domaine :** Debian
 
 ---
 
 ## 1. Contexte du test
 
-Validation de l'installation, de la configuration et du bon fonctionnement opérationnel de l'autorité de certification (CA) locale `step-ca`. L'objectif de cette recette est de s'assurer que le service s'exécute correctement avec son compte de service dédié, qu'il est en écoute sur les ports requis, et que l'autorité racine est distribuable et intègre cryptographiquement.
+Validation de l'infrastructure d'autorité de certification `step-ca` sur serveur Debian. Ce test vise à vérifier le fonctionnement du service, le déploiement automatisé du certificat racine via stratégie de groupe (GPO) sur les clients Windows, et la reconnaissance de la chaîne de confiance cryptographique au niveau du navigateur web pour l'URL `https://pki.ecocert.fr`.
 
 ## 2. Procédures de validation
 
-### 2.1. Vérification de l'état du service systemd step-ca
+### 2.1. Vérification de l'état du service step-ca
 
-**Objectif :** S'assurer que le service step-ca est actif, fonctionne sans erreur en arrière-plan et est activé au démarrage du système.
+**Objectif :** Vérifier que le démon de l'autorité de certification est actif et opérationnel sur le serveur Debian.
 
 **Commande utilisée :**
 
-```bash title="verification_service.sh"
+```bash title="Vérification du service"
 sudo systemctl status step-ca --no-pager
 ```
 
-* `sudo` : Exécute la commande avec les privilèges administrateur.
-* `systemctl status step-ca` : Interroge le gestionnaire de services systemd pour obtenir l'état actuel de l'unité `step-ca`.
-* `--no-pager` : Affiche la sortie directement dans le terminal complet sans nécessiter d'interaction ou de défilement manuel.
+* `systemctl status step-ca` : Affiche l'état courant du service et les derniers messages disponibles.
+* `--no-pager` : Affiche directement la sortie dans le terminal sans ouvrir de pager interactif.
 
 **Résultat attendu :**
 
 ```bash
-● step-ca.service - step-ca service
-     Loaded: loaded (/etc/systemd/system/step-ca.service; enabled; preset: enabled)
-     Active: active (running) since Tue 2026-11-10 13:30:00 CET; 8min ago
-   Main PID: 1234 (step-ca)
+Active: active (running) since ...
 ```
 
 **Statut :**
@@ -50,25 +46,30 @@ sudo systemctl status step-ca --no-pager
 
 ................................................................................................................................................................................................................................................................................................................................................................
 
-### 2.2. Vérification de l'écoute réseau sur le port HTTPS
+### 2.2. Vérification de la GPO sur le poste client
 
-**Objectif :** Confirmer que l'autorité de certification écoute bien les requêtes entrantes sur le port 443 pour répondre aux demandes ACME et de distribution de certificats.
+**Objectif :** Valider que la stratégie de groupe a injecté le certificat racine de confiance dans le magasin système Windows de la machine cible.
+
+> [!warning] "Périmètre d'application"
+> La GPO modifie la configuration système globale du poste ("Configuration ordinateur"). Un redémarrage des clients ou une actualisation GPO en arrière-plan est requis pour que l'approbation soit active.
 
 **Commande utilisée :**
 
-```bash title="verification_port.sh"
-sudo ss -tulpn | grep 443
+```powershell title="verify_gpo.ps1"
+gpupdate /force
+Get-ChildItem -Path "Cert:\LocalMachine\Root" | Where-Object { $_.Subject -match "Ecocert" }
 ```
 
-* `sudo` : Nécessaire pour afficher les processus associés aux sockets réseau.
-* `ss` : Utilitaire permettant d'afficher les statistiques des sockets réseau.
-* `-tulpn` : Affiche les sockets TCP (`t`), UDP (`u`), à l'écoute (`l`), les processus associés (`p`), avec la résolution numérique des ports au lieu des noms de services (`n`).
-* `grep 443` : Filtre la sortie de la commande précédente pour ne conserver que les lignes concernant le port 443.
+* `gpupdate /force` : Binaire natif forçant le rafraîchissement immédiat de toutes les stratégies de groupe locales et Active Directory.
+* `Get-ChildItem` : Cmdlet listant les objets d'un chemin, ciblant ici spécifiquement le magasin cryptographique système (`LocalMachine\Root`).
+* `Where-Object` : Filtre les résultats renvoyés pour confirmer la présence du sujet de l'autorité (Ecocert).
 
 **Résultat attendu :**
 
-```bash
-tcp   LISTEN 0      4096               *:443              *:*    users:(("step-ca",pid=1234,fd=3))
+```powershell
+Thumbprint                                Subject
+----------                                -------
+71A84C99304E592EF481D7A31E5223E3E988F79C  CN=Ecocert4 PKI
 ```
 
 **Statut :**
@@ -80,60 +81,13 @@ tcp   LISTEN 0      4096               *:443              *:*    users:(("step-c
 
 ................................................................................................................................................................................................................................................................................................................................................................
 
-### 2.3. Vérification de l'accès à la PKI et téléchargement du certificat
+### 2.3. Validation de la confiance HTTPS sur le navigateur
 
-**Objectif :** S'assurer que le serveur web embarqué de la CA répond et distribue la clé publique de l'autorité racine.
-
-**Commande utilisée :**
-
-```bash title="telechargement_certificat.sh"
-curl -k "https://pki.ecocert4.fr/roots.pem" -o /tmp/root_ca_ecocert.crt
-
-```
-
-* `curl` : Utilitaire en ligne de commande pour transférer des données via URL.
-* `-k` : Ignore les erreurs de validation TLS (nécessaire car la machine de test ne fait pas encore confiance à la PKI).
-* `"https://pki.ecocert4.fr/roots.pem"` : Point de terminaison web distribuant le certificat racine de step-ca.
-* `-o /tmp/root_ca_ecocert.crt` : Spécifie le fichier de sortie local où sera sauvegardé le certificat.
+**Objectif :** S'assurer que le certificat de la PKI est reconnu par le navigateur internet, permettant de joindre le site sans avertissement de sécurité.
 
 **Résultat attendu :**
 
-```bash
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100   826  100   826    0     0   100k      0 --:--:-- --:--:-- --:--:--  100k
-```
-
-**Statut :**
-
-* [ ] Ok
-* [ ] KO
-
-**Commentaire :**
-
-................................................................................................................................................................................................................................................................................................................................................................
-
-### 2.4. Validation de l'intégrité du certificat racine
-
-> [!warning] "Validation de l'empreinte"
-> Ne validez ce test que si l'empreinte calculée correspond strictement à l'empreinte originale générée lors de l'initialisation de `step-ca` (ex: 71A84C99304E592EF481D7A31E5223E3E988F79C05E8EE4EB12A802DB42AC43C).
-
-**Objectif :** Garantir que le certificat téléchargé n'a pas été altéré et correspond bien à la PKI déployée, pour contrer le risque d'attaque par l'homme du milieu (MITM).
-
-**Commande utilisée :**
-
-```bash title="verification_empreinte.sh" hl_lines="1"
-sha256sum /tmp/root_ca_ecocert.crt
-```
-
-* `sha256sum` : Calcule et affiche l'empreinte cryptographique SHA256 d'un fichier donné.
-* `/tmp/root_ca_ecocert.crt` : Chemin pointant vers le certificat racine précédemment téléchargé pour vérification.
-
-**Résultat attendu :**
-
-```bash
-71a84c99304e592ef481d7a31e5223e3e988f79c05e8ee4eb12a802db42ac43c  /tmp/root_ca_ecocert.crt
-```
+Le navigateur s'ouvre sur la page web. Le cadenas à côté de l'URL est fermé, et aucun écran d'alerte ou avertissement TLS lié à l'autorité de certification n'apparaît.
 
 **Statut :**
 
