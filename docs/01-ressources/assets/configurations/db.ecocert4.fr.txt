@@ -1,6 +1,6 @@
 $TTL 43200
 ecocert4.fr. IN SOA ns0.ecocert4.fr. postmaster.ecocert4.fr. (
-    2026092301  ; Serial
+    2026111600  ; Serial
     1D          ; Refresh
     1H          ; Retry
     1W          ; Expire
@@ -18,3 +18,4 @@ adecocert.local     IN  A   172.16.54.1
 
 ; PKI
 pki          IN  A   10.0.84.1
+bastion      IN  A   10.0.85.1
